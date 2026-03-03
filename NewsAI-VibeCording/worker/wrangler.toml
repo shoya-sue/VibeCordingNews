@@ -1,0 +1,30 @@
+name = "newsai-vibecording-bot"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+
+# ─── KV Namespaces ───
+# 初回セットアップ時に以下のコマンドで作成し、表示されたIDを入力すること:
+#   cd worker
+#   npx wrangler kv:namespace create SESSION_KV   → id を SESSION_KV の id に記入
+#   npx wrangler kv:namespace create MEMORY_KV    → id を MEMORY_KV の id に記入
+
+[[kv_namespaces]]
+binding = "SESSION_KV"
+id = "REPLACE_WITH_SESSION_KV_ID"
+# 用途: ユーザーごとの会話履歴・感情状態 (TTL: 24h)
+
+[[kv_namespaces]]
+binding = "MEMORY_KV"
+id = "REPLACE_WITH_MEMORY_KV_ID"
+# 用途: エピソード記憶（忘却曲線管理）(TTL: 90日)
+
+# ─── Variables ───
+[vars]
+# GitHubリポジトリ情報（RAG知識ベース取得用）
+GITHUB_OWNER = "shoya-sue"
+GITHUB_REPO  = "VibeCordingNews"
+
+# ─── Secrets (wrangler secret put で設定) ───
+# DISCORD_APPLICATION_ID
+# DISCORD_PUBLIC_KEY
+# GEMINI_API_KEY

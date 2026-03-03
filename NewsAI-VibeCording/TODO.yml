@@ -1,0 +1,232 @@
+# NewsAI-VibeCording — 実装タスク管理
+# 最終更新: 2026-03-03
+# バージョン: v3.0 (現行) → v3.1 (次期: 初回デプロイ)
+
+project: NewsAI-VibeCording
+version_current: "3.0"
+version_next: "3.1"
+
+# ============================================================
+# ✅ DONE — 実装・コード完成（構文チェック済み）
+# ============================================================
+completed:
+
+  - id: DONE-01
+    title: "RSSフィード収集 → Discord Webhook 定時配信"
+    file: scripts/fetch_and_deliver.py
+    detail: "Zenn/GitHub/Qiita/DEV.to/HackerNews を feedparser で収集。重複防止CSV付き"
+
+  - id: DONE-02
+    title: "Discord Bot スラッシュコマンド (/news, /ask, /status)"
+    file: worker/src/index.js
+    detail: "Ed25519署名検証、レート制限(30req/h)、Gemini API連携"
+
+  - id: DONE-03
+    title: "VTuber心理モデル v2.0 (Big Five + 感情パラメータ)"
+    file: config.json
+    detail: "O:9/C:6/E:8/A:8/N:4、tension/curiosity/confidence/empathy/fatigue、5フェーズ管理"
+
+  - id: DONE-04
+    title: "配信フェーズ対応プロンプト (5段階時間帯)"
+    file: worker/src/index.js, scripts/fetch_and_deliver.py
+    detail: "JST時刻判定でフェーズを切り替え、口調スタイルを動的変更"
+
+  - id: DONE-05
+    title: "動的感情スコアリングエンジン v2.1"
+    file: worker/src/index.js
+    functions:
+      - "computeEmotionState() — 入力シグナル検出 + 減衰0.88 + 時刻疲労"
+      - "buildEmotionPromptSection() — 数値感情 → 具体的口調指示 + 禁止語尾"
+      - "extractLastEnding() — 応答末尾語尾パターン抽出（だよ！なの！等）"
+      - "dynamicTemp = 0.6 + (tension/100) × 0.4"
+
+  - id: DONE-06
+    title: "GitHub Actions ワークフロー (定時配信 + Worker自動デプロイ)"
+    file: .github/workflows/news-delivery.yml, deploy-worker.yml
+    detail: "cron JST10:00/15:00、競合回避retry3回、pip cache、手動実行対応"
+
+  - id: DONE-07
+    title: "キャラクターテストスクリプト (8シナリオ)"
+    file: scripts/test_character.py
+
+  - id: DONE-08
+    title: "Layer 1: 会話履歴 + Cloudflare KV セッション管理"
+    file: worker/src/index.js
+    functions:
+      - "loadSession(userId, env) — KV読み取り + in-memoryフォールバック"
+      - "saveSession(userId, sessionData, env) — KV書き込み TTL:24h"
+      - "askGemini() の contents[] に直近3ターン(6メッセージ)を注入"
+
+  - id: DONE-09
+    title: "BM25 検索エンジン (外部依存ゼロ)"
+    file: worker/src/index.js
+    functions:
+      - "tokenize(text) — 英数字 + 日本語バイグラム"
+      - "bm25Score(queryTerms, docTerms, k1=1.5, b=0.75)"
+      - "searchKnowledge(query, entries, topK=3)"
+      - "fetchKnowledgeBase(env) — GitHub Raw URL + 5分Edgeキャッシュ"
+
+  - id: DONE-10
+    title: "RAG知識抽出パイプライン (extract_knowledge.py)"
+    file: scripts/extract_knowledge.py
+    detail: >
+      Gemini responseSchema で構造化抽出。
+      keywords/summary/core_insight/category/importance/is_worthy/tech_terms/sentiment。
+      data/knowledge_base/YYYY-MM/index.json に月別保存。
+      latest.json (is_worthy上位200件) を自動再生成。
+      --dry-run / --force / --limit オプション付き
+
+  - id: DONE-11
+    title: "Layer 2: エピソード記憶 + 忘却曲線エンジン (memory_manager.py)"
+    file: scripts/memory_manager.py
+    detail: >
+      Ebbinghaus R=e^(-t/S) + SM-2 EF更新 の hybrid実装。
+      add/recall/decay/consolidate/list/search コマンド付きCLI。
+      Layer 2 → Layer 3 (personality_layer.json) への自動統合。
+
+  - id: DONE-12
+    title: "GitHub Actions への知識抽出・忘却更新ステップ追加"
+    file: .github/workflows/news-delivery.yml
+    detail: "配信後に extract_knowledge.py → memory_manager.py decay → git commit を自動実行"
+
+  - id: DONE-13
+    title: "調査ソース集約ドキュメント"
+    file: docs/Research_Sources.md
+    detail: "MemoryBank/Mem0/SM-2/BM25/Gemini responseSchema 等の論文・技術ソース一覧"
+
+
+# ============================================================
+# ⚠️ SETUP — コードは完成、環境設定が必要
+# ============================================================
+setup_required:
+
+  - id: SETUP-01
+    title: "GitHub リポジトリ push + Secrets 設定"
+    priority: high
+    effort: S (5分)
+    steps:
+      - "git remote add origin → git push"
+      - "GitHub Settings → Secrets → DISCORD_WEBHOOK_URL"
+      - "GitHub Settings → Secrets → GEMINI_API_KEY"
+
+  - id: SETUP-02
+    title: "Cloudflare KV ネームスペース作成"
+    priority: high
+    effort: S (10分)
+    steps:
+      - "cd worker && npx wrangler kv:namespace create SESSION_KV"
+      - "npx wrangler kv:namespace create MEMORY_KV"
+      - "取得した ID を wrangler.toml の id フィールドに記入"
+
+  - id: SETUP-03
+    title: "wrangler.toml の GITHUB_OWNER 書き換え"
+    priority: high
+    effort: S (1分)
+    file: worker/wrangler.toml
+    action: "REPLACE_WITH_YOUR_GITHUB_USERNAME を自分の GitHub ユーザー名に変更"
+
+  - id: SETUP-04
+    title: "Cloudflare Worker Secrets 設定"
+    priority: high
+    effort: S (5分)
+    steps:
+      - "npx wrangler secret put DISCORD_APPLICATION_ID"
+      - "npx wrangler secret put DISCORD_PUBLIC_KEY"
+      - "npx wrangler secret put GEMINI_API_KEY"
+
+  - id: SETUP-05
+    title: "Discord Bot アプリケーション作成"
+    priority: high
+    effort: S (10分)
+    steps:
+      - "https://discord.com/developers/applications でアプリ作成"
+      - "Application ID と Public Key を SETUP-04 に使用"
+      - "Interactions Endpoint URL に Worker の URL を設定"
+      - "Bot をサーバーに招待"
+
+  - id: SETUP-06
+    title: "スラッシュコマンド登録（初回のみ）"
+    priority: high
+    effort: S (1分)
+    steps:
+      - "cd worker"
+      - "DISCORD_APPLICATION_ID=xxx DISCORD_BOT_TOKEN=yyy node src/register-commands.js"
+
+  - id: SETUP-07
+    title: "Worker デプロイ"
+    priority: high
+    effort: S (2分)
+    steps:
+      - "cd worker && npx wrangler deploy"
+      - "または main ブランチに push して deploy-worker.yml を自動実行"
+
+
+# ============================================================
+# 🔮 FUTURE — 将来的な拡張候補
+# ============================================================
+future:
+
+  - id: FUTURE-01
+    title: "Layer 2 → Worker 統合（MEMORY_KV での会話記憶永続化）"
+    priority: medium
+    effort: M
+    detail: >
+      現状の memory_manager.py は GitHub Actions 側のみ。
+      Worker 側でも MEMORY_KV を使い Layer 2 を参照・更新できるように統合する。
+      Worker の askGemini() に memory recall を追加。
+
+  - id: FUTURE-02
+    title: "日本語形態素解析の精度向上（TinySegmenter.js）"
+    priority: medium
+    effort: M
+    detail: >
+      現在はバイグラム近似。
+      TinySegmenter.js (WASM 不要) を Worker に組み込むと BM25 精度が向上。
+
+  - id: FUTURE-03
+    title: "personality_layer.json のプロンプト注入"
+    priority: medium
+    effort: S
+    detail: >
+      Layer 3 に統合された知識を /ask 時のシステムプロンプトに含める。
+      「VibeちゃんBotの体に刻まれた知識」として人格の一部になる。
+      fetchKnowledgeBase() と同様のパターンで実装可能。
+
+  - id: FUTURE-04
+    title: "配信ソース拡充"
+    priority: low
+    effort: S
+    detail: "X (Twitter) API、Reddit r/ClaudeAI、YouTube チャンネル新着動画 等"
+
+  - id: FUTURE-05
+    title: "ユーザー別パーソナライズ"
+    priority: low
+    effort: L
+    detail: >
+      ユーザーの興味タグを KV に保存し、RAG 検索のスコアリングに反映。
+      よく話しかけてくれるユーザーへの親密度スコアも管理。
+
+
+# ============================================================
+# 📋 推奨着手順序
+# ============================================================
+recommended_order:
+  next_session:
+    - SETUP-01  # GitHub push (コードを上げないと何も動かない)
+    - SETUP-03  # wrangler.toml 書き換え (1分)
+    - SETUP-02  # KV 作成 (wrangler.toml 記入)
+    - SETUP-05  # Discord Bot 作成
+    - SETUP-04  # Worker Secrets 設定
+    - SETUP-07  # Worker デプロイ
+    - SETUP-06  # スラッシュコマンド登録
+  # → ここまでやれば全機能が動く
+
+  after_first_delivery:
+    - data/knowledge_base/ にデータが溜まり始める
+    - /ask で RAG が効き始める
+    - memory_manager の decay が毎配信後に動く
+
+  long_term:
+    - FUTURE-01  # Layer 2 を Worker に統合
+    - FUTURE-03  # personality_layer.json をプロンプトに注入
+    - FUTURE-02  # 形態素解析精度向上

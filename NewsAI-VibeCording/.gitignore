@@ -1,0 +1,21 @@
+node_modules/
+.wrangler/
+.dev.vars
+__pycache__/
+*.pyc
+.env
+
+# ロック・一時ファイル
+*.lock
+docs/.~lock.*
+docs/*.tmp
+docs/*.jpg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 機密情報（絶対にコミットしない）
+*.pem
+*.key
+secrets.*

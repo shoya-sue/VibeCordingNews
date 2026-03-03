@@ -1,0 +1,201 @@
+# 📰 NewsAI-VibeCording
+
+VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、Discord に配信する無料ニュースBot。
+
+## ✨ 機能
+
+### 🔔 定時配信（Push型）
+- **10:00 / 15:00 JST** に最新ニュース5件を自動配信
+- GitHub Actions cron による定期実行
+- Gemini API で記事要約を自動生成
+- 配信済み記事は CSV 管理で再配信防止
+
+### 💬 対話Bot（Pull型）
+- `/news` — 最新ニュースを即座に取得
+- `/ask <質問>` — VibeCoding関連の質問にAIが回答
+- `/status` — Botの稼働状況を確認
+- Cloudflare Workers で常駐サーバー不要
+
+## 📡 情報ソース
+
+| ソース | カテゴリ |
+|---|---|
+| Zenn - Claude Code | 技術記事 |
+| Zenn - Claude | 技術記事 |
+| Zenn - VibeCoding | 技術記事 |
+| Zenn - AI Agent | 技術記事 |
+| Qiita - ClaudeCode | 技術記事 |
+| Qiita - バイブコーディング | 技術記事 |
+| Claude Code GitHub Releases | リリース情報 |
+| Anthropic News | 公式発表 |
+
+## 🏗️ アーキテクチャ
+
+```
+┌──────────────────────────────────────────────────┐
+│         NewsAI-VibeCording Architecture          │
+│                                                  │
+│  ┌─────────────┐     ┌──────────────────────┐   │
+│  │ GitHub      │cron │ Python Script         │   │
+│  │ Actions     │────▶│ fetch_and_deliver.py  │   │
+│  │ (10:00/15:00)│    │  ├─ feedparser (RSS) │   │
+│  └─────────────┘     │  ├─ Gemini API (要約)│   │
+│                      │  └─ Webhook POST     │   │
+│                      └──────────┬───────────┘   │
+│                                 │                │
+│                                 ▼                │
+│                      ┌──────────────────┐        │
+│                      │   Discord        │        │
+│                      │   Channel        │◀───┐   │
+│                      └──────────────────┘    │   │
+│                                              │   │
+│  ┌─────────────┐     ┌──────────────────┐    │   │
+│  │ Discord     │────▶│ Cloudflare       │────┘   │
+│  │ Slash Cmd   │     │ Worker           │        │
+│  │ (/news etc) │     │  ├─ RSS取得      │        │
+│  └─────────────┘     │  ├─ Gemini API   │        │
+│                      │  └─ レート制限   │        │
+│                      └──────────────────┘        │
+│                                                  │
+│  ┌──────────────────┐                            │
+│  │ data/             │                           │
+│  │ delivered.csv     │ ← 配信済み記事管理        │
+│  └──────────────────┘                            │
+└──────────────────────────────────────────────────┘
+```
+
+## 💰 コスト
+
+| サービス | 費用 |
+|---|---|
+| GitHub Actions | **無料** (Public repo) |
+| Gemini API (Flash-Lite) | **無料** (1,000回/日) |
+| Cloudflare Workers | **無料** (10万リクエスト/日) |
+| Discord Bot | **無料** |
+| **合計** | **$0** |
+
+## 🚀 セットアップ
+
+### 1. 事前準備
+
+以下のアカウント/トークンが必要です:
+
+| 項目 | 取得先 |
+|---|---|
+| Discord Webhook URL | サーバー設定 → 連携サービス → ウェブフック |
+| Discord Application | https://discord.com/developers/applications |
+| Gemini API Key | https://aistudio.google.com/apikey |
+| Cloudflare Account | https://dash.cloudflare.com/ |
+
+### 2. リポジトリの準備
+
+```bash
+git clone https://github.com/<your-username>/NewsAI-VibeCording.git
+cd NewsAI-VibeCording
+```
+
+### 3. GitHub Secrets の設定
+
+リポジトリの Settings → Secrets and variables → Actions に以下を追加:
+
+| Secret名 | 値 |
+|---|---|
+| `DISCORD_WEBHOOK_URL` | Discord Webhook URL |
+| `GEMINI_API_KEY` | Gemini API キー |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API トークン |
+
+### 4. Discord Bot のセットアップ
+
+```bash
+# Discord Developer Portal でアプリケーションを作成
+# Bot Token と Application ID を取得
+
+cd worker
+npm install
+
+# Slash Commands の登録
+DISCORD_APPLICATION_ID=<your-app-id> \
+DISCORD_BOT_TOKEN=<your-bot-token> \
+node src/register-commands.js
+```
+
+### 5. Cloudflare Worker のデプロイ
+
+```bash
+cd worker
+npm install
+
+# Secrets を設定
+npx wrangler secret put DISCORD_PUBLIC_KEY
+npx wrangler secret put GEMINI_API_KEY
+
+# デプロイ
+npx wrangler deploy
+```
+
+デプロイ後に表示される Worker URL を Discord Developer Portal の
+**Interactions Endpoint URL** に設定してください。
+
+### 6. 手動テスト
+
+```bash
+# 定時配信を手動実行
+DISCORD_WEBHOOK_URL=<url> GEMINI_API_KEY=<key> python scripts/fetch_and_deliver.py
+
+# または GitHub Actions の workflow_dispatch から実行
+```
+
+## 📁 ディレクトリ構成
+
+```
+NewsAI-VibeCording/
+├── .github/
+│   └── workflows/
+│       ├── news-delivery.yml    # 定時配信ワークフロー
+│       └── deploy-worker.yml    # Worker自動デプロイ
+├── worker/
+│   ├── src/
+│   │   ├── index.js             # Cloudflare Worker メインロジック
+│   │   └── register-commands.js # Slash Command 登録スクリプト
+│   ├── wrangler.toml
+│   └── package.json
+├── scripts/
+│   ├── fetch_and_deliver.py     # RSS収集 & Discord配信
+│   └── requirements.txt
+├── data/
+│   └── delivered.csv            # 配信済み記事DB
+├── config.json                  # フィード設定 & レート制限
+├── .gitignore
+└── README.md
+```
+
+## ⚙️ カスタマイズ
+
+### フィードの追加
+
+`config.json` の `feeds` 配列に新しいエントリを追加:
+
+```json
+{
+  "name": "表示名",
+  "url": "https://example.com/feed",
+  "category": "カテゴリ名",
+  "lang": "ja",
+  "emoji": "🆕"
+}
+```
+
+### レート制限の調整
+
+`config.json` の `rate_limits` で設定:
+
+```json
+{
+  "gemini_daily_max": 50,
+  "discord_interactions_per_hour": 30
+}
+```
+
+## 📄 License
+
+MIT

@@ -51,6 +51,11 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python scripts/fetch_and_deliver.py
 
+      - name: "⏳ Wait before RAG extraction (rate limit buffer)"
+        run: |
+          echo "Gemini API レート制限回避のため120秒待機..."
+          sleep 120
+
       - name: "🧠 Extract knowledge & build RAG database"
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

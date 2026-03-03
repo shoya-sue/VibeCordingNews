@@ -1,11 +1,12 @@
 name: "⚡ Deploy Cloudflare Worker"
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "worker/**"
-  workflow_dispatch:
+  # Cloudflare のセットアップ完了後に以下のコメントを外す:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "worker/**"
+  workflow_dispatch:  # 手動実行のみ（セットアップ完了まで自動デプロイを無効化）
 
 jobs:
   deploy:

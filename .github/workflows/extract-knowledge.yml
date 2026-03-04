@@ -2,8 +2,8 @@ name: "🧠 Extract Knowledge & Update Memory"
 
 on:
   schedule:
-    # JST 10:30 (UTC 01:30) — 配信(10:00)の30分後に実行
-    - cron: "30 1 * * *"
+    # JST 6:00 (UTC 21:00前日) — news-delivery(10:00/15:00)より前にAPIクォータを使用
+    - cron: "0 21 * * *"
   workflow_dispatch:
     # 手動実行にも対応
 

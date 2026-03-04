@@ -1,17 +1,15 @@
-name: "📰 VibeCording News Delivery"
+name: "🧠 Extract Knowledge & Update Memory"
 
 on:
   schedule:
-    # JST 10:00 (UTC 01:00)
-    - cron: "0 1 * * *"
-    # JST 15:00 (UTC 06:00)
-    - cron: "0 6 * * *"
+    # JST 10:30 (UTC 01:30) — 配信(10:00)の30分後に実行
+    - cron: "30 1 * * *"
   workflow_dispatch:
     # 手動実行にも対応
 
 concurrency:
-  group: news-delivery
-  cancel-in-progress: false  # 同時実行を防ぐ（前の実行完了を待つ）
+  group: extract-knowledge
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -20,13 +18,13 @@ env:
   TZ: "Asia/Tokyo"
 
 jobs:
-  deliver-news:
+  extract:
     runs-on: ubuntu-latest
     steps:
       - name: "📥 Checkout repository"
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 競合回避のため全履歴を取得
+          fetch-depth: 0
 
       - name: "🐍 Setup Python"
         uses: actions/setup-python@v5
@@ -38,31 +36,35 @@ jobs:
       - name: "📦 Install dependencies"
         run: pip install -r scripts/requirements.txt
 
-      - name: "📋 Ensure data directory exists"
-        run: |
-          mkdir -p data
-          if [ ! -f data/delivered.csv ] || [ ! -s data/delivered.csv ]; then
-            echo "url,title,source,delivered_at" > data/delivered.csv
-          fi
-
-      - name: "📡 Fetch feeds & deliver to Discord"
+      - name: "🧠 Extract knowledge & build RAG database"
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python scripts/fetch_and_deliver.py
+        run: |
+          mkdir -p data/knowledge_base
+          # 未処理記事から知識を抽出して knowledge_base に追記
+          # --limit 20: 1回の実行で最大20件処理 (Gemini Flash-Lite レート制限対策)
+          python scripts/extract_knowledge.py --limit 20
 
-      - name: "💾 Commit & push delivered articles"
+      - name: "📉 Update episodic memory decay"
+        run: |
+          mkdir -p data/episodic_memory
+          # 忘却曲線による保持率を毎回更新
+          python scripts/memory_manager.py decay
+
+      - name: "💾 Commit & push knowledge base"
         run: |
           git config user.name "NewsAI Bot"
           git config user.email "newsai-bot@users.noreply.github.com"
-          git add data/delivered.csv
+          git add data/knowledge_base/ || true
+          git add data/episodic_memory/ || true
+          git add data/processed_ids.json || true
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
 
-          git commit -m "📰 Deliver news $(date +%Y-%m-%dT%H:%M) [skip ci]"
+          git commit -m "🧠 Update knowledge base $(date +%Y-%m-%dT%H:%M) [skip ci]"
 
           # Retry logic for push (競合対策)
           MAX_RETRIES=3

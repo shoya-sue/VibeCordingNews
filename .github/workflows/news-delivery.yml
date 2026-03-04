@@ -53,8 +53,8 @@ jobs:
 
       - name: "⏳ Wait before RAG extraction (rate limit buffer)"
         run: |
-          echo "Gemini API レート制限回避のため120秒待機..."
-          sleep 120
+          echo "Gemini API レート制限回避のため300秒待機..."
+          sleep 300
 
       - name: "🧠 Extract knowledge & build RAG database"
         env:

@@ -32,37 +32,96 @@ VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、D
 ## 🏗️ アーキテクチャ
 
 ```
-┌──────────────────────────────────────────────────┐
-│         NewsAI-VibeCording Architecture          │
-│                                                  │
-│  ┌─────────────┐     ┌──────────────────────┐   │
-│  │ GitHub      │cron │ Python Script         │   │
-│  │ Actions     │────▶│ fetch_and_deliver.py  │   │
-│  │ (10:00/15:00)│    │  ├─ feedparser (RSS) │   │
-│  └─────────────┘     │  ├─ Gemini API (要約)│   │
-│                      │  └─ Webhook POST     │   │
-│                      └──────────┬───────────┘   │
-│                                 │                │
-│                                 ▼                │
-│                      ┌──────────────────┐        │
-│                      │   Discord        │        │
-│                      │   Channel        │◀───┐   │
-│                      └──────────────────┘    │   │
-│                                              │   │
-│  ┌─────────────┐     ┌──────────────────┐    │   │
-│  │ Discord     │────▶│ Cloudflare       │────┘   │
-│  │ Slash Cmd   │     │ Worker           │        │
-│  │ (/news etc) │     │  ├─ RSS取得      │        │
-│  └─────────────┘     │  ├─ Gemini API   │        │
-│                      │  └─ レート制限   │        │
-│                      └──────────────────┘        │
-│                                                  │
-│  ┌──────────────────┐                            │
-│  │ data/             │                           │
-│  │ delivered.csv     │ ← 配信済み記事管理        │
-│  └──────────────────┘                            │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│           NewsAI-VibeCording Architecture                │
+│                                                          │
+│  【配信フロー】 1日2回 (JST 10:00 / 15:00)               │
+│  ┌─────────────┐     ┌──────────────────────┐            │
+│  │ GitHub      │cron │ fetch_and_deliver.py  │            │
+│  │ Actions     │────▶│  ├─ feedparser (RSS) │            │
+│  │ news-       │     │  ├─ Gemini API (要約)│            │
+│  │ delivery    │     │  └─ Webhook POST     │            │
+│  └─────────────┘     └──────────┬───────────┘            │
+│                                 │ Discord配信             │
+│                                 ▼                        │
+│                      ┌──────────────────┐   ┌──────────┐ │
+│                      │   Discord        │◀──│Cloudflare│ │
+│                      │   Channel        │   │ Worker   │ │
+│                      └──────────────────┘   └──────────┘ │
+│                                 │ delivered.csv 更新      │
+│                                 ▼                        │
+│                      ┌──────────────────────┐            │
+│                      │  data/delivered.csv  │            │
+│                      │  (配信済みURL管理)    │            │
+│                      └──────────────────────┘            │
+│                                                          │
+│  【知識蓄積フロー】 1日1回 (JST 10:30)                   │
+│  ┌─────────────┐     ┌──────────────────────┐            │
+│  │ GitHub      │cron │ extract_knowledge.py  │            │
+│  │ Actions     │────▶│  ├─ 未処理記事を取得  │            │
+│  │ extract-    │     │  ├─ Gemini API (抽出) │            │
+│  │ knowledge   │     │  └─ BM25インデックス  │            │
+│  └─────────────┘     └──────────┬───────────┘            │
+│                                 │                        │
+│                                 ▼                        │
+│                      ┌──────────────────────┐            │
+│                      │ data/knowledge_base/ │            │
+│                      │  ├─ entries.jsonl    │ ← 知識DB   │
+│                      │  └─ bm25_index.pkl   │ ← 検索用  │
+│                      └──────────────────────┘            │
+│                                 │                        │
+│                                 ▼                        │
+│                      ┌──────────────────────┐            │
+│                      │ memory_manager.py     │            │
+│                      │  └─ 忘却曲線で保持率  │            │
+│                      │     を毎日更新        │            │
+│                      └──────────────────────┘            │
+└──────────────────────────────────────────────────────────┘
 ```
+
+## ⚙️ GitHub Actions ワークフロー
+
+2つのワークフローに分離することで、無料枠（2,000分/月）を効率的に使用しています。
+
+### 📰 news-delivery.yml — 配信専用
+
+| 項目 | 内容 |
+|---|---|
+| 実行タイミング | JST 10:00 / 15:00（1日2回） |
+| 処理内容 | RSS収集 → Gemini要約 → Discord Webhook配信 |
+| 所要時間 | 約3〜5分/回 |
+| 月間消費 | 約300分 |
+
+### 🧠 extract-knowledge.yml — 知識蓄積専用
+
+| 項目 | 内容 |
+|---|---|
+| 実行タイミング | JST 10:30（1日1回、配信の30分後） |
+| 処理内容 | 未処理記事をGeminiで解析 → knowledge_base に蓄積 → 忘却曲線で保持率更新 |
+| 所要時間 | 約3〜5分/回 |
+| 月間消費 | 約150分 |
+
+**月間合計: 約450分**（無料枠2,000分の22%）
+
+### 知識の蓄積ロジック
+
+```
+実行のたびに:
+  delivered.csv の未処理URL を取得
+       ↓
+  processed_ids.json で処理済みかチェック
+       ↓ 未処理のみ
+  Gemini API で知識を抽出（最大20件/回）
+  ※ 429レート制限エラー時 → 90秒待機後1回リトライ
+  ※ リトライも失敗 → processed_ids に記録せず次回へ持ち越し
+       ↓ 成功のみ
+  data/knowledge_base/entries.jsonl に追記
+  data/processed_ids.json に記録（次回スキップ）
+       ↓
+  memory_manager.py で忘却曲線計算（保持率更新）
+```
+
+これにより日々記事が蓄積され、`/ask` スラッシュコマンドで使うBM25検索の精度が向上していきます。
 
 ## 💰 コスト
 
@@ -151,8 +210,9 @@ DISCORD_WEBHOOK_URL=<url> GEMINI_API_KEY=<key> python scripts/fetch_and_deliver.
 NewsAI-VibeCording/
 ├── .github/
 │   └── workflows/
-│       ├── news-delivery.yml    # 定時配信ワークフロー
-│       └── deploy-worker.yml    # Worker自動デプロイ
+│       ├── news-delivery.yml    # 定時配信（JST 10:00/15:00）
+│       ├── extract-knowledge.yml # 知識蓄積（JST 10:30、1日1回）
+│       └── deploy-worker.yml    # Worker手動デプロイ
 ├── worker/
 │   ├── src/
 │   │   ├── index.js             # Cloudflare Worker メインロジック
@@ -161,9 +221,16 @@ NewsAI-VibeCording/
 │   └── package.json
 ├── scripts/
 │   ├── fetch_and_deliver.py     # RSS収集 & Discord配信
+│   ├── extract_knowledge.py     # Gemini APIで知識抽出 & RAG構築
+│   ├── memory_manager.py        # 忘却曲線による保持率管理
 │   └── requirements.txt
 ├── data/
-│   └── delivered.csv            # 配信済み記事DB
+│   ├── delivered.csv            # 配信済み記事DB
+│   ├── processed_ids.json       # RAG処理済み記事ID
+│   ├── knowledge_base/          # 抽出済み知識（蓄積データ）
+│   │   ├── entries.jsonl        # 知識エントリ
+│   │   └── bm25_index.pkl       # BM25検索インデックス
+│   └── episodic_memory/         # エピソード記憶（忘却曲線データ）
 ├── config.json                  # フィード設定 & レート制限
 ├── .gitignore
 └── README.md

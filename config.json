@@ -135,6 +135,12 @@
       "emoji": "🕵️"
     }
   ],
+  "filtering": {
+    "enabled": true,
+    "candidate_pool_size": 8,
+    "relevance_threshold": 3,
+    "min_delivery_count": 0
+  },
   "discord": {
     "max_items_per_delivery": 5,
     "embed_color": 5814783

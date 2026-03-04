@@ -162,11 +162,49 @@ def get_current_phase() -> dict:
         return {"name": "late_night", "tension": [20, 40], "style": "眠たいモード。ぼそぼそ"}
 
 
-def summarize_with_gemini(title: str, summary_raw: str, config: dict) -> str:
-    """Gemini API で記事の要約を生成（VTuber心理モデルv2.0対応）"""
+# ─── Gemini responseSchema（要約+関連度を同時取得） ───
+SUMMARY_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "summary": {
+            "type": "STRING",
+            "description": "VTuber口調での記事要約（100文字以内）",
+        },
+        "relevance": {
+            "type": "INTEGER",
+            "description": "VibeCoding/Claude Codeコミュニティとの関連度（1-5）",
+        },
+    },
+    "required": ["summary", "relevance"],
+}
+
+# 関連度スコアの評価基準（システムプロンプトに注入）
+RELEVANCE_CRITERIA = """
+## 関連度スコア (relevance) の基準
+記事がVibeCoding/Claude Codeコミュニティにとってどれだけ有用かを1-5で評価してください。
+- 5: Claude Code/VibeCodingの公式アップデート・リリース情報
+- 4: AI駆動開発の実践Tips、MCP関連、AIエージェント活用事例
+- 3: AI開発ツール全般（Copilot, Cursor等含む）、プロンプトエンジニアリング
+- 2: 間接的に関連する話題、汎用的な入門・初心者向け記事
+- 1: コミュニティとの関連が薄い、一般的なプログラミング記事
+"""
+
+
+def _make_fallback_result(summary_raw: str) -> dict:
+    """Gemini APIが使えない場合のフォールバック結果を生成"""
+    clean = re.sub(r"<[^>]+>", "", summary_raw)
+    fallback_summary = clean[:150] + "..." if len(clean) > 150 else clean
+    return {"summary": fallback_summary, "relevance": 3}
+
+
+def summarize_with_gemini(title: str, summary_raw: str, config: dict) -> dict:
+    """Gemini API で記事の要約と関連度を同時取得（VTuber心理モデルv2.0対応）
+
+    Returns:
+        dict: {"summary": str, "relevance": int}
+    """
     if not GEMINI_API_KEY:
-        clean = re.sub(r"<[^>]+>", "", summary_raw)
-        return clean[:150] + "..." if len(clean) > 150 else clean
+        return _make_fallback_result(summary_raw)
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={GEMINI_API_KEY}"
 
@@ -177,7 +215,7 @@ def summarize_with_gemini(title: str, summary_raw: str, config: dict) -> str:
         "技術記事を100文字以内で日本語要約してください。"
     )
     phase_context = f"\n\n## 現在の配信フェーズ\n- フェーズ: {phase['name']}\n- テンション範囲: {phase['tension'][0]}〜{phase['tension'][1]}\n- 口調: {phase['style']}"
-    system_prompt = base_prompt + phase_context
+    system_prompt = base_prompt + phase_context + RELEVANCE_CRITERIA
 
     try:
         resp = requests.post(url, json={
@@ -188,29 +226,41 @@ def summarize_with_gemini(title: str, summary_raw: str, config: dict) -> str:
                 "role": "user",
                 "parts": [{"text": f"タイトル: {title}\n概要: {summary_raw[:200]}"}]
             }],
-            "generationConfig": {"maxOutputTokens": 200, "temperature": 0.8}
+            "generationConfig": {
+                "maxOutputTokens": 300,
+                "temperature": 0.8,
+                "responseMimeType": "application/json",
+                "responseSchema": SUMMARY_SCHEMA,
+            }
         }, timeout=15)
 
         if resp.status_code == 429:
             logger.warning("    Gemini API rate limit reached, using fallback")
-            clean = re.sub(r"<[^>]+>", "", summary_raw)
-            return clean[:150] + "..." if len(clean) > 150 else clean
+            return _make_fallback_result(summary_raw)
 
         resp.raise_for_status()
         data = resp.json()
         text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-        return text[:200]
+        result = json.loads(text)
+
+        # バリデーション: relevanceが1-5の範囲に収まるように
+        relevance = result.get("relevance", 3)
+        relevance = max(1, min(5, int(relevance)))
+
+        return {
+            "summary": result.get("summary", "")[:200],
+            "relevance": relevance,
+        }
 
     except requests.exceptions.Timeout:
         logger.warning("    Gemini API timeout")
     except requests.exceptions.RequestException as e:
         logger.warning(f"    Gemini API request error: {e}")
-    except (KeyError, IndexError, TypeError) as e:
+    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as e:
         logger.warning(f"    Gemini API response parse error: {e}")
 
-    # Fallback
-    clean = re.sub(r"<[^>]+>", "", summary_raw)
-    return clean[:150] + "..." if len(clean) > 150 else clean
+    # フォールバック: 中間値(3)で通過させる
+    return _make_fallback_result(summary_raw)
 
 
 def send_to_discord(articles: list[dict], config: dict):
@@ -300,32 +350,64 @@ def main():
         logger.info("新着記事なし。配信をスキップします。")
         return
 
-    # 3. 新しい順にソートして上位N件
+    # 3. 新しい順にソート
     new_articles.sort(key=lambda x: x["published"], reverse=True)
     max_items = config["discord"]["max_items_per_delivery"]
-    selected = new_articles[:max_items]
-    logger.info(f"配信対象: {len(selected)}件")
+    filtering = config.get("filtering", {})
+    filtering_enabled = filtering.get("enabled", False)
 
-    # 4. AI要約生成
+    # フィルタリング有効時は候補を多めに取得
+    if filtering_enabled:
+        pool_size = filtering.get("candidate_pool_size", 8)
+        candidates = new_articles[:pool_size]
+    else:
+        candidates = new_articles[:max_items]
+    logger.info(f"要約候補: {len(candidates)}件 (フィルタリング: {'ON' if filtering_enabled else 'OFF'})")
+
+    # 4. AI要約生成（+関連度スコア取得）
     gemini_count = 0
     gemini_max = config["rate_limits"]["gemini_daily_max"]
-    for article in selected:
+    for article in candidates:
         if gemini_count < gemini_max:
             logger.info(f"  要約生成: {article['title'][:40]}...")
-            article["summary"] = summarize_with_gemini(
+            result = summarize_with_gemini(
                 article["title"], article["summary_raw"], config
             )
+            article["summary"] = result["summary"]
+            article["relevance"] = result.get("relevance", 3)
             gemini_count += 1
             time.sleep(1)  # レート制限対策
         else:
             clean = re.sub(r"<[^>]+>", "", article["summary_raw"])
             article["summary"] = clean[:150]
+            article["relevance"] = 3  # フォールバック時は中間値
 
-    # 5. Discord配信
+    # 5. 関連度フィルタリング
+    if filtering_enabled:
+        threshold = filtering.get("relevance_threshold", 3)
+        passed = [a for a in candidates if a.get("relevance", 0) >= threshold]
+        excluded = [a for a in candidates if a.get("relevance", 0) < threshold]
+
+        # フィルタ結果のログ出力（チューニング用）
+        logger.info(f"関連度フィルタ通過: {len(passed)}/{len(candidates)}件 (閾値: {threshold})")
+        for a in excluded:
+            logger.info(f"  除外: [{a.get('relevance', '?')}] {a['title'][:50]}")
+
+        selected = passed[:max_items]
+    else:
+        selected = candidates[:max_items]
+
+    if not selected:
+        logger.info("関連度フィルタ後に配信対象なし。配信をスキップします。")
+        return
+
+    logger.info(f"配信対象: {len(selected)}件")
+
+    # 6. Discord配信
     logger.info("Discord Webhookに配信中...")
     send_to_discord(selected, config)
 
-    # 6. 配信済み保存
+    # 7. 配信済み保存
     save_delivered(selected)
     logger.info("配信済みCSVを更新しました")
 

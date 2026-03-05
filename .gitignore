@@ -3,6 +3,7 @@ node_modules/
 .dev.vars
 __pycache__/
 *.pyc
+.pytest_cache/
 .env
 
 # ロック・一時ファイル

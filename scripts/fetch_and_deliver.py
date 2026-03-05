@@ -11,6 +11,7 @@ import csv
 import json
 import logging
 import os
+import random
 import re
 import sys
 import time
@@ -332,6 +333,76 @@ def summarize_with_gemini(title: str, summary_raw: str, config: dict) -> dict:
     return _make_fallback_result(summary_raw)
 
 
+# 挨拶を「冒頭ワード / 絵文字 / 後半フレーズ」に分解して独立ランダム選択。
+# 各リストの要素数を掛け合わせた分だけパターンが生まれる（例: 4×4×4=64通り）。
+_GREETING_PARTS: dict[str, dict[str, list[str]]] = {
+    "early_morning": {
+        "opening": ["ふぁ…おはよ…", "ん…おはよ…", "ふぁ〜…", "むにゃ…おはようなの…"],
+        "emoji":   ["☀️", "😪", "☕", "🌅"],
+        "follow":  [
+            "(まだ眠いけど…ニュース届けないと…プロ意識…！)",
+            "眠いけど…今日のニュースまとめてきたの…",
+            "寝ぼけてるけど頑張るね…",
+            "もう少しだけ寝たかった…でも来たよ…",
+        ],
+    },
+    "morning": {
+        "opening": ["おはよ〜！", "やほ〜！", "おはようございます！", "やっほー！"],
+        "emoji":   ["✨", "🌅", "☀️", "🎉"],
+        "follow":  [
+            "今日もVibeっていこー！",
+            "朝からいい記事見つけちゃった！",
+            "今日も元気にニュースお届けするよ！",
+            "朝のVibeCodingニュースだよ！",
+        ],
+    },
+    "afternoon": {
+        "opening": ["やっほ〜！", "こんにちは〜！", "お昼もVibeってる？", "ねぇねぇ！"],
+        "emoji":   ["☕", "📰", "✨", "🌤"],
+        "follow":  [
+            "午後のニュースタイムだよ〜！",
+            "今日の午後もアツいニュースあったよ！",
+            "気になる記事まとめてきたよ〜！",
+            "旬の記事チェックしてこー！",
+        ],
+    },
+    "evening": {
+        "opening": ["お疲れさま〜！", "おつかれー！", "こんばんは〜！", "やっと夕方だね〜！"],
+        "emoji":   ["🌙", "✨", "🌆", "🍵"],
+        "follow":  [
+            "今日の気になるニュースまとめたよ〜",
+            "夕方のニュースタイムだよ！",
+            "一日の締めくくりに最新ニュースどうぞ！",
+            "今日も面白い記事あったよ！",
+        ],
+    },
+    "late_night": {
+        "opening": ["zzZ…はっ！", "…むにゃ…あっ！", "深夜ニュース…", "zzZ…起きてるよ…！"],
+        "emoji":   ["📰", "🌙", "😴", "⭐"],
+        "follow":  [
+            "深夜のニュース…お届け…するの…",
+            "深夜ニュース…届けなきゃ…頑張る…",
+            "眠いけど…見てくれてありがとう…ね…",
+            "こんな時間まで…ありがとうなの…",
+        ],
+    },
+}
+
+# 件数表現・動詞を分解してランダム組み合わせ（例: 4×4=16通り）
+_COUNT_PHRASES = [
+    "**{count}件**",
+    "{count}本の記事",
+    "厳選 **{count}件**",
+    "今日の **{count}件**",
+]
+_DELIVERY_VERBS = [
+    "をお届けするよ！",
+    "チェックしてみてね！",
+    "持ってきたよ！読んでみて〜",
+    "まとめたよ！気になるのある？",
+]
+
+
 def send_to_discord(articles: list[dict], config: dict):
     """Discord Webhookにembed形式で送信（キャラクター対応）"""
     if not DISCORD_WEBHOOK_URL:
@@ -341,19 +412,17 @@ def send_to_discord(articles: list[dict], config: dict):
         return
 
     now_jst = datetime.now(JST)
-    hour = now_jst.hour
     character = config.get("character", {})
     phase = get_current_phase()
 
-    # 配信フェーズに応じた挨拶（VTuber心理モデルv2.0）
-    phase_greetings = {
-        "early_morning": "ふぁ…おはよ…☀️ (まだ眠いけど…ニュース届けないと…プロ意識…！)",
-        "morning": "おはよ〜！✨ 今日もVibeっていこー！最新ニュースお届けだよ！",
-        "afternoon": "やっほ〜！☕ 午後のニュースタイムだよ〜！いい記事見つけたの！",
-        "evening": "お疲れさま〜！🌙 今日の気になるニュースまとめたよ〜",
-        "late_night": "zzZ…はっ！起きてるよ…！📰 深夜のニュース…お届け…するの…",
-    }
-    greeting = phase_greetings.get(phase["name"], character.get("greeting_morning", "おはようございます！"))
+    # 配信フェーズに応じた挨拶を「冒頭 / 絵文字 / 後半」でそれぞれ独立ランダム選択
+    parts = _GREETING_PARTS.get(phase["name"], _GREETING_PARTS["morning"])
+    greeting = (
+        random.choice(parts["opening"])
+        + random.choice(parts["emoji"])
+        + " "
+        + random.choice(parts["follow"])
+    )
 
     char_name = character.get("name", "NewsAI VibeCording")
 
@@ -375,8 +444,9 @@ def send_to_discord(articles: list[dict], config: dict):
             embed["timestamp"] = article["published"].isoformat()
         embeds.append(embed)
 
+    suffix = random.choice(_COUNT_PHRASES).format(count=len(articles)) + random.choice(_DELIVERY_VERBS)
     payload = {
-        "content": f"{greeting} VibeCordingニュース **{len(articles)}件** をお届けするよ！",
+        "content": f"{greeting} {suffix}",
         "username": char_name,
         "embeds": embeds[:10],  # Discord制限: 1メッセージ10embeds
     }

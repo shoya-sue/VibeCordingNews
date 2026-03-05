@@ -7,7 +7,11 @@
 公式ソース（release/official）は記事間重複排除をスキップする。
 """
 
+import logging
+
 from keyword_scorer import PRIORITY_CATEGORIES
+
+logger = logging.getLogger(__name__)
 
 
 def _char_bigrams(text: str) -> set[str]:
@@ -58,12 +62,20 @@ def deduplicate(
 
     # Stage 1: 過去配信との類似チェック
     fresh = []
+    delivered_dup_count = 0
     for article in articles:
-        title_bigrams = _char_bigrams(article.get("title", ""))
+        title = article.get("title", "")
+        title_bigrams = _char_bigrams(title)
         is_duplicate = False
-        for d_bg in delivered_bigrams:
-            if _jaccard(title_bigrams, d_bg) >= delivered_threshold:
+        for idx, d_bg in enumerate(delivered_bigrams):
+            sim = _jaccard(title_bigrams, d_bg)
+            if sim >= delivered_threshold:
                 is_duplicate = True
+                logger.debug(
+                    "除外(配信済み類似): sim=%.2f >= %.2f | %s ≈ %s",
+                    sim, delivered_threshold, title, delivered_titles[idx],
+                )
+                delivered_dup_count += 1
                 break
         if not is_duplicate:
             article["_bigrams"] = title_bigrams
@@ -93,11 +105,23 @@ def deduplicate(
         for j in range(i + 1, len(normal)):
             if j in used:
                 continue
-            if _jaccard(article["_bigrams"], normal[j]["_bigrams"]) >= sim_threshold:
+            sim = _jaccard(article["_bigrams"], normal[j]["_bigrams"])
+            if sim >= sim_threshold:
                 used.add(j)
+                logger.debug(
+                    "除外(記事間類似): sim=%.2f >= %.2f | %s ≈ %s",
+                    sim, sim_threshold,
+                    normal[j].get("title", ""), article.get("title", ""),
+                )
 
     # 一時フィールドを除去
     for article in result:
         article.pop("_bigrams", None)
 
+    inter_dup_count = len(used)
+    logger.info(
+        "dedup_filter: %d件中 %d件通過 (配信済み類似=%d, 記事間類似=%d, 公式=%d)",
+        len(articles), len(result),
+        delivered_dup_count, inter_dup_count, len(priority),
+    )
     return result

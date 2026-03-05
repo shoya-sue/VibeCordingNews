@@ -8,10 +8,13 @@
 
 from __future__ import annotations
 
+import logging
 import math
 import re
 from datetime import datetime, timezone
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 # ─── ティア別キーワード辞書（小文字正規化済み） ───
@@ -125,6 +128,7 @@ def score_articles(articles: list[dict], config: dict) -> list[dict]:
     min_relevance = sf.get("min_relevance", 3)
 
     scored = []
+    filtered_count = 0
     for article in articles:
         title = article.get("title", "")
         summary_raw = article.get("summary_raw", "")
@@ -162,7 +166,18 @@ def score_articles(articles: list[dict], config: dict) -> list[dict]:
 
         if static_relevance >= min_relevance:
             scored.append(article)
+        else:
+            filtered_count += 1
+            logger.debug(
+                "除外(relevance不足): tier=%d, floor=%d → relevance=%d < %d | %s",
+                keyword_relevance, source_floor, static_relevance,
+                min_relevance, title,
+            )
 
     # composite_score 降順ソート
     scored.sort(key=lambda x: x["composite_score"], reverse=True)
+    logger.info(
+        "keyword_scorer: %d件中 %d件通過, %d件除外",
+        len(articles), len(scored), filtered_count,
+    )
     return scored

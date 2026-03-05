@@ -7,9 +7,12 @@
 AIを使わずRSS descriptionからHTMLタグを除去し、トリミングで要約を生成する。
 """
 
+import logging
 import re
 
 from keyword_scorer import PRIORITY_CATEGORIES
+
+logger = logging.getLogger(__name__)
 
 
 def _generate_static_summary(summary_raw: str, max_length: int) -> str:
@@ -73,10 +76,18 @@ def select_and_summarize(articles: list[dict], config: dict) -> list[dict]:
 
     for article in normal_articles:
         if len(selected) >= max_candidates:
-            break
+            logger.debug(
+                "除外(候補数上限): max=%d | %s",
+                max_candidates, article.get("title", ""),
+            )
+            continue
 
         cat = article.get("category", "other")
         if category_count.get(cat, 0) >= max_per_category:
+            logger.debug(
+                "除外(カテゴリ上限): cat=%s, max=%d | %s",
+                cat, max_per_category, article.get("title", ""),
+            )
             continue
 
         article["summary"] = _generate_static_summary(
@@ -97,5 +108,10 @@ def select_and_summarize(articles: list[dict], config: dict) -> list[dict]:
         )
         fallback["relevance"] = fallback.get("static_relevance", 3)
         selected.append(fallback)
+        logger.info("candidate_selector: 候補0件のためfallback適用 | %s", fallback.get("title", ""))
 
+    logger.info(
+        "candidate_selector: %d件中 %d件選定 (公式=%d)",
+        len(articles), len(selected), len(priority_articles),
+    )
     return selected

@@ -15,11 +15,14 @@ from keyword_scorer import (
     _normalize,
     _match_tier,
     _calc_freshness,
+    _is_title_valid,
+    _has_code_block,
     score_articles,
     KEYWORD_TIERS,
     SOURCE_RELEVANCE_FLOOR,
     SOURCE_WEIGHTS,
     TITLE_MATCH_BONUS,
+    CODE_BLOCK_BONUS,
 )
 
 
@@ -235,3 +238,84 @@ class TestScoreArticles:
         result = score_articles(articles, self.CONFIG)
         assert "static_relevance" in result[0]
         assert "composite_score" in result[0]
+
+
+# ─── タイトル品質フィルタ ───
+
+
+class TestTitleFilter:
+    CONFIG = {"static_filtering": {"min_relevance": 1}}  # relevanceで弾かれないよう最低値
+
+    def test_short_title_filtered(self):
+        """5文字未満のタイトルは除外"""
+        articles = [{"title": "短い", "summary_raw": "", "category": "general"}]
+        result = score_articles(articles, self.CONFIG)
+        assert len(result) == 0
+
+    def test_version_only_filtered(self):
+        """バージョン番号のみのタイトルは除外（通常カテゴリ）"""
+        articles = [{"title": "v2.1.69", "summary_raw": "", "category": "general"}]
+        result = score_articles(articles, self.CONFIG)
+        assert len(result) == 0
+
+    def test_version_only_release_not_filtered(self):
+        """releaseカテゴリはタイトルがバージョン番号のみでも除外しない"""
+        articles = [{"title": "v2.1.69", "summary_raw": "", "category": "release"}]
+        result = score_articles(articles, self.CONFIG)
+        assert len(result) == 1
+
+    def test_no_word_chars_filtered(self):
+        """日本語・英字を一切含まないタイトルは除外"""
+        articles = [{"title": "12345678", "summary_raw": "", "category": "general"}]
+        result = score_articles(articles, self.CONFIG)
+        assert len(result) == 0
+
+    def test_valid_title_passes(self):
+        """正常なタイトルは通過する"""
+        articles = [{"title": "Claude Code v2.1.69 リリース", "summary_raw": "", "category": "release"}]
+        result = score_articles(articles, self.CONFIG)
+        assert len(result) == 1
+
+    def test_is_title_valid_short(self):
+        assert _is_title_valid("短い") == (False, "タイトルが短すぎる: 2文字")
+
+    def test_is_title_valid_version_only(self):
+        valid, reason = _is_title_valid("v2.1.69")
+        assert not valid
+        assert "バージョン番号のみ" in reason
+
+    def test_is_title_valid_normal(self):
+        assert _is_title_valid("Claude Codeの最新機能") == (True, "")
+
+
+# ─── コードブロック検出 ───
+
+
+class TestCodeBlockBonus:
+    CONFIG = {"static_filtering": {"min_relevance": 3}}
+
+    def test_backtick_code_block_detected(self):
+        assert _has_code_block("```python\nprint('hello')\n```") is True
+
+    def test_html_code_tag_detected(self):
+        assert _has_code_block("<code>snippet</code>") is True
+
+    def test_no_code_block(self):
+        assert _has_code_block("テキストのみの記事") is False
+
+    def test_empty_summary(self):
+        assert _has_code_block("") is False
+
+    def test_code_block_increases_score(self):
+        """コードブロックありの記事はなしより composite_score が高い"""
+        with_code = [{"title": "Claude活用ガイド", "summary_raw": "```python\ncode\n```", "category": "general"}]
+        without_code = [{"title": "Claude活用ガイド", "summary_raw": "テキストのみ", "category": "general"}]
+        r_with = score_articles(with_code, self.CONFIG)
+        r_without = score_articles(without_code, self.CONFIG)
+        assert len(r_with) == 1
+        assert len(r_without) == 1
+        assert r_with[0]["composite_score"] > r_without[0]["composite_score"]
+
+    def test_code_block_bonus_value(self):
+        """CODE_BLOCK_BONUS は 0 より大きい定数"""
+        assert CODE_BLOCK_BONUS > 0

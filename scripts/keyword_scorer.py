@@ -74,6 +74,38 @@ PRIORITY_CATEGORIES = {"release", "official"}
 # タイトルマッチのボーナス倍率
 TITLE_MATCH_BONUS = 1.5
 
+# タイトル品質フィルタの設定
+# バージョン番号のみ（v2.1.69, 2.1.69 等）は実質タイトルなしと判定
+TITLE_MIN_CHARS = 5
+_RE_VERSION_ONLY = re.compile(r"^v?\d+[\d.]+$", re.IGNORECASE)
+# 日本語（ひらがな・カタカナ・漢字）または英字を含むか判定
+_RE_HAS_WORD_CHAR = re.compile(r"[a-zA-Z\u3040-\u9fff\u30a0-\u30ff]")
+
+# コードブロック検出 — 技術実装記事へのスコアボーナス
+CODE_BLOCK_BONUS = 0.15
+_RE_CODE_BLOCK = re.compile(r"```|<code[^>]*>", re.IGNORECASE)
+
+
+def _is_title_valid(title: str) -> tuple[bool, str]:
+    """タイトルの品質チェック。低品質タイトルを静的に除外する。
+
+    Returns:
+        (is_valid, reason): is_valid=False の場合、reason に除外理由
+    """
+    stripped = title.strip()
+    if len(stripped) < TITLE_MIN_CHARS:
+        return False, f"タイトルが短すぎる: {len(stripped)}文字"
+    if _RE_VERSION_ONLY.match(stripped):
+        return False, f"バージョン番号のみ: {stripped}"
+    if not _RE_HAS_WORD_CHAR.search(stripped):
+        return False, f"日本語・英字なし: {stripped}"
+    return True, ""
+
+
+def _has_code_block(summary_raw: str) -> bool:
+    """summary_raw にコードブロック（``` または <code>）が含まれるか判定。"""
+    return bool(_RE_CODE_BLOCK.search(summary_raw))
+
 
 def _normalize(text: str) -> str:
     """検索用に正規化: 小文字化 + 全角→半角 + 余分な空白除去"""
@@ -134,6 +166,14 @@ def score_articles(articles: list[dict], config: dict) -> list[dict]:
         summary_raw = article.get("summary_raw", "")
         category = article.get("category", "")
 
+        # タイトル品質フィルタ（公式ソースはスキップ — バージョン番号のみタイトルが正常）
+        if category not in PRIORITY_CATEGORIES:
+            is_valid, reason = _is_title_valid(title)
+            if not is_valid:
+                filtered_count += 1
+                logger.debug("除外(タイトル品質): %s | %s", reason, title)
+                continue
+
         # タイトルとsummary_rawそれぞれのティアを判定
         title_tier = _match_tier(title)
         body_tier = _match_tier(summary_raw)
@@ -160,6 +200,9 @@ def score_articles(articles: list[dict], config: dict) -> list[dict]:
         base = static_relevance * source_weight * freshness
         if has_title_match:
             base *= TITLE_MATCH_BONUS
+        # コードブロックを含む記事は技術実装記事として優先度を上げる
+        if _has_code_block(summary_raw):
+            base += CODE_BLOCK_BONUS
 
         article["static_relevance"] = static_relevance
         article["composite_score"] = round(base, 3)

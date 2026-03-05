@@ -8,7 +8,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from candidate_selector import _generate_static_summary, select_and_summarize
+from candidate_selector import _generate_static_summary, _extract_version, select_and_summarize
 
 
 # ─── _generate_static_summary ───
@@ -165,3 +165,38 @@ class TestSelectAndSummarize:
         ]
         result = select_and_summarize(articles, self.CONFIG)
         assert result[0]["category"] == "official"
+
+    def test_version_field_added_for_release(self):
+        """releaseカテゴリ記事にはversionフィールドが付与される"""
+        articles = [self._make_article("v2.1.69", 5.0, "release", 5)]
+        result = select_and_summarize(articles, self.CONFIG)
+        assert result[0].get("version") == "v2.1.69"
+
+    def test_version_field_none_for_no_version(self):
+        """バージョン番号のない記事はversion=None"""
+        articles = [self._make_article("Claude Codeの新機能", 5.0, "release", 5)]
+        result = select_and_summarize(articles, self.CONFIG)
+        assert result[0].get("version") is None
+
+
+# ─── _extract_version ───
+
+
+class TestExtractVersion:
+    def test_semver_title(self):
+        assert _extract_version("v2.1.69") == "v2.1.69"
+
+    def test_semver_embedded_in_sentence(self):
+        assert _extract_version("Claude Code v2.1.69 リリース") == "v2.1.69"
+
+    def test_two_digit_version(self):
+        assert _extract_version("v1.0") == "v1.0"
+
+    def test_no_version_returns_none(self):
+        assert _extract_version("リリースノートです") is None
+
+    def test_empty_returns_none(self):
+        assert _extract_version("") is None
+
+    def test_url_with_version(self):
+        assert _extract_version("https://github.com/anthropics/claude-code/releases/tag/v2.1.69") == "v2.1.69"

@@ -431,6 +431,11 @@ def send_to_discord(articles: list[dict], config: dict):
             ],
             "footer": {"text": f"{char_name} • {article['category']}"},
         }
+        # リリース記事にバージョン番号が抽出されていれば表示
+        if article.get("version"):
+            embed["fields"].append(
+                {"name": "🔖 バージョン", "value": article["version"], "inline": True}
+            )
         # timestamp は ISO 8601 文字列が必須
         if article.get("published"):
             embed["timestamp"] = article["published"].isoformat()

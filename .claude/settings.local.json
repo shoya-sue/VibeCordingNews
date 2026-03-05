@@ -8,7 +8,9 @@
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:zenn.dev)",
       "WebFetch(domain:qiita.com)",
-      "WebFetch(domain:www.anthropic.com)"
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:files.pythonhosted.org)",
+      "Bash(pip3 install:*)"
     ]
   },
   "model": "claude-sonnet-4-6",

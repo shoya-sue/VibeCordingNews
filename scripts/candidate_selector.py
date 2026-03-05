@@ -43,6 +43,9 @@ def select_and_summarize(articles: list[dict], config: dict) -> list[dict]:
     sf = config.get("static_filtering", {})
     max_candidates = sf.get("max_candidates", 5)
     max_per_category = sf.get("max_per_category", 2)
+    # 公式ソース（release/official）はカテゴリごとに最大1件がデフォルト。
+    # 複数リリースが一度に配信されるのを防ぐため、通常記事より厳しく制限する。
+    max_per_priority_category = sf.get("max_per_priority_category", 1)
     summary_max_length = sf.get("summary_max_length", 120)
 
     # composite_score降順でソート済みのはずだが念のため
@@ -52,7 +55,7 @@ def select_and_summarize(articles: list[dict], config: dict) -> list[dict]:
         reverse=True,
     )
 
-    # 公式ソースを無条件で最優先配信（カテゴリ枠制限なし）
+    # 公式ソースを通常記事より優先して選定（ただしカテゴリ上限あり）
     priority_articles = [
         a for a in sorted_articles
         if a.get("category", "") in PRIORITY_CATEGORIES
@@ -63,16 +66,34 @@ def select_and_summarize(articles: list[dict], config: dict) -> list[dict]:
     ]
 
     selected = []
+    # priority と normal で共通のカテゴリカウントを使用する
+    category_count: dict[str, int] = {}
+
     for article in priority_articles:
+        if len(selected) >= max_candidates:
+            logger.debug(
+                "除外(候補数上限-公式): max=%d | %s",
+                max_candidates, article.get("title", ""),
+            )
+            continue
+
+        cat = article.get("category", "other")
+        if category_count.get(cat, 0) >= max_per_priority_category:
+            logger.debug(
+                "除外(公式カテゴリ上限): cat=%s, max=%d | %s",
+                cat, max_per_priority_category, article.get("title", ""),
+            )
+            continue
+
         article["summary"] = _generate_static_summary(
             article.get("summary_raw", ""),
             summary_max_length,
         )
         article["relevance"] = article.get("static_relevance", 3)
         selected.append(article)
+        category_count[cat] = category_count.get(cat, 0) + 1
 
     # 残り枠を通常記事でカテゴリ多様性を考慮して埋める
-    category_count: dict[str, int] = {}
 
     for article in normal_articles:
         if len(selected) >= max_candidates:

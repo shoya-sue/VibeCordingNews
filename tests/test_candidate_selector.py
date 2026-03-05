@@ -101,15 +101,36 @@ class TestSelectAndSummarize:
         tech_count = sum(1 for a in result if a["category"] == "tech")
         assert tech_count <= 2
 
-    def test_priority_category_unlimited(self):
-        """公式ソースはカテゴリ枠制限なし"""
+    def test_priority_category_limited_by_max_per_priority(self):
+        """公式ソースも max_per_priority_category で件数制限される"""
         articles = [
             self._make_article("リリースA", 5.0, "release", 5),
             self._make_article("リリースB", 4.0, "release", 5),
             self._make_article("リリースC", 3.0, "release", 5),
         ]
         result = select_and_summarize(articles, self.CONFIG)
-        assert len(result) == 3
+        # デフォルト max_per_priority_category=1 なので1件のみ
+        release_count = sum(1 for a in result if a["category"] == "release")
+        assert release_count == 1
+
+    def test_priority_category_respects_config(self):
+        """max_per_priority_category=2 なら2件まで通過する"""
+        config = {
+            "static_filtering": {
+                "max_candidates": 5,
+                "max_per_category": 2,
+                "max_per_priority_category": 2,
+                "summary_max_length": 120,
+            }
+        }
+        articles = [
+            self._make_article("リリースA", 5.0, "release", 5),
+            self._make_article("リリースB", 4.0, "release", 5),
+            self._make_article("リリースC", 3.0, "release", 5),
+        ]
+        result = select_and_summarize(articles, config)
+        release_count = sum(1 for a in result if a["category"] == "release")
+        assert release_count == 2
 
     def test_summary_added(self):
         """各記事に summary フィールドが付与される"""

@@ -148,6 +148,7 @@
     "delivered_similarity_threshold": 0.5,
     "max_candidates": 5,
     "max_per_category": 2,
+    "max_per_priority_category": 1,
     "summary_max_length": 120
   },
   "discord": {

@@ -141,6 +141,15 @@
     "relevance_threshold": 3,
     "min_delivery_count": 0
   },
+  "static_filtering": {
+    "enabled": true,
+    "min_relevance": 3,
+    "similarity_threshold": 0.4,
+    "delivered_similarity_threshold": 0.5,
+    "max_candidates": 5,
+    "max_per_category": 2,
+    "summary_max_length": 120
+  },
   "discord": {
     "max_items_per_delivery": 5,
     "embed_color": 5814783

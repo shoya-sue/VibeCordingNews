@@ -17,6 +17,10 @@ import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+from keyword_scorer import score_articles
+from dedup_filter import deduplicate
+from candidate_selector import select_and_summarize
+
 import feedparser
 import requests
 
@@ -39,7 +43,8 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 # ─── Constants ───
 JST = timezone(timedelta(hours=9))
-CSV_FIELDNAMES = ["url", "title", "source", "delivered_at"]
+CSV_FIELDNAMES = ["url", "title", "source", "delivered_at",
+                   "static_relevance", "composite_score"]
 
 
 def load_config() -> dict:
@@ -55,6 +60,25 @@ def load_config() -> dict:
         sys.exit(1)
 
 
+def _migrate_csv_header():
+    """既存CSVにカラムが不足していればヘッダーを更新し既存行に空値を補完する"""
+    if not DELIVERED_CSV.exists() or DELIVERED_CSV.stat().st_size == 0:
+        return
+    with open(DELIVERED_CSV, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        existing_fields = reader.fieldnames or []
+        if set(CSV_FIELDNAMES) <= set(existing_fields):
+            return  # マイグレーション不要
+        rows = list(reader)
+    # 新カラムを追加して再書き込み
+    with open(DELIVERED_CSV, "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({k: row.get(k, "") for k in CSV_FIELDNAMES})
+    logger.info(f"delivered.csv ヘッダーを更新: {CSV_FIELDNAMES}")
+
+
 def load_delivered() -> set:
     """配信済み記事URLをsetとして返す"""
     DELIVERED_CSV.parent.mkdir(parents=True, exist_ok=True)
@@ -65,6 +89,9 @@ def load_delivered() -> set:
             writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
             writer.writeheader()
         return set()
+
+    # 既存CSVにカラムが不足していれば自動マイグレーション
+    _migrate_csv_header()
 
     delivered = set()
     try:
@@ -79,6 +106,46 @@ def load_delivered() -> set:
     return delivered
 
 
+def load_delivered_titles() -> list[str]:
+    """配信済み記事のタイトル一覧を返す（類似度チェック用）"""
+    if not DELIVERED_CSV.exists():
+        return []
+    titles = []
+    try:
+        with open(DELIVERED_CSV, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                title = row.get("title", "").strip()
+                if title:
+                    titles.append(title)
+    except Exception as e:
+        logger.warning(f"タイトル読み込みエラー（続行します）: {e}")
+    return titles
+
+
+def _save_pipeline_debug(stage: str, articles: list[dict]):
+    """パイプライン中間結果をJSONに保存（デバッグ用）"""
+    pipeline_dir = ROOT_DIR / "data" / "pipeline"
+    pipeline_dir.mkdir(parents=True, exist_ok=True)
+    out_path = pipeline_dir / f"{stage}.json"
+    # datetimeをISO文字列に変換
+    serializable = []
+    for a in articles:
+        item = {}
+        for k, v in a.items():
+            if isinstance(v, datetime):
+                item[k] = v.isoformat()
+            else:
+                item[k] = v
+        serializable.append(item)
+    try:
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(serializable, f, ensure_ascii=False, indent=2)
+        logger.info(f"  パイプラインデバッグ: {out_path}")
+    except Exception as e:
+        logger.warning(f"  パイプラインデバッグ保存エラー: {e}")
+
+
 def save_delivered(articles: list[dict]):
     """配信した記事をCSVに追記"""
     try:
@@ -90,6 +157,8 @@ def save_delivered(articles: list[dict]):
                     "title": article["title"],
                     "source": article["source"],
                     "delivered_at": datetime.now(JST).isoformat(),
+                    "static_relevance": article.get("static_relevance", ""),
+                    "composite_score": article.get("composite_score", ""),
                 })
     except Exception as e:
         logger.error(f"CSV書き込みエラー: {e}")
@@ -350,52 +419,78 @@ def main():
         logger.info("新着記事なし。配信をスキップします。")
         return
 
-    # 3. 新しい順にソート
+    # 3. 静的フィルタリングパイプライン or 従来フロー
     new_articles.sort(key=lambda x: x["published"], reverse=True)
     max_items = config["discord"]["max_items_per_delivery"]
-    filtering = config.get("filtering", {})
-    filtering_enabled = filtering.get("enabled", False)
 
-    # フィルタリング有効時は候補を多めに取得
-    if filtering_enabled:
-        pool_size = filtering.get("candidate_pool_size", 8)
-        candidates = new_articles[:pool_size]
-    else:
-        candidates = new_articles[:max_items]
-    logger.info(f"要約候補: {len(candidates)}件 (フィルタリング: {'ON' if filtering_enabled else 'OFF'})")
+    static_filtering = config.get("static_filtering", {})
+    static_enabled = static_filtering.get("enabled", False)
 
-    # 4. AI要約生成（+関連度スコア取得）
-    gemini_count = 0
-    gemini_max = config["rate_limits"]["gemini_daily_max"]
-    for article in candidates:
-        if gemini_count < gemini_max:
-            logger.info(f"  要約生成: {article['title'][:40]}...")
-            result = summarize_with_gemini(
-                article["title"], article["summary_raw"], config
+    if static_enabled:
+        # ─── 静的フィルタリングパイプライン（Gemini API呼び出し: 0回） ───
+        logger.info("静的フィルタリングパイプライン開始...")
+        delivered_titles = load_delivered_titles()
+
+        # Stage 1: キーワードスコアリング
+        scored = score_articles(new_articles, config)
+        logger.info(f"  [Stage 1] キーワードスコアリング: {len(new_articles)}→{len(scored)}件")
+        _save_pipeline_debug("scored", scored)
+
+        # Stage 2: 類似タイトル重複排除
+        deduped = deduplicate(scored, delivered_titles, config)
+        logger.info(f"  [Stage 2] 重複排除: {len(scored)}→{len(deduped)}件")
+        _save_pipeline_debug("deduped", deduped)
+
+        # Stage 3: 最終候補選定＋静的要約生成
+        selected = select_and_summarize(deduped, config)
+        logger.info(f"  [Stage 3] 最終候補選定: {len(deduped)}→{len(selected)}件")
+        _save_pipeline_debug("selected", selected)
+
+        # ログ: 選定結果の詳細
+        for a in selected:
+            logger.info(
+                f"  配信: [rel={a.get('static_relevance', '?')}, "
+                f"score={a.get('composite_score', 0):.2f}] {a['title'][:50]}"
             )
-            article["summary"] = result["summary"]
-            article["relevance"] = result.get("relevance", 3)
-            gemini_count += 1
-            time.sleep(1)  # レート制限対策
-        else:
-            clean = re.sub(r"<[^>]+>", "", article["summary_raw"])
-            article["summary"] = clean[:150]
-            article["relevance"] = 3  # フォールバック時は中間値
-
-    # 5. 関連度フィルタリング
-    if filtering_enabled:
-        threshold = filtering.get("relevance_threshold", 3)
-        passed = [a for a in candidates if a.get("relevance", 0) >= threshold]
-        excluded = [a for a in candidates if a.get("relevance", 0) < threshold]
-
-        # フィルタ結果のログ出力（チューニング用）
-        logger.info(f"関連度フィルタ通過: {len(passed)}/{len(candidates)}件 (閾値: {threshold})")
-        for a in excluded:
-            logger.info(f"  除外: [{a.get('relevance', '?')}] {a['title'][:50]}")
-
-        selected = passed[:max_items]
     else:
-        selected = candidates[:max_items]
+        # ─── 従来フロー（Gemini API使用） ───
+        filtering = config.get("filtering", {})
+        filtering_enabled = filtering.get("enabled", False)
+
+        if filtering_enabled:
+            pool_size = filtering.get("candidate_pool_size", 8)
+            candidates = new_articles[:pool_size]
+        else:
+            candidates = new_articles[:max_items]
+        logger.info(f"要約候補: {len(candidates)}件 (フィルタリング: {'ON' if filtering_enabled else 'OFF'})")
+
+        gemini_count = 0
+        gemini_max = config["rate_limits"]["gemini_daily_max"]
+        for article in candidates:
+            if gemini_count < gemini_max:
+                logger.info(f"  要約生成: {article['title'][:40]}...")
+                result = summarize_with_gemini(
+                    article["title"], article["summary_raw"], config
+                )
+                article["summary"] = result["summary"]
+                article["relevance"] = result.get("relevance", 3)
+                gemini_count += 1
+                time.sleep(1)
+            else:
+                clean = re.sub(r"<[^>]+>", "", article["summary_raw"])
+                article["summary"] = clean[:150]
+                article["relevance"] = 3
+
+        if filtering_enabled:
+            threshold = filtering.get("relevance_threshold", 3)
+            passed = [a for a in candidates if a.get("relevance", 0) >= threshold]
+            excluded = [a for a in candidates if a.get("relevance", 0) < threshold]
+            logger.info(f"関連度フィルタ通過: {len(passed)}/{len(candidates)}件 (閾値: {threshold})")
+            for a in excluded:
+                logger.info(f"  除外: [{a.get('relevance', '?')}] {a['title'][:50]}")
+            selected = passed[:max_items]
+        else:
+            selected = candidates[:max_items]
 
     if not selected:
         logger.info("関連度フィルタ後に配信対象なし。配信をスキップします。")

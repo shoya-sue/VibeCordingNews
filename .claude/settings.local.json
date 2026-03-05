@@ -1,12 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "permissions": {
-    "allow": [
-    ]
-  },
-  "model": "claude-opus-4-6",
-  "language": "japanese",
   "env": {
     "MAX_THINKING_TOKENS": "16000"
-  }
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:zenn.dev)",
+      "WebFetch(domain:qiita.com)",
+      "WebFetch(domain:www.anthropic.com)"
+    ]
+  },
+  "model": "claude-sonnet-4-6",
+  "language": "japanese"
 }

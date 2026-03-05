@@ -7,7 +7,7 @@ VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、D
 ### 🔔 定時配信（Push型）
 - **10:00 / 15:00 JST** に最新ニュース5件を自動配信
 - GitHub Actions cron による定期実行
-- Gemini API で記事要約を自動生成
+- **静的フィルタリングパイプライン**でAI API呼び出し0回の記事厳選
 - 配信済み記事は CSV 管理で再配信防止
 
 ### 💬 対話Bot（Pull型）
@@ -39,7 +39,7 @@ VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、D
 │  ┌─────────────┐     ┌──────────────────────┐            │
 │  │ GitHub      │cron │ fetch_and_deliver.py  │            │
 │  │ Actions     │────▶│  ├─ feedparser (RSS) │            │
-│  │ news-       │     │  ├─ Gemini API (要約)│            │
+│  │ news-       │     │  ├─ 静的フィルタリング│            │
 │  │ delivery    │     │  └─ Webhook POST     │            │
 │  └─────────────┘     └──────────┬───────────┘            │
 │                                 │ Discord配信             │
@@ -79,6 +79,63 @@ VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、D
 └──────────────────────────────────────────────────────────┘
 ```
 
+### 📊 静的フィルタリングパイプライン（配信フロー詳細）
+
+Gemini API のレート制限 (429) を回避するため、記事の厳選と要約をすべてローカル処理で完結させる設計。
+AI API 呼び出し **0回** で配信候補を選定する。
+
+```
+RSS 8フィード (~80エントリ)
+  │
+  ▼
+delivered.csv URL重複除去          ← 既知URLを除外
+  │  (~50-60件)
+  ▼
+┌─────────────────────────────────────────────────────────┐
+│  Stage 1: keyword_scorer.py — キーワード関連度スコアリング│
+│                                                          │
+│  ティア別キーワード辞書で static_relevance (1-5) を判定   │
+│                                                          │
+│  Tier 1 (=5): claude code, vibecoding, バイブコーディング│
+│  Tier 2 (=4): claude, anthropic, MCP, ai agent           │
+│  Tier 3 (=3): copilot, cursor, LLM, プロンプトエンジニアリング│
+│  Tier 4 (=2): AI, 機械学習, chatgpt, 生成AI   ← 除外    │
+│  マッチなし (=1):                              ← 除外    │
+│                                                          │
+│  composite_score = relevance × ソース重み × 鮮度          │
+│    ソース重み: release/official=1.5, claude-code=1.3      │
+│    鮮度: max(0.2, exp(-hours/24))                        │
+│    タイトルマッチ: ×1.5 ボーナス                          │
+└──────────┬──────────────────────────────────────────────┘
+           │  relevance ≥ 3 のみ通過 (~15-20件)
+           ▼
+┌─────────────────────────────────────────────────────────┐
+│  Stage 2: dedup_filter.py — 類似タイトル重複排除          │
+│                                                          │
+│  文字バイグラム Jaccard 類似度で判定                       │
+│    記事間: ≥ 0.4 → 同一クラスタ → 最高スコアの1件を残す  │
+│    過去配信: ≥ 0.5 → 除外                                │
+└──────────┬──────────────────────────────────────────────┘
+           │  (~10-15件)
+           ▼
+┌─────────────────────────────────────────────────────────┐
+│  Stage 3: candidate_selector.py — 最終選定 + 静的要約     │
+│                                                          │
+│  composite_score 上位から最大5件を選定                     │
+│    カテゴリ多様性: 同一カテゴリ最大2件                     │
+│    安全弁: 候補0件時は最高スコア1件を補充                  │
+│                                                          │
+│  要約: summary_raw → HTMLタグ除去 → 先頭120文字 + "…"     │
+└──────────┬──────────────────────────────────────────────┘
+           │  3-5件（summary付き）
+           ▼
+      Discord Webhook 配信
+```
+
+> **Gemini API の残る役割**: 知識蓄積フロー (`extract_knowledge.py`) でのみ使用。
+> 配信フローでは `static_filtering.enabled=true`（デフォルト）の間 API 呼び出しは発生しない。
+> `config.json` で `static_filtering.enabled=false` に設定すると従来の Gemini 要約フローにフォールバック可能。
+
 ## ⚙️ GitHub Actions ワークフロー
 
 2つのワークフローに分離することで、無料枠（2,000分/月）を効率的に使用しています。
@@ -88,9 +145,9 @@ VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、D
 | 項目 | 内容 |
 |---|---|
 | 実行タイミング | JST 10:00 / 15:00（1日2回） |
-| 処理内容 | RSS収集 → Gemini要約 → Discord Webhook配信 |
-| 所要時間 | 約3〜5分/回 |
-| 月間消費 | 約300分 |
+| 処理内容 | RSS収集 → 静的フィルタリング（3段階） → Discord Webhook配信 |
+| 所要時間 | 約1〜2分/回（API呼び出しなし） |
+| 月間消費 | 約60分 |
 
 ### 🧠 extract-knowledge.yml — 知識蓄積専用
 
@@ -101,7 +158,7 @@ VibeCoding / Claude Code / AI Coding 関連のニュースを自動収集し、D
 | 所要時間 | 約3〜5分/回 |
 | 月間消費 | 約150分 |
 
-**月間合計: 約450分**（無料枠2,000分の22%）
+**月間合計: 約210分**（無料枠2,000分の10%）
 
 ### 知識の蓄積ロジック
 
@@ -220,12 +277,19 @@ NewsAI-VibeCording/
 │   ├── wrangler.toml
 │   └── package.json
 ├── scripts/
-│   ├── fetch_and_deliver.py     # RSS収集 & Discord配信
+│   ├── fetch_and_deliver.py     # RSS収集 & Discord配信（メインエントリ）
+│   ├── keyword_scorer.py        # Stage 1: キーワード関連度スコアリング
+│   ├── dedup_filter.py          # Stage 2: 類似タイトル重複排除
+│   ├── candidate_selector.py    # Stage 3: 最終候補選定 + 静的要約
 │   ├── extract_knowledge.py     # Gemini APIで知識抽出 & RAG構築
 │   ├── memory_manager.py        # 忘却曲線による保持率管理
 │   └── requirements.txt
 ├── data/
 │   ├── delivered.csv            # 配信済み記事DB
+│   ├── pipeline/                # フィルタリング中間結果（デバッグ用）
+│   │   ├── scored.json          # Stage 1 出力
+│   │   ├── deduped.json         # Stage 2 出力
+│   │   └── selected.json        # Stage 3 出力
 │   ├── processed_ids.json       # RAG処理済み記事ID
 │   ├── knowledge_base/          # 抽出済み知識（蓄積データ）
 │   │   ├── entries.jsonl        # 知識エントリ
@@ -252,9 +316,37 @@ NewsAI-VibeCording/
 }
 ```
 
-### レート制限の調整
+### 静的フィルタリングの調整
 
-`config.json` の `rate_limits` で設定:
+`config.json` の `static_filtering` で設定:
+
+```json
+{
+  "static_filtering": {
+    "enabled": true,
+    "min_relevance": 3,
+    "similarity_threshold": 0.4,
+    "delivered_similarity_threshold": 0.5,
+    "max_candidates": 5,
+    "max_per_category": 2,
+    "summary_max_length": 120
+  }
+}
+```
+
+| パラメータ | 説明 | デフォルト |
+|---|---|---|
+| `enabled` | `true` で静的パイプライン、`false` で従来Geminiフロー | `true` |
+| `min_relevance` | この値未満のキーワードティアを除外 | `3` |
+| `similarity_threshold` | 記事間のJaccard類似度閾値（重複判定） | `0.4` |
+| `delivered_similarity_threshold` | 過去配信との類似度閾値 | `0.5` |
+| `max_candidates` | 最終配信候補の上限数 | `5` |
+| `max_per_category` | 同一カテゴリの最大件数 | `2` |
+| `summary_max_length` | 静的要約の最大文字数 | `120` |
+
+### レート制限の調整（従来フロー用）
+
+`config.json` の `rate_limits` で設定（`static_filtering.enabled=false` 時のみ使用）:
 
 ```json
 {

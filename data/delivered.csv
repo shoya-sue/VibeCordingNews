@@ -1,21 +1,26 @@
-url,title,source,delivered_at
-https://qiita.com/dsgarage/items/33190a4fb58abca3a831,Figma MCPでデザインからUnity UIを生成する — /simplify・/batchとの連携ワークフロー,Qiita - ClaudeCode,2026-03-03T18:42:32.008588+09:00
-https://qiita.com/dsgarage/items/368775af9abc3d1bac12,Unity開発者が知るべき.envリスク — AIエージェント時代のAPIキー管理,Qiita - ClaudeCode,2026-03-03T18:42:32.008616+09:00
-https://qiita.com/yurukusa/items/a62bc0a05bfd258c4df5,「コピペしたら2箇所直す羽目になった」——非エンジニアがAIと仕事して学んだDRY原則,Qiita - ClaudeCode,2026-03-03T18:42:32.008627+09:00
-https://qiita.com/to3izo/items/18c68452c616b79a8d5b,"Claude Code｜独自の Skills を生成してくれる公式の ""Skill Creator"" を導入する手順",Qiita - ClaudeCode,2026-03-03T18:42:32.008634+09:00
-https://zenn.dev/shiromizuj/articles/cc91bb06db5b5b,Mastra Announcements 速報解説一覧,Zenn - AI Agent,2026-03-03T18:42:32.008641+09:00
-https://github.com/anthropics/claude-code/releases/tag/v2.1.66,v2.1.66,Claude Code - GitHub Releases,2026-03-04T10:37:05.307413+09:00
-https://zenn.dev/uniformnext/articles/c25072f5ecc1da,Design Systems with Figma: Tokyo に参加してきた,Zenn - Claude,2026-03-04T10:37:05.307439+09:00
-https://qiita.com/nxted_sapporo/items/05f38eb0d2269b600d69,#184 非エンジニアも使えるゲーム開発の仕組みをAI+Github Actionsで作ってみた,Qiita - ClaudeCode,2026-03-04T10:37:05.307449+09:00
-https://zenn.dev/soshi1234/articles/strategy-20260303-2024,AIに任せるほど事故る人へ。個人開発で先に作るべき『運用ルール3点セット』,Zenn - Claude,2026-03-04T10:37:05.307456+09:00
-https://qiita.com/synchr0niciteen/items/d1937237591a267c1b89,ClaudeCode：SKILLに引数を渡すためのフィールド,Qiita - ClaudeCode,2026-03-04T10:37:05.307462+09:00
-https://qiita.com/sinshutu/items/143711dee36dcf18e81a,巷でMCPが死んでいたので生き返らせてみる —— 死因はCLIで済む場所に作ったこと。じゃあ作るべき場所は？,Qiita - ClaudeCode,2026-03-04T15:19:49.559817+09:00
-https://qiita.com/fukmaru/items/1180347b3bf10cb630d9,「バグ報告 → GitHub Issue → AI自動修正」を繋げるSaaS「Bugoon」を個人開発で作った,Qiita - ClaudeCode,2026-03-04T15:19:49.559846+09:00
-https://qiita.com/kazuki_ikuta_nahato/items/f4a80413e928c5392b60,「触ったら壊れるスプレッドシート」の関数をAIで解析→GASで最適化→安全にリリースした全記録,Qiita - ClaudeCode,2026-03-04T15:19:49.559857+09:00
-https://qiita.com/noujiru/items/4a4226eb52325d26f065,Context Rot と戦う — SessionStart フック18件で作る「記憶を持つ Claude」,Qiita - ClaudeCode,2026-03-04T15:19:49.559864+09:00
-https://zenn.dev/mk668a/articles/ee24a0e4abd3c5,Go言語は、LLMにとって最適な言語である,Zenn - AI Agent,2026-03-04T15:19:49.559871+09:00
-https://zenn.dev/hfm/articles/commit-message-generated-by-ai,コミットメッセージを自分で書かない,Zenn - Claude Code,2026-03-05T10:37:36.348649+09:00
-https://zenn.dev/hironobuarakawa/articles/295e5711b76e27,No-Vibe Coding 実践編：YAML設計図から「動く契約」を生成する,Zenn - VibeCoding,2026-03-05T10:37:36.348675+09:00
-https://github.com/anthropics/claude-code/releases/tag/v2.1.69,v2.1.69,Claude Code - GitHub Releases,2026-03-05T10:37:36.348685+09:00
-https://qiita.com/Mrtetsu/items/9d92dd9c0f6d6a048805,Claude CodeをWSLで動かす理由とセットアップ完全ガイド,Qiita - ClaudeCode,2026-03-05T10:37:36.348691+09:00
-https://zenn.dev/mametter/articles/3e8580ec034201,Claude Code に向いているプログラミング言語,Zenn - Claude Code,2026-03-05T10:37:36.348698+09:00
+url,title,source,delivered_at,static_relevance,composite_score
+https://qiita.com/dsgarage/items/33190a4fb58abca3a831,Figma MCPでデザインからUnity UIを生成する — /simplify・/batchとの連携ワークフロー,Qiita - ClaudeCode,2026-03-03T18:42:32.008588+09:00,,
+https://qiita.com/dsgarage/items/368775af9abc3d1bac12,Unity開発者が知るべき.envリスク — AIエージェント時代のAPIキー管理,Qiita - ClaudeCode,2026-03-03T18:42:32.008616+09:00,,
+https://qiita.com/yurukusa/items/a62bc0a05bfd258c4df5,「コピペしたら2箇所直す羽目になった」——非エンジニアがAIと仕事して学んだDRY原則,Qiita - ClaudeCode,2026-03-03T18:42:32.008627+09:00,,
+https://qiita.com/to3izo/items/18c68452c616b79a8d5b,"Claude Code｜独自の Skills を生成してくれる公式の ""Skill Creator"" を導入する手順",Qiita - ClaudeCode,2026-03-03T18:42:32.008634+09:00,,
+https://zenn.dev/shiromizuj/articles/cc91bb06db5b5b,Mastra Announcements 速報解説一覧,Zenn - AI Agent,2026-03-03T18:42:32.008641+09:00,,
+https://github.com/anthropics/claude-code/releases/tag/v2.1.66,v2.1.66,Claude Code - GitHub Releases,2026-03-04T10:37:05.307413+09:00,,
+https://zenn.dev/uniformnext/articles/c25072f5ecc1da,Design Systems with Figma: Tokyo に参加してきた,Zenn - Claude,2026-03-04T10:37:05.307439+09:00,,
+https://qiita.com/nxted_sapporo/items/05f38eb0d2269b600d69,#184 非エンジニアも使えるゲーム開発の仕組みをAI+Github Actionsで作ってみた,Qiita - ClaudeCode,2026-03-04T10:37:05.307449+09:00,,
+https://zenn.dev/soshi1234/articles/strategy-20260303-2024,AIに任せるほど事故る人へ。個人開発で先に作るべき『運用ルール3点セット』,Zenn - Claude,2026-03-04T10:37:05.307456+09:00,,
+https://qiita.com/synchr0niciteen/items/d1937237591a267c1b89,ClaudeCode：SKILLに引数を渡すためのフィールド,Qiita - ClaudeCode,2026-03-04T10:37:05.307462+09:00,,
+https://qiita.com/sinshutu/items/143711dee36dcf18e81a,巷でMCPが死んでいたので生き返らせてみる —— 死因はCLIで済む場所に作ったこと。じゃあ作るべき場所は？,Qiita - ClaudeCode,2026-03-04T15:19:49.559817+09:00,,
+https://qiita.com/fukmaru/items/1180347b3bf10cb630d9,「バグ報告 → GitHub Issue → AI自動修正」を繋げるSaaS「Bugoon」を個人開発で作った,Qiita - ClaudeCode,2026-03-04T15:19:49.559846+09:00,,
+https://qiita.com/kazuki_ikuta_nahato/items/f4a80413e928c5392b60,「触ったら壊れるスプレッドシート」の関数をAIで解析→GASで最適化→安全にリリースした全記録,Qiita - ClaudeCode,2026-03-04T15:19:49.559857+09:00,,
+https://qiita.com/noujiru/items/4a4226eb52325d26f065,Context Rot と戦う — SessionStart フック18件で作る「記憶を持つ Claude」,Qiita - ClaudeCode,2026-03-04T15:19:49.559864+09:00,,
+https://zenn.dev/mk668a/articles/ee24a0e4abd3c5,Go言語は、LLMにとって最適な言語である,Zenn - AI Agent,2026-03-04T15:19:49.559871+09:00,,
+https://zenn.dev/hfm/articles/commit-message-generated-by-ai,コミットメッセージを自分で書かない,Zenn - Claude Code,2026-03-05T10:37:36.348649+09:00,,
+https://zenn.dev/hironobuarakawa/articles/295e5711b76e27,No-Vibe Coding 実践編：YAML設計図から「動く契約」を生成する,Zenn - VibeCoding,2026-03-05T10:37:36.348675+09:00,,
+https://github.com/anthropics/claude-code/releases/tag/v2.1.69,v2.1.69,Claude Code - GitHub Releases,2026-03-05T10:37:36.348685+09:00,,
+https://qiita.com/Mrtetsu/items/9d92dd9c0f6d6a048805,Claude CodeをWSLで動かす理由とセットアップ完全ガイド,Qiita - ClaudeCode,2026-03-05T10:37:36.348691+09:00,,
+https://zenn.dev/mametter/articles/3e8580ec034201,Claude Code に向いているプログラミング言語,Zenn - Claude Code,2026-03-05T10:37:36.348698+09:00,,
+https://qiita.com/shimo4228/items/f80a6716a91eac35deb3,デフォルトのまま使うな ── Claude Code で本当に効いた設定10選,Qiita - ClaudeCode,2026-03-05T10:58:18.248100+09:00,,
+https://zenn.dev/nnakapa/articles/lab-03-mcp-sqlite,オトナの自由研究 #03：AIが書いたコードは「育てられる」か——Claude Code × MCP × Python,Zenn - Claude Code,2026-03-05T10:58:18.248116+09:00,,
+https://zenn.dev/no_code_written/articles/ai-gamedev-batch-simplify,Claude Codeのローグライク開発、自作したリファクタ自動化を公式が1週間で追い越した,Zenn - Claude,2026-03-05T10:58:18.248121+09:00,,
+https://zenn.dev/shuji_bonji/articles/85af5f8fdf4b0b,会計PWAのビジネスロジックをMCPサーバーとして切り出した話,Zenn - Claude,2026-03-05T10:58:18.248125+09:00,,
+https://zenn.dev/takumi2112/articles/d5eee1d21e217d,素人がバイブコーディングで Web アプリを公開するまでやった話,Zenn - VibeCoding,2026-03-05T10:58:18.248129+09:00,,

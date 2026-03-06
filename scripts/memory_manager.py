@@ -75,6 +75,8 @@ memory_manager.py — エピソード記憶・忘却曲線エンジン  (Phase 3
  python scripts/memory_manager.py search --query "Claude Code MCP"
 """
 
+from __future__ import annotations
+
 import argparse
 import hashlib
 import json

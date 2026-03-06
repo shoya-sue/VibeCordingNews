@@ -78,3 +78,19 @@ jobs:
           done
           echo "Push failed after $MAX_RETRIES retries"
           exit 1
+
+      - name: "🚨 Notify Discord on failure"
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL not set, skipping notification"
+            exit 0
+          fi
+          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"username\": \"NewsAI Bot\",
+              \"content\": \"🚨 **ニュース配信が失敗しました**\nワークフロー: \`${{ github.workflow }}\`\n実行ID: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n時刻: $(date '+%Y-%m-%d %H:%M JST')\"
+            }"

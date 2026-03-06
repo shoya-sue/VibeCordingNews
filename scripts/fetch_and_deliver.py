@@ -174,6 +174,88 @@ def _save_pipeline_debug(stage: str, articles: list[dict]):
         logger.warning(f"  パイプラインデバッグ保存エラー: {e}")
 
 
+def save_to_knowledge_base(articles: list[dict]):
+    """配信した記事をRAG知識ベースに保存。
+    Workerが `data/knowledge_base/{YYYY-MM}/index.json` を読み込むため、
+    配信後にエントリを追記することでボットが記事を参照できるようになる。
+    """
+    kb_dir = ROOT_DIR / "data" / "knowledge_base"
+    now_ym = datetime.now(JST).strftime("%Y-%m")
+    month_dir = kb_dir / now_ym
+    month_dir.mkdir(parents=True, exist_ok=True)
+    index_path = month_dir / "index.json"
+
+    # 既存エントリ読み込み（なければ空）
+    existing_entries = []
+    if index_path.exists() and index_path.stat().st_size > 0:
+        try:
+            with open(index_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data.get("entries"), list):
+                existing_entries = data["entries"]
+        except Exception as e:
+            logger.warning(f"knowledge_base読み込みエラー（続行します）: {e}")
+
+    # URL重複チェック用set
+    existing_urls = {e.get("url", "") for e in existing_entries}
+
+    new_entries = []
+    for article in articles:
+        url = article.get("url", "")
+        if url in existing_urls:
+            continue
+
+        # summary が静的要約または Gemini 要約のいずれかを使う
+        summary = article.get("summary", "")
+        if not summary:
+            clean = re.sub(r"<[^>]+>", "", article.get("summary_raw", ""))
+            summary = clean[:120] + "…" if len(clean) > 120 else clean
+
+        # keywords: タイトル+summaryから既存キーワードスコアラーのティア辞書で抽出
+        keywords = _extract_keywords(article.get("title", "") + " " + summary)
+
+        published = article.get("published")
+        date_str = published.isoformat() if isinstance(published, datetime) else str(published or "")
+
+        new_entries.append({
+            "title":       article.get("title", ""),
+            "summary":     summary,
+            "core_insight": summary,  # RAG検索のメインテキストとして summary を流用
+            "keywords":    keywords,
+            "date":        date_str,
+            "category":    article.get("category", ""),
+            "source":      article.get("source", ""),
+            "url":         url,
+        })
+        existing_urls.add(url)
+
+    if not new_entries:
+        return
+
+    all_entries = existing_entries + new_entries
+    try:
+        with open(index_path, "w", encoding="utf-8") as f:
+            json.dump({"entries": all_entries}, f, ensure_ascii=False, indent=2)
+        logger.info(f"knowledge_base更新: {now_ym}/index.json に {len(new_entries)}件追加 (合計{len(all_entries)}件)")
+    except Exception as e:
+        logger.error(f"knowledge_base書き込みエラー: {e}")
+
+
+def _extract_keywords(text: str) -> list[str]:
+    """テキストからキーワードを抽出（ティア辞書マッチング）"""
+    text_lower = text.lower()
+    # keyword_scorer と同じティア辞書を参照
+    tier_keywords = [
+        "claude code", "vibecoding", "バイブコーディング",
+        "claude", "anthropic", "mcp", "model context protocol",
+        "ai agent", "aiエージェント",
+        "copilot", "cursor", "ai開発", "llm",
+        "プロンプトエンジニアリング", "chatgpt", "生成ai",
+    ]
+    matched = [kw for kw in tier_keywords if kw in text_lower]
+    return matched if matched else []
+
+
 def save_delivered(articles: list[dict]):
     """配信した記事をCSVに追記"""
     try:
@@ -607,6 +689,10 @@ def main():
     # 7. 配信済み保存
     save_delivered(selected)
     logger.info("配信済みCSVを更新しました")
+
+    # 8. RAG知識ベースに保存（Workerが /ask で参照できるよう）
+    save_to_knowledge_base(selected)
+    logger.info("knowledge_baseを更新しました")
 
     logger.info("完了！")
 

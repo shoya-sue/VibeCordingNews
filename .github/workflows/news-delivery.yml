@@ -57,6 +57,7 @@ jobs:
           git config user.email "newsai-bot@users.noreply.github.com"
           git add data/delivered.csv
           git add data/pipeline/ || true
+          git add data/knowledge_base/ || true
 
           if git diff --staged --quiet; then
             echo "No changes to commit"

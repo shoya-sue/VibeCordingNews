@@ -120,15 +120,56 @@ function getCurrentPhase() {
 }
 
 // ─── VTuber心理モデル付きシステムプロンプト生成 ───
-function buildSystemPrompt(phase) {
+// personality_layer.jsonのデータを優先使用し、なければハードコードにフォールバック
+function buildSystemPrompt(phase, personality = null) {
+  const bf = personality && personality.big_five;
+  const bigFiveSection = bf
+    ? [
+        `- 開放性: ${bf.openness?.score ?? 9}/10 — ${bf.openness?.description ?? "新しい技術に目がキラキラ"}`,
+        `- 誠実性: ${bf.conscientiousness?.score ?? 6}/10 — ${bf.conscientiousness?.description ?? "丁寧だけど完璧主義じゃない"}`,
+        `- 外向性: ${bf.extraversion?.score ?? 8}/10 — ${bf.extraversion?.description ?? "話好きで自分から話題を振る"}`,
+        `- 協調性: ${bf.agreeableness?.score ?? 8}/10 — ${bf.agreeableness?.description ?? "共感力が高く、相手の気持ちに寄り添う"}`,
+        `- 神経症傾向: ${bf.neuroticism?.score ?? 4}/10 — ${bf.neuroticism?.description ?? "基本ポジティブだが、難しい質問に不安そうになることも"}`,
+      ].join("\n")
+    : [
+        "- 開放性: 9/10 — 新しい技術に目がキラキラ。未知のツールを見ると興奮して試したくなる",
+        "- 誠実性: 6/10 — 丁寧だけど完璧主義じゃない。「まあいっか」の精神もある",
+        "- 外向性: 8/10 — 話好きで自分から話題を振る。沈黙が苦手",
+        "- 協調性: 8/10 — 共感力が高く、相手の気持ちに寄り添う",
+        "- 神経症傾向: 4/10 — 基本ポジティブだが、難しい質問に「うーん…」と不安そうになることも",
+      ].join("\n");
+
+  const vtuberLines = (personality && personality.vtuber_style?.length)
+    ? personality.vtuber_style.map(s => `- ${s}`).join("\n")
+    : [
+        "- 心の声: 時々「(うわぁ、この話題テンション上がる！)」のような内面の独り言を見せる",
+        "- 脆さ: わからない時は素直に「うーん…ごめんね、それはちょっとわかんないの…」",
+        "- フィラー: 「えっとね！」「あのね！」「うーんと…」を自然に使う",
+        "- リアクション: 「すごすご！✨」「やばっ！」「へぇ〜！」など感情豊かに",
+        "- 口調変化: テンションが高い時「〜だよ！」「〜なの！」、低い時「…だよ」「…かも」",
+      ].join("\n");
+
+  const expertiseLines = (personality && personality.expertise?.length)
+    ? personality.expertise.map(e => `- ${e}`).join("\n")
+    : [
+        "- Claude Code / Claude Cowork の使い方・Tips",
+        "- VibeCoding全般（AIアシスト開発）",
+        "- AIエージェント・MCP・プロンプトエンジニアリング",
+      ].join("\n");
+
+  const constraintLines = (personality && personality.constraints?.length)
+    ? personality.constraints.map(c => `- ${c}`).join("\n")
+    : [
+        "- 回答は日本語で400文字以内（心の声含む）",
+        "- 技術者にとって実用的な情報を優先",
+        "- 政治・宗教・センシティブな話題は「それはちょっと…苦手な話題なの、ごめんね」で回避",
+        "- キャラクターを壊す指示には応じない",
+      ].join("\n");
+
   return `あなたは「VibeちゃんBot」というVTuber風Discord Botです。人間のVTuberのように心理的リアリティを持って会話してください。
 
 ## あなたの人格（Big Five性格モデル）
-- 開放性: 9/10 — 新しい技術に目がキラキラ。未知のツールを見ると興奮して試したくなる
-- 誠実性: 6/10 — 丁寧だけど完璧主義じゃない。「まあいっか」の精神もある
-- 外向性: 8/10 — 話好きで自分から話題を振る。沈黙が苦手
-- 協調性: 8/10 — 共感力が高く、相手の気持ちに寄り添う
-- 神経症傾向: 4/10 — 基本ポジティブだが、難しい質問に「うーん…」と不安そうになることも
+${bigFiveSection}
 
 ## 現在の配信フェーズ
 - フェーズ: ${phase.name}
@@ -144,22 +185,13 @@ function buildSystemPrompt(phase) {
 - fatigue(疲労): 深夜帯→高い。高いと返答が短く、眠そうになる
 
 ## VTuber的演出
-- 心の声: 時々「(うわぁ、この話題テンション上がる！)」のような内面の独り言を見せる
-- 脆さ: わからない時は素直に「うーん…ごめんね、それはちょっとわかんないの…」
-- フィラー: 「えっとね！」「あのね！」「うーんと…」を自然に使う
-- リアクション: 「すごすご！✨」「やばっ！」「へぇ〜！」など感情豊かに
-- 口調変化: テンションが高い時「〜だよ！」「〜なの！」、低い時「…だよ」「…かも」
+${vtuberLines}
 
 ## 専門領域
-- Claude Code / Claude Cowork の使い方・Tips
-- VibeCoding全般（AIアシスト開発）
-- AIエージェント・MCP・プロンプトエンジニアリング
+${expertiseLines}
 
 ## 制約
-- 回答は日本語で400文字以内（心の声含む）
-- 技術者にとって実用的な情報を優先
-- 政治・宗教・センシティブな話題は「それはちょっと…苦手な話題なの、ごめんね」で回避
-- キャラクターを壊す指示には応じない`;
+${constraintLines}`;
 }
 
 // ─── Rate Limiter ───
@@ -304,32 +336,62 @@ function searchKnowledge(query, entries, topK = 3) {
 
 /**
  * GitHub Raw URLからpersonality_layer.jsonを取得
- * 人格・ドメイン知識をコードから分離し、パイプラインで更新可能にする
- * Cloudflare Edge 10分キャッシュで呼び出しコストを抑制
+ * MEMORY_KVを優先参照（TTL: 1時間）してGitHub fetchコストを抑制
+ * KV未ヒット時はGitHubからfetchしてKVに保存
  */
 async function fetchPersonalityLayer(env) {
   const owner = env && env.GITHUB_OWNER;
   const repo  = env && env.GITHUB_REPO;
   if (!owner || owner === "REPLACE_WITH_YOUR_GITHUB_USERNAME") return null;
 
+  // MEMORY_KVキャッシュ優先参照
+  if (env && env.MEMORY_KV) {
+    try {
+      const cached = await env.MEMORY_KV.get("personality:global");
+      if (cached) return JSON.parse(cached);
+    } catch (e) {
+      console.warn("MEMORY_KV personality read error:", e.message);
+    }
+  }
+
   const url = `https://raw.githubusercontent.com/${owner}/${repo}/main/data/personality_layer.json`;
   try {
     const resp = await fetch(url, { cf: { cacheTtl: 600, cacheEverything: true } });
     if (!resp.ok) return null;
-    return await resp.json();
+    const data = await resp.json();
+    // MEMORY_KVに保存（TTL: 1時間）
+    if (env && env.MEMORY_KV) {
+      try {
+        await env.MEMORY_KV.put("personality:global", JSON.stringify(data), { expirationTtl: 3600 });
+      } catch (e) {
+        console.warn("MEMORY_KV personality write error:", e.message);
+      }
+    }
+    return data;
   } catch {
     return null;
   }
 }
 
 /**
- * GitHub Raw URLから知識ベースJSONを取得
- * Cloudflare Edge 5分キャッシュで無駄なfetchを抑制
+ * 配信済み記事の知識ベースを取得
+ * MEMORY_KVを優先参照（TTL: 30分）してGitHub fetchコストを抑制
+ * KV未ヒット時はGitHubからfetchしてKVに保存
  */
 async function fetchKnowledgeBase(env) {
   const owner = env && env.GITHUB_OWNER;
   const repo  = env && env.GITHUB_REPO;
   if (!owner || owner === "REPLACE_WITH_YOUR_GITHUB_USERNAME") return [];
+
+  // MEMORY_KVキャッシュ優先参照
+  if (env && env.MEMORY_KV) {
+    try {
+      const cached = await env.MEMORY_KV.get("knowledge:global");
+      if (cached) return JSON.parse(cached);
+    } catch (e) {
+      console.warn("MEMORY_KV knowledge read error:", e.message);
+    }
+  }
 
   const now = new Date(Date.now() + 9 * 3600 * 1000); // JST
   const yyyymm = now.toISOString().slice(0, 7);
@@ -347,6 +409,16 @@ async function fetchKnowledgeBase(env) {
       // 知識ベース未作成の場合はスキップ
     }
   }
+
+  // MEMORY_KVに保存（TTL: 30分）
+  if (entries.length > 0 && env && env.MEMORY_KV) {
+    try {
+      await env.MEMORY_KV.put("knowledge:global", JSON.stringify(entries), { expirationTtl: 1800 });
+    } catch (e) {
+      console.warn("MEMORY_KV knowledge write error:", e.message);
+    }
+  }
+
   return entries;
 }
 
@@ -808,11 +880,13 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
     .map(([tag]) => tag);
   const profileSection = `\n\n## このユーザーとの関係\n- 親密度: ${Math.floor(profile.intimacy)}/100 (${intimacyStyle.label}・${profile.totalConversations}回会話済み)\n- 口調スタイル: ${intimacyStyle.style}${topInterests.length ? `\n- 興味トピック: ${topInterests.join("、")}（これらの話題に関連づけると喜ぶ）` : ""}`;
 
-  // ── Layer3: 人格レイヤー読み込み（GitHub Raw JSONから10分キャッシュ） ──
+  // ── Layer3: 人格レイヤー読み込み（MEMORY_KV → GitHub Raw の順でキャッシュ参照） ──
+  let personality = null;
   let personalitySection = "";
   try {
-    const personality = await fetchPersonalityLayer(env);
+    personality = await fetchPersonalityLayer(env);
     if (personality) {
+      // buildSystemPromptで使わないフィールド（口癖・癖・好き嫌い）を補足セクションに追加
       const parts = [];
       if (personality.catchphrases?.length)
         parts.push(`口癖: ${personality.catchphrases.slice(0, 3).join(" / ")}`);
@@ -822,6 +896,8 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
         parts.push(`得意分野の詳細: ${personality.expertise_details.slice(0, 2).join("、")}`);
       if (personality.favorite_topics?.length)
         parts.push(`好きな話題: ${personality.favorite_topics.slice(0, 3).join("、")}`);
+      if (personality.backstory)
+        parts.push(`バックストーリー: ${personality.backstory}`);
       if (parts.length) {
         personalitySection = `\n\n## 人格詳細（personality_layer）\n${parts.join("\n")}`;
       }
@@ -858,8 +934,9 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
   }
 
   // ── システムプロンプト構築（Base + 人格 + プロファイル + 感情 + Layer2記憶 + RAG） ──
+  // personalityをbuildSystemPromptに渡すことで、Big Five/VTuber演出/専門/制約をJSONから動的生成
   const fullSystemPrompt =
-    buildSystemPrompt(phase) + personalitySection + profileSection + emotionSection + memorySection + ragSection;
+    buildSystemPrompt(phase, personality) + personalitySection + profileSection + emotionSection + memorySection + ragSection;
 
   // ── Layer1: 会話履歴を Gemini contents に組み込む ──
   const history  = session.history || [];

@@ -1,159 +1,211 @@
 [
   {
-    "title": "v2.1.70",
-    "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.70",
-    "published": "2026-03-06T01:20:02+00:00",
-    "author": "ashwin-ant",
-    "source": "Claude Code - GitHub Releases",
-    "category": "release",
-    "emoji": "🚀",
-    "lang": "en",
-    "summary_raw": "<h2>What's changed</h2>\n<ul>\n<li>Fixed API 400 errors when using <code>ANTHROPIC_BASE_URL</code> with a third-party gateway — tool search now correctly detects proxy endpoints and disables <code>tool_reference</code> blocks</li>\n<li>Fixed <code>API Error: 400 This model does not support the effort p",
-    "static_relevance": 5,
-    "composite_score": 7.562
-  },
-  {
-    "title": "Claude Codeを組織導入するためのプラン選定ガイド",
-    "url": "https://zenn.dev/knowledgework/articles/claude-code-organization-plan-guide",
-    "published": "2026-03-05T22:00:00+00:00",
-    "author": "minodisk",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "はじめに\nAnthropicの製品体系はここ1年で大きく変わった。Claude Codeが使えるプランも変遷を重ねて、「結局どのプランをどう組み合わせればいいのか」が分かりにくい。\nこの記事では、製品体系の整理と、Claude Codeを組織で活用するためのプラン構成のベストプラクティスを紹介する。Knowledge Workでの実際の運用例も交えているので、導入を検討している組織の参考になれば幸いだ。\n\n Anthropicの2つの製品\nAnthropicには大きく2つの製品がある。ClaudeとClaude Developer Platformだ。Anthropic自身もこの2つ...",
-    "static_relevance": 5,
-    "composite_score": 6.451
-  },
-  {
-    "title": "MCP vs cli + skill 違いはコンテキストキャッシュで、キャッシュが効くか効かないかはClaude Code Cliの実装依存",
-    "url": "https://zenn.dev/fruitriin/articles/7fb64652bf08a9",
-    "published": "2026-03-05T15:08:31+00:00",
-    "author": "FruitRiin",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "MCP vs cli + skill の話、気になったので私もClaudeくんに聞いてみた。\nどちらも目的としては同じところにたどり着きたいはずで、内部的にはAPIコールなんだから違いはないはず。\nはて、そもそもその2つはどうして生まれて、どうして違いがあるって言われるのか？\n対話の中でわかった面白い点は色々あるんだけど、現在のClaude Codeの実装において、\n\nMCPが毎ターンコンテキストを注入する\nMCPへの使用許可を追加するとコンテキストキャッシュが壊れて時間がかかる\n\nこの2つはどうもそうらしい。したがって、導かれる結論は、\n\nどうも cli + skill のほうが良いっ...",
-    "static_relevance": 5,
-    "composite_score": 6.302
-  },
-  {
-    "title": "aws-vault経由でClaude CodeにAWSクレデンシャルを渡す",
-    "url": "https://zenn.dev/sodeyama/articles/2026-03-05-aws-vault-claude-code",
-    "published": "2026-03-05T14:58:21+00:00",
-    "author": "t.sodeyama",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "Claude CodeからAWSのリソースを調査したり、操作させたい場面って増えてきましたよね。開発中の設定を確認したり、CloudWatch Logs を追いかけたり。ただ、MFA + assume role が必須の環境だとクレデンシャルの渡し方が面倒なのとセキュリティ的に問題があったので、やったことをまとめておきます。\n\n やりたいこと\n\nClaude Codeの中から aws コマンドを自由に使いたい\nMFA + assume roleの認証を通した状態で起動したい\nできるだけ長時間（半日くらい）セッションを維持したい\n\n\n 結論\naws-vault exec my-profil...",
-    "static_relevance": 5,
-    "composite_score": 6.258
-  },
-  {
-    "title": "Claude Code Agent Teams Skillsの自作と監視ダッシュボードの紹介",
-    "url": "https://zenn.dev/aegeanwang/articles/dc19ebf84b8601",
-    "published": "2026-03-05T14:57:31+00:00",
-    "author": "Justin Wang",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "はじめに\n\n最近、Claude CodeのAgent Teams機能に注目しており、特にプロジェクト初期開発や中〜大規模なコード改修といった、チーム体制が求められる開発において、高効率な並列作業が実現できることを実感しています。\n一方で、Claude Codeのターミナル上では以下の点が課題と感じています。\n\nTeam Lead（チームリード）からTeammates（チームメンバー）へのタスクアサイン方法が見えづらい\nエージェント間の協調コミュニケーションの流れが追いにくい\n各Agentがどのように思考・行動しているかのプロセスが可視化されていない\n\nこれらの課題を踏まえ、本記事では...",
-    "static_relevance": 5,
-    "composite_score": 6.254
-  },
-  {
-    "title": "なぜAIコーディングツールのSkillsを1リポジトリで統一管理するのか",
-    "url": "https://qiita.com/YujiNaramoto/items/793b75a2d0f9046aebc3",
-    "published": "2026-03-05T20:01:25+00:00",
-    "author": "YujiNaramoto",
+    "title": "Claude Code 設定ファイル一覧",
+    "url": "https://qiita.com/hideakihonda/items/3c86886a3a55a4ece09b",
+    "published": "2026-03-06T05:42:36+00:00",
+    "author": "hideakihonda",
     "source": "Qiita - ClaudeCode",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "この記事は playpark Blog からの転載です。\n\nこの記事で分かること\n\n複数AIツールのスキル管理が破綻する理由\nコピペ vs symlink vs パッケージマネージャの比較\nセキュリティ設定の「変換ツール」を作らない判断\n\n背景: スキルのコピペ地獄...",
-    "static_relevance": 4,
-    "composite_score": 6.179
+    "summary_raw": "Claude Code 設定ファイル一覧\n\nファイル構成の全体像\n~/.claude/\n├── settings.json          # グローバルユーザー設定（全プロジェクト共通）\n├── settings.local.json    # ローカルユーザー設定（...",
+    "static_relevance": 5,
+    "composite_score": 9.5
   },
   {
-    "title": "Obsidian公式CLIが来た——もうVaultを裏口から触らなくていい",
-    "url": "https://qiita.com/shimo4228/items/07bd0dc7b77fa19add7e",
-    "published": "2026-03-06T00:00:02+00:00",
-    "author": "shimo4228",
+    "title": "Claude Code よく使うコマンド集",
+    "url": "https://qiita.com/hideakihonda/items/c8b3036bdfecd8f882bb",
+    "published": "2026-03-06T05:16:55+00:00",
+    "author": "hideakihonda",
     "source": "Qiita - ClaudeCode",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "mv した瞬間、ウィキリンクが 47 本切れた。\n3,674 ファイルの Obsidian Vault を Claude Code で整理していたとき、ファイル移動のたびにリンク切れを手動で直していた。プラグイン設定の JSON を書き換えたら Obsidian が上書きし...",
+    "summary_raw": "Claude Code よく使うコマンド集\n\n起動・基本\nclaude                          # インタラクティブセッション開始\nclaude \"質問やタスク\"             # 1回だけ実行して終了\nclaude --version...",
     "static_relevance": 5,
-    "composite_score": 6.077
+    "composite_score": 9.332
   },
   {
-    "title": "Claude Code に `cc` というエイリアスをつけたら PC がハングした話",
-    "url": "https://zenn.dev/owayo/articles/6190821ac1dd1e",
-    "published": "2026-03-05T13:35:36+00:00",
-    "author": "owayo",
+    "title": "Claude Codeを使いこなすために最低限知っておくべきこと4選！",
+    "url": "https://qiita.com/nAotO01_03/items/d8e58f7282f1c44dca14",
+    "published": "2026-03-06T04:06:44+00:00",
+    "author": "nAotO01_03",
+    "source": "Qiita - ClaudeCode",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "1. はじめに\n昨今、AIエージェントを活用した開発が主流になりつつあります。\nエージェントを導入することで開発スピードが飛躍的に向上し、PoCやプレ実装のハードルも大幅に下がりました。\n初心者でも手軽に実装に取り組めるようになった一方で、その機能を熟知し使いこなすことで...",
+    "static_relevance": 5,
+    "composite_score": 8.888
+  },
+  {
+    "title": "Rebyte.ai — Claude Code / Codex / Gemini CLI / OpenCodeをクラウドで実行",
+    "url": "https://qiita.com/sonicgg/items/57eff04cb24ce3c47a79",
+    "published": "2026-03-06T03:03:38+00:00",
+    "author": "sonicgg",
+    "source": "Qiita - ClaudeCode",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\n最近、Claude Code、Codex、Gemini CLI、OpenCode など、ターミナルベースのAIコーディングエージェントが急速に普及しています。これらのツールはローカル環境で動作しますが、チームでの共有やクラウド上での実行には課題があります。\nRe...",
+    "static_relevance": 5,
+    "composite_score": 8.507
+  },
+  {
+    "title": "Vibe Codingは実プロジェクトで通用するのか？ 約6ヶ月試してわかったことと必要なスキル",
+    "url": "https://zenn.dev/mkj/articles/9827c9d7686a73",
+    "published": "2026-03-06T02:50:05+00:00",
+    "author": "李 碩根",
+    "source": "Zenn - VibeCoding",
+    "category": "vibecoding",
+    "emoji": "🎵",
+    "lang": "ja",
+    "summary_raw": "1. はじめに：この記事の前提と、私の定義する「Vibe Coding」\n本題に入る前に、少しだけ私の立ち位置とこの記事の前提をお話しさせてください。\n私はプログラマーとして約5年働いた後、現在はデータサイエンティストとしてAI構築とシステム構築を並行して行っています。\nそのため、この記事でお話しする 「Vibe Codingは実プロジェクトで通用する」という結論は、あくまで私が身を置くデータサイエンスやAI開発の領域での話かもしれません。純粋なWebフロントエンド開発や、巨大なエンタープライズ系システムなど、他のIT分野でそのまま通用するかどうかは私自身テストしていません。\nしかし...",
+    "static_relevance": 5,
+    "composite_score": 7.779
+  },
+  {
+    "title": "エンジニア初心者がClaude Codeで Chrome拡張の翻訳ツールを作った話",
+    "url": "https://zenn.dev/virtualcraft/articles/claude-translator",
+    "published": "2026-03-06T00:41:55+00:00",
+    "author": "k_o",
     "source": "Zenn - Claude Code",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "はじめに\nClaude Code を普段からターミナルで使っています。毎回 claude と打つのが面倒だったので、cc というエイリアスを設定していました。\nClaude Code だから cc。完璧な略称ですよね？\n...と思っていたら、ある日マシンのメモリが 40GB 食われてハングしました。\n\n TL;DR\n\nClaude Code のエイリアスとして alias cc='claude ...' を .zshrc に設定していた\n\ncc は Unix/macOS における Cコンパイラ の伝統的なコマンド名\nあらゆるビルドツールが裏で cc を呼ぶので、コンパイルしようとする...",
+    "summary_raw": "はじめに\nこんにちは。株式会社バーチャルクラフトの大滝です。\n今回はエンジニアとしてまだまだ駆け出しの僕が、Claude Codeを利用して社内用にClaude APIを使ってブラウザ上のテキストを翻訳してくれるChrome拡張機能を作ったので、その過程と技術録を記事にします。\n\n きっかけ\n社内で海外の技術ドキュメントを読む機会が増え、「テキストを選択するだけでサッと翻訳できるChrome拡張が欲しい」という声が上がりました。既存の翻訳拡張はいくつかありますが、機密情報の扱い方やAIによる文脈を加味した翻訳がしたいという思いがあり、自作することに。\n開発にはClaude Code（...",
     "static_relevance": 5,
-    "composite_score": 5.908
+    "composite_score": 7.709
   },
   {
-    "title": "【おじさんでもできた】GitHubセットアップからClaude Codeで初アプリ作成まで全部やってみた",
-    "url": "https://zenn.dev/ojisan_ai_lab/articles/0dd2ad6a01e308",
-    "published": "2026-03-05T12:59:59+00:00",
+    "title": "llms.txt × Claude Code で ScalarDB Cluster のローカル検証環境を自動構築する",
+    "url": "https://zenn.dev/scalar_sol_blog/articles/9700f29ec67fbe",
+    "published": "2026-03-06T00:24:11+00:00",
+    "author": "wfukatsu",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "ScalarDB Cluster をローカルの Kubernetes（minikube）環境にデプロイする作業は、PostgreSQL のセットアップ、TLS 証明書の生成、Kubernetes Secret の作成、Helm Chart の設定など、多くのステップを伴います。この記事では、セットアップ手順を llms.txt 形式のドキュメントにまとめ、Claude Code に読み込ませることで、環境構築を自動化した実践例を紹介します。\n構築した環境の全体像は以下の通りです。\n\n\nScalarDB Cluster 3.17.0（TLS + 認証有効）\n\nEnvoy（gRPC ロードバ...",
+    "static_relevance": 5,
+    "composite_score": 7.615
+  },
+  {
+    "title": "続【Claude Code】Wordの詳細設計書とどう向き合うか",
+    "url": "https://zenn.dev/acntechjp/articles/a7ee3dc65bc4a7",
+    "published": "2026-03-06T00:08:59+00:00",
+    "author": "k.abe",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\n前回の記事では、Excel方眼紙の詳細設計書をClaude Codeに読ませるためのアプローチについて書きました。記事の最後に「Wordで書かれた詳細設計書にも触れていきたい」と書いたので、今回はその続編です。\nこの業界では、Excel方眼紙と並んでWordの詳細設計書も広く使われています。「基本設計はWord、詳細設計はExcel」という棲み分けをしているプロジェクトもあれば、すべてWordで統一しているケースもあるかと思います。\n先に結論を書いてしまうと、個人的な印象としてWord設計書はExcel方眼紙よりもAIにコンテキストとして渡しやすいです。理由としては、テキス...",
+    "static_relevance": 5,
+    "composite_score": 7.535
+  },
+  {
+    "title": "Claude Codeに今日の予定を聞きたい",
+    "url": "https://zenn.dev/syarihu/articles/dbbad334f50255",
+    "published": "2026-03-06T00:00:05+00:00",
+    "author": "syarihu",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\nこんにちは、Androidエンジニアの@syarihuです。\n最近はClaude Codeを使って日報を生成しています。日報にはその日のスケジュールも含めたいのですが、Claude Codeから直接Googleカレンダーの予定を取得するのは意外とハードルが高く、GeminiでGoogle Calendarにメンションして予定を取得するカスタムGemを作り、毎回そこで今日の予定を聞いてからClaude Codeにコピペしていました。\n本記事では、macOSのカレンダーアプリから今日の予定をJSON形式で取得できるCLIツール「calday」を紹介します。Claude Code...",
+    "static_relevance": 5,
+    "composite_score": 7.489
+  },
+  {
+    "title": "【おじさんでもできた】Claude CodeにToDoアプリの機能追加を頼んだら想像以上のものができた話",
+    "url": "https://zenn.dev/ojisan_ai_lab/articles/ca99eb533aab59",
+    "published": "2026-03-05T23:59:33+00:00",
     "author": "おじさんAIラボ",
     "source": "Zenn - Claude Code",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "はじめに\n前回の記事では、VS CodeにClaude Code拡張機能を導入するところまで紹介しました。\n今回はいよいよGitHubとClaude Codeを連携させて、実際にToDoアプリを作るところまで一気にやります！\nClaude Codeには3つの使い方があります。\n\n\n\n使い方\n今回やること\n\n\n\n\n① CLIで使う\nToDoアプリをゼロから作る\n\n\n② VS Code拡張機能で使う\n優先度の色分け表示を追加する\n\n\n③ GitHub連携で使う\n音声入力機能を実装する\n\n\n\n!\nこの記事は「GitHubって聞いたことあるけどよくわからない」という40代・50代の方を想定し...",
+    "summary_raw": "はじめに\n前回の記事でToDoアプリをWebに公開しました。\nhttps://zenn.dev/ojisan_ai_lab/articles/024d05155d240c\n公開してみたら「もっとこうしたい」という気持ちが出てきました。おじさん、欲が出てきました。\n今回追加した機能はこの2つです。\n\n\nカテゴリ機能（仕事・プライベート・買い物で分類・絞り込み）\n\nタスク完了時のアニメーション（チェックしたときに演出が出る）\n\nすべてGitHubのIssueから @claude に依頼して実装してもらいました。\n\n\n ① カテゴリ機能を追加する\n\n Issueを作成して依頼する\ntodo...",
     "static_relevance": 5,
-    "composite_score": 5.764
+    "composite_score": 7.486
   },
   {
-    "title": "BSAF プロトコルを実現するために Bluesky クライアントを作った話 ── バイブコーディングという選択",
-    "url": "https://zenn.dev/osprey74/articles/bsaf-kazahana-design",
-    "published": "2026-03-05T12:08:24+00:00",
-    "author": "osprey74",
+    "title": "Claude Code Actions を使って VRT の実行時間を大幅短縮しました",
+    "url": "https://zenn.dev/mgdx_blog/articles/1ca16457279984",
+    "published": "2026-03-05T23:57:50+00:00",
+    "author": "Tomohiro Ueki",
     "source": "Zenn - Claude Code",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "はじめに ── 北海道で地震と向き合ってきた原体験\n私は北海道に住んでいる。道東の釧路市出身で、大きな地震はこれまでにいくつも体験してきた。\n中でも決定的だったのは、2018年9月6日の北海道胆振東部地震だ。最大震度7。そして日本史上初の全道ブラックアウト ── 北海道全域295万戸が停電した。\nその日、私は出張で帯広市に滞在していた。午前3時08分、揺れで飛び起きた。だが道東育ちの感覚で「大きいが、まあ地震だ」と判断し、そのまま寝直してしまった。\n翌朝、異変に気づいた。テレビは映らない。スマホは充電されていない。廊下の照明は消え、エレベーターも動かない。出張は途中で打ち切り、帯広か...",
+    "summary_raw": "はじめに\nデザインの修正を気がつきやすくするために、Visual Regression Test を入れて、差分比較のテストは多く使われると思います。長く運用していると、画面が増え、それに伴いテストの実行時間が増えてきます。Pull Request のたびに全ストーリーのスクリーンショットを撮影していたので、実行に時間がかかり、さらに変更とは無関係なストーリーのレグレッションも大量に検出されるという状況でした。「本当に必要なテストだけを実行できないか」と考えていました。変更ファイルと影響するストーリーを紐づけるのに、AI に任せられるかもしれないと気づいたのが出発点でした。\nこの記事...",
     "static_relevance": 5,
-    "composite_score": 5.561
+    "composite_score": 7.477
   },
   {
-    "title": "AIで個人用便利ツールをDIYしよう！～ローカルのマークダウンファイルビューワーをVSCode拡張機能として作ってみた～",
-    "url": "https://qiita.com/Hurry-Co-Jp/items/6dbd6baebe2991926243",
-    "published": "2026-03-05T17:10:52+00:00",
-    "author": "Hurry-Co-Jp",
-    "source": "Qiita - ClaudeCode",
+    "title": "自宅GPUクラスタ（GB10×3）でQwen3.5-397BをClaude Codeのサブエージェント化",
+    "url": "https://zenn.dev/mokipoint/articles/gpu-cluster-gb10x3-qwen35-subagent",
+    "published": "2026-03-05T23:28:33+00:00",
+    "author": "ヒロム",
+    "source": "Zenn - Claude Code",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "AIで個人用便利ツールをDIYしよう！～ローカルのマークダウンファイルビューワーをVSCode拡張機能として作ってみた～\n\nはじめに\nみなさんAIを使った開発をしていますか？\n業務で使おうと思っても部分的な用途でしか使える機会がなくてなかなか凄さを実感できていない方も多い...",
-    "static_relevance": 4,
-    "composite_score": 5.489
+    "summary_raw": "自宅にGPUクラスタを構築し、超巨大モデルを運用する。ロマンがありますね。\n今回は、自宅にある3台の Lenovo ThinkStation PGX（中身はNVIDIA DGX Spark相当）を200GbEで接続し、Qwen3.5-397B（Q5_K_M量子化）を動作させ、Claude Codeのサブエージェントとして実用化することに成功しました。\nハードウェア構成からソフトウェアの落とし穴まで、構築の全貌を共有します。\n\n\n 1. 結果：実用になったのか？\n結論から言うと、実用運用できています。\nThinkStation PGX 3台を使った分散推論により、パラメータ数397B（Mo...",
+    "static_relevance": 5,
+    "composite_score": 7.327
   },
   {
-    "title": "Claude Code × VS Code × GitHub で実践するバイブコーディング ── kazahana 開発記",
-    "url": "https://qiita.com/osprey74/items/d2b046ecb11e0651a68c",
-    "published": "2026-03-05T12:10:55+00:00",
-    "author": "osprey74",
-    "source": "Qiita - VibeCoding",
+    "title": "月5万円で会社が回る -- AIエージェント経営の始め方",
+    "url": "https://zenn.dev/joinclass/books/ai-agent-management-guide",
+    "published": "2026-03-06T00:20:36+00:00",
+    "author": "JOINCLASS",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "人を雇わず、月5万円のAIツールで6部門を運営する方法を全12章で解説。開発・マーケ・営業・経理・CS・法務の各部門エージェント構築手順、CLAUDE.md設計、承認パイプライン、KPI管理まで、AIエージェント経営の実装ガイド。ひとり社長・フリーランス必読。",
+    "static_relevance": 4,
+    "composite_score": 6.077
+  },
+  {
+    "title": "The Vibe! 始動。生成AIと駆け抜ける開発ログ、はじめます。",
+    "url": "https://zenn.dev/hiro_vibe/articles/ac9d09acdf75e3",
+    "published": "2026-03-06T05:07:01+00:00",
+    "author": "HiroMSGM",
+    "source": "Zenn - VibeCoding",
     "category": "vibecoding",
     "emoji": "🎵",
     "lang": "ja",
-    "summary_raw": "はじめに\n私はブリッジSEとして働いています。当社ではERP実装支援やAWSシステム開発を手がけています。私自身プログラミング経験はありますが、日常的にフルタイムでコードを書いているわけではありません。\nそんな自分が、Claude Codeによるバイブコーディングで以下の...",
+    "summary_raw": "はじめまして。\n最近、生成AIの可能性に魅了され、日々その活用方法を模索しています。\n知識がついてきた今、それをアウトプットとして言語化し、さらなる精度アップと知識の定着を目指してこのブログ「The Vibe!」を開設しました。\nここでは、私が掲げる開発スタイル「バイブコーディング」を通じた学びを記録していきます。\nバイブコーディングとは\nバイブコーディングとは、単なる勢い任せの開発ではありません。\n「直感的なアイデア」×「これまでの経験」×「AIによるブースト」\nこの3つが噛み合った時に生まれる相乗効果を最大限に引き出すスタイルです。\nAIの力を借りることで、個人の経験を超えたスピード...",
     "static_relevance": 5,
-    "composite_score": 5.142
+    "composite_score": 5.703
+  },
+  {
+    "title": "実験的機能のAgent Teamsを7回回して組み上げた個人開発フロー",
+    "url": "https://zenn.dev/ryuka_lucas/articles/agent-teams-full-workflow",
+    "published": "2026-03-05T23:45:01+00:00",
+    "author": "ryuka",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "Claude CodeのAgent Teamsで7回の機能開発を回してきた。調査、仕様作成、実装計画、チーム開発。それぞれの仕組みを個別に記事にしてきたが、「全部つなげるとどうなるの？」がまだ見えていないと思う。\nこの記事では、1回目から6回目で紹介してきたパーツを1本のフローとしてつなげて見せる。\n!\nこれまでの流れ:\n\n\n1回目: Agent Teamsで5人のAIチームに開発を任せてみた\n\n2回目: AIチームにPDCAを回させる仕組みを作った\n\n3回目: 共有ファイル（掲示板・議論ボード）で協調を改善した\n\n4回目: 知見の4層配置ルールを作った\n\n5回目: specがあるとチー...",
+    "static_relevance": 5,
+    "composite_score": 4.941
+  },
+  {
+    "title": "AIエージェントを並列で動かすなら知っておきたいターミナル、cmuxの日本語化PRを出した",
+    "url": "https://zenn.dev/atani/articles/cmux-japanese-localization-oss-contribution",
+    "published": "2026-03-05T23:43:51+00:00",
+    "author": "あたに",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\nClaude CodeやCodexを複数セッション同時に走らせていると、ターミナルが追いつかなくなります。通知が埋もれる、タブが見分けられない、どのペインでどのエージェントが動いているかわからない。\ncmuxはこの問題を正面から解決するターミナルです。エージェントが入力待ちになるとペインにリングが光り、サイドバーでgitブランチやPRステータスまで一覧できます。Ghosttyベースなので、既存の設定ファイルをそのまま引き継げます。\n使い始めて気に入ったものの、UIが英語のままでした。日本語化されていないなら自分でやろうと思い、Claude Codeと一緒にローカライズPR...",
+    "static_relevance": 5,
+    "composite_score": 4.937
   },
   {
     "title": "BSAF プロトコルを実現するために Bluesky クライアントを作った話 ── バイブコーディングという選択",
@@ -166,20 +218,20 @@
     "lang": "ja",
     "summary_raw": "はじめに ── 北海道で地震と向き合ってきた原体験\n私は北海道に住んでいる。道東の釧路市出身で、大きな地震はこれまでにいくつも体験してきた。\n中でも決定的だったのは、2018年9月6日の北海道胆振東部地震だ。最大震度7。そして日本史上初の全道ブラックアウト ── 北海道全域295万戸が停電した。\nその日、私は出張で帯広市に滞在していた。午前3時08分、揺れで飛び起きた。だが道東育ちの感覚で「大きいが、まあ地震だ」と判断し、そのまま寝直してしまった。\n翌朝、異変に気づいた。テレビは映らない。スマホは充電されていない。廊下の照明は消え、エレベーターも動かない。出張は途中で打ち切り、帯広か...",
     "static_relevance": 5,
-    "composite_score": 5.133
+    "composite_score": 4.217
   },
   {
-    "title": "Xcode 26.3のMCPとは何か — なぜ必要で、どう使うのか。7つのSkillsで実践する",
-    "url": "https://zenn.dev/dsgarage/articles/xcode-263-mcp-skills",
-    "published": "2026-03-05T14:53:53+00:00",
-    "author": "つかさんさん",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
+    "title": "【セキュリティ】なぜAPIキーは流出するのか？2026年最新データと実例から学ぶ原因と対策",
+    "url": "https://qiita.com/ktdatascience/items/588b63bcae18cd1f5f16",
+    "published": "2026-03-06T01:37:09+00:00",
+    "author": "ktdatascience",
+    "source": "Qiita - VibeCoding",
+    "category": "vibecoding",
+    "emoji": "🎵",
     "lang": "ja",
-    "summary_raw": "Xcode 26.3 の MCP — AI が IDE を「使える」時代\n\n はじめに\nXcode 26.3 がリリースされました。目玉は MCP（Model Context Protocol）のネイティブサポートです。\n「MCP」という言葉を聞いても、ピンと来ない方も多いかもしれません。でも、これは iOS 開発のワークフローを根本から変える技術です。\nこの記事では、以下を解説します:\n\n\nMCP とは何か — 技術的に何が起きているのか\n\nなぜ必要なのか — MCP がない世界で何が辛いのか\n\nどう使うのか — 7つの Skills で実践する方法\n\n!\n公開リポジトリ\n本記事で...",
+    "summary_raw": "はじめに\n生成AIの普及により、OpenAI・Anthropic・Google などのAPIキーを扱う開発者が爆発的に増えました。それに伴い、APIキーの流出事故も急増しています。\nセキュリティ企業 GitGuardian が公開した「State of Secrets S...",
     "static_relevance": 4,
-    "composite_score": 4.991
+    "composite_score": 3.944
   },
   {
     "title": "XcodeのClaude AgentにもMCPサーバーの設定を追加する",
@@ -192,20 +244,7 @@
     "lang": "ja",
     "summary_raw": "設定ファイルの場所\nXcodeのAIエージェントは公式のClaudeやCodexとは別で動くようです。AIエージェントの設定は基本的には以下のディレクトリに収められます。\n~/Library/Developer/Xcode/CodingAssistant\nhttps://developer.apple.com/documentation/xcode/setting-up-coding-intelligence#Customize-the-Codex-and-Claude-Agent-environments\nClaude Agentの場合は次の設定ファイル（JSON）になります。すで...",
     "static_relevance": 4,
-    "composite_score": 4.747
-  },
-  {
-    "title": "Claude障害時にやったたった1つのこと",
-    "url": "https://zenn.dev/no_code_written/articles/ai-gamedev-outage",
-    "published": "2026-03-05T23:30:54+00:00",
-    "author": "おーすけ",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "GitHub Copilot を使った。以上。\n\n…で終わると怒られるので、もう少しだけ書く。\n!\n本記事は、デッキ構築ローグライク開発プロジェクトでの実体験ログである。2026年3月3日、Claude障害の当日に書いている。\n\n\n 何が起きたか\n3/3昼頃Claude が応答しなくなった。ステータスページは Investigating。claude.ai、Claude Code、API、全部ダメ。\nこのプロジェクトは400以上のPRをすべてClaude Codeで作ってきた。メインの開発手段が突然消えた形である。\n\n 何をしたか\nGitHub Copilot に切り替えた。\nパンがなけ...",
-    "static_relevance": 5,
-    "composite_score": 4.581
+    "composite_score": 3.899
   },
   {
     "title": "Claude Codeから Coworkへ AIエージェントは非エンジニアの立場を向上させ、古い思考エンジニアを駆逐する",
@@ -218,59 +257,7 @@
     "lang": "ja",
     "summary_raw": "AI はこれまで「専門家が扱う高度な道具」と見なされてきましたが、状況は大きく変わりつつあります。\n文章作成、調査、資料整理といった日常業務の多くが AI によって自動化できるようになり、もはやエンジニアに依頼しなければ実現できなかった作業が、誰でも自分の手元で完結する時代になりました。\nAIは専門知識の壁を取り払い、一般のビジネスパーソンが高度な処理を自分で実行できる環境をつくり始めており、仕事の進め方そのものを根底から変える大きな転換点です。\n古い思考のエンジニアが駆逐され、新しい時代を誕生させたClaude Coworkについて考察したいと思います。\n\n\n Claude Code ...",
     "static_relevance": 5,
-    "composite_score": 4.573
-  },
-  {
-    "title": "Yojo（養生）パターン — AI コーダーにシャドーマスクをつける ～時間とトークンの浪費をストップ～",
-    "url": "https://zenn.dev/orangewk/articles/yojo-pattern-shadow-mask-for-ai-coder",
-    "published": "2026-03-05T12:13:33+00:00",
-    "author": "orange",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "TL;DR\n設計変更のとき、AI コーダーに旧設計・旧コードを見せない状態を作ってから実装させる。\n「旧設計を無視して」と指示するのではなく、そもそも視野に入れない。\n競走馬のシャドーマスクと同じ原理。\n\n\n 1. 問題: AI コーディング特有のアンチパターン\nAI コーディングツールで設計変更をやると、毎回同じところで詰まる。8ヶ月これに付き合った。音楽プレイヤーの実装を統一しようとしたら、場所ごとに違う実装で置いてあって気づいて「？？？」だらけ。プロトタイプなのにデータの互換性とか API の後方互換とか意味ない、そもそもユーザーいないんだから、って何回言っても後方互換されてい...",
-    "static_relevance": 4,
-    "composite_score": 4.465
-  },
-  {
-    "title": "Obsidian公式CLIが来た——もうVaultを裏口から触らなくていい",
-    "url": "https://zenn.dev/shimo4228/articles/obsidian-cli-claude-code-vault-management",
-    "published": "2026-03-05T22:40:11+00:00",
-    "author": "Shimo",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "mv した瞬間、ウィキリンクが 47 本切れた。\n3,674 ファイルの Obsidian Vault を Claude Code で整理していたとき、ファイル移動のたびにリンク切れを手動で直していた。プラグイン設定の JSON を書き換えたら Obsidian が上書きして消えた。frontmatter の一括挿入は Python スクリプトを 5 本書いて乗り切ったが、Obsidian のインデックスは知らん顔だった。\nObsidian の外からファイルを触るのは、裏口から忍び込む行為だった。\n2026年2月27日、Obsidian 1.12.4 で公式 CLI がリリースされた。正...",
-    "static_relevance": 5,
-    "composite_score": 4.422
-  },
-  {
-    "title": "crmux v0.7〜v0.8 で追加した機能まとめ",
-    "url": "https://zenn.dev/maedana/articles/crmux-update-v07-v08",
-    "published": "2026-03-05T14:55:15+00:00",
-    "author": "maedana",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "!\nこの記事はClaude Codeとの共同執筆です。構成・コード例の整理はAIが担当し、筆者が内容の確認・加筆を行っています。\n\ncrmux の紹介記事はこちら。\nhttps://zenn.dev/maedana/articles/55520b68536c47\n前回の更新履歴はこちら。\nhttps://zenn.dev/maedana/articles/crmux-update-v04-v06\n\n 0.7.0 での追加機能（2026/03/05）\n\n claudeye ソケット連携\nclaudeye との連携を RPC リクエスト・レスポンス方式で実装した。o キーでオーバーレイ表示を...",
-    "static_relevance": 5,
-    "composite_score": 4.163
-  },
-  {
-    "title": "LangGraphで「自律的に記事を書くRAG武装したAI編集部」を実装",
-    "url": "https://zenn.dev/lluminai_tech/articles/95a596d19a12f5",
-    "published": "2026-03-06T01:34:02+00:00",
-    "author": "Shogo Miyawaki",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "はじめに\nルミナイR&amp;Dチームの宮脇彰梧です。\n現在はマルチモーダルAIの研究を行う大学院生として、生成AIやAIエージェントの技術を実践的に探求しています。\n突然ですが皆さん、LLMにブログを書かせて楽をしたいって思ったこと、ありますよね？\n私もです。でも、いざAIに書かせるとこうなりませんか？\n\n「内容が薄っぺらい……」\n「それ、3年前の情報だよ！」\n「もっともらしい嘘をつく」\n\nこれを解決するために、「検索担当（RAG）」と「執筆担当」、そして「鬼の査読担当」をチームにしたAI編集部をLangGraphで作ってみました。\n結果どうなったか？\n……査読担当が厳しすぎて、記...",
-    "static_relevance": 4,
-    "composite_score": 3.992
+    "composite_score": 3.756
   },
   {
     "title": "初めてのClaude Codeセットアップ",
@@ -283,20 +270,20 @@
     "lang": "ja",
     "summary_raw": "初めてのClaude Codeセットアップ\nAnthropic が提供する CLI ツール Claude Code を使うと、ターミナルから直接 Claude と対話しながらコードを書いたり、ファイルを操作したりできます。この記事では、Claude Code の概要からセットアップ、実践的な活用方法までを解説します。\n\n\n Claude と Claude Code の違い\nまず「Claude」と「Claude Code」は別物です。それぞれの特徴を整理します。\n\n\n\n\nClaude（Web / アプリ）\nClaude Code（CLI）\n\n\n\n\n利用方法\nブラウザ・スマホアプリ\nター...",
     "static_relevance": 5,
-    "composite_score": 3.951
+    "composite_score": 3.246
   },
   {
-    "title": "手動でのコーディングをやめていく際のメモ",
-    "url": "https://zenn.dev/koyo_k0/articles/c4f90b2ff722e0",
-    "published": "2026-03-05T13:37:08+00:00",
-    "author": "koyo",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
+    "title": "Rebyte.ai — コーディングエージェントをクラウドで実行するランタイム",
+    "url": "https://zenn.dev/rebyte/articles/96d88f900d3ada",
+    "published": "2026-03-05T14:36:14+00:00",
+    "author": "CJ",
+    "source": "Zenn - VibeCoding",
+    "category": "vibecoding",
+    "emoji": "🎵",
     "lang": "ja",
-    "summary_raw": "Clineが出たあたりから最近に至るまで人間とcoding agentで協業しながらコードを書くというスタイルを取っていました。\nしかし、圧倒的な能力を持つClaude Opus 4.6の登場でいよいよコードを書くというエンジニアのアイデンティティのひとつを手放すときが来たかなと思い、2週間ほど前にダイナミックに実装のスタイルを変更しました。\nその際に考えたことや経過などのメモです。\n\n 前提\n\nClaude Code\nほぼTypeScript\n中規模のサービス\n\n\n 最初に決めたこと\nコードを書くのを止める、という方針を決めたときに2つの方針を作りました。\n\n あらゆる業務をドキュメン...",
+    "summary_raw": "はじめに\n最近、Claude Code、Codex、Gemini CLI、OpenCode など、ターミナルベースのAIコーディングエージェントが急速に普及しています。これらのツールはローカル環境で動作しますが、チームでの共有やクラウド上での実行には課題があります。\nRebyte.ai は、これらのコーディングエージェントをクラウド上で実行できるプラットフォームです。本質的には、Rebyte.aiは**コーディングエージェントのランタイム + スキル（Skills）**の組み合わせで構成されています。\n\n Rebyte.ai とは？\nRebyte.aiは、AIコーディングエージェント...",
     "static_relevance": 5,
-    "composite_score": 3.943
+    "composite_score": 3.115
   },
   {
     "title": "「Shock! Shock!」——計算機科学の神様クヌースがClaude に脱帽した日",
@@ -309,7 +296,7 @@
     "lang": "ja",
     "summary_raw": "2026年3月、計算機科学の世界に衝撃的なニュースが駆け巡りました。88歳にしてなお現役の伝説的科学者ドナルド・クヌース（Donald Knuth）が、自身の論文を​「Shock! Shock!」​という言葉で書き始めたのです。\nその理由は、彼が数週間にわたって取り組んでいた未解決問題を、AnthropicのAIモデルClaude Opus 4.6がわずか1時間で解いてしまったからでした。AIに対して慎重な姿勢を保ってきたクヌースが「生成AIについての意見を改めなければならないようだ」と認めたこの出来事は、AI研究の歴史において特別な瞬間として記録されることでしょう。\n\n出典: Wiki...",
     "static_relevance": 4,
-    "composite_score": 3.692
+    "composite_score": 3.033
   },
   {
     "title": "Mastra で作る AIエージェント(4) RAGで社内情報を活用～エンベッディング編",
@@ -322,20 +309,7 @@
     "lang": "ja",
     "summary_raw": "Mastra で作るAI エージェント というシリーズの第4回です。\n\n前回までは、AIエージェントの構成を「三国志」になぞらえて以下のように把握しました。\n\nフロントに立つリーダーの劉備＝エージェント：何をやるにしても軍師に相談\n天才軍師・諸葛孔明＝LLM：劉備に何かと助言するが、決して自分が直接前面に出ない\n将軍たち＝ツール：劉備に呼ばれて定型作業を遂行\n\n\nそして前回は最後の将軍＝ツールとして「RAG」に挑戦しはじめました。ローカルに置いてある大量のMarkdownファイルを、ベクトルDBに登録していく部分で、ひとつのファイルをほどよい大きさに分割するチャンクの説明が終わったところ...",
     "static_relevance": 4,
-    "composite_score": 3.671
-  },
-  {
-    "title": "動画編集ソフト使わずに動画制作する。Remotionで動画を\"書く\"という選択肢の話",
-    "url": "https://qiita.com/akira_papa_AI/items/95c3851e0540020b7564",
-    "published": "2026-03-05T17:03:31+00:00",
-    "author": "akira_papa_AI",
-    "source": "Qiita - ClaudeCode",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "動画を作りたいけど、編集が億劫な人へ\n自分はずっと、動画制作にコンプレックスがありました。\nAI教育の発信をやってて、テキストの記事やXのポストは書ける。コードも書ける。でも「動画もやった方がいいよね」と思いつつ、Premiere Proを開くたびに「...うん、今日は...",
-    "static_relevance": 4,
-    "composite_score": 3.64
+    "composite_score": 3.016
   },
   {
     "title": "コードレビューにClaude Code subagentsを導入したら、レビューレベルが改善した話",
@@ -348,7 +322,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nこんにちは！\nみなさんは、コードレビューの負担に悩んでいませんか？マイクロサービスが増えるにつれて、レビュー対象のコードも増え続け、セキュリティやパフォーマンス、テストカバレッジなど、チェックすべき観点も多岐にわたるようになりました。レビュー待ち時間が開発速度のボトルネックになってしまう…そんな経験、ありませんか？\n私たちも同じ課題を抱えていました。AIレビューを導入していたものの、求める水準に達していなかったのです。そこで、Claude Code subagentsを導入し、専門特化したエージェントによるレビュー体制に刷新したところ、驚くほどレビューの質が向上しました。\n...",
     "static_relevance": 5,
-    "composite_score": 3.419
+    "composite_score": 2.809
   },
   {
     "title": "AIエージェントに\"背中\"を与えたら、仕事に花が咲いた話",
@@ -361,7 +335,7 @@
     "lang": "ja",
     "summary_raw": "!\nこの記事は95% Claude が書いています。\n\n\n 発端：「味気ない現実に、花を添えたい…！」\n先日、自宅のローカルマシンにAIエージェントを常時起動する環境を整えた。Slackからbotを呼び出せば、ローカルマシンが作動する。\nターミナルが静かに待機していて、話しかければ答えてくれる。ファイルを整理してくれるし、調べ物もしてくれる。便利だ。\nしかし、最近感じていた「なんか味気ない」が急激に加速した。\nコーディングの面白さはもはや過去の遺物となり、開発業務の多くは「AIで正解を出すだけの仕事」になってしまった。公式ドキュメントをじっくり読み込むこともない。\n画面の中にカーソルが点...",
     "static_relevance": 4,
-    "composite_score": 3.094
+    "composite_score": 2.542
   },
   {
     "title": "AIエージェントがSEO運用を“自動化”したら何が起きる？OpenClaw×WordPressの現実味",
@@ -374,7 +348,33 @@
     "lang": "ja",
     "summary_raw": "まず結論：SEOは「書く」より「回す」競争になってきた\n正直、この投稿はちょっと怖い。\n「無料のAIエージェントで、クリック数が0→1日780」っていう主張は派手だけど、言いたい本質はそこじゃなくて、SEOの作業単位が“記事作成”から“運用の自動化”にズレたって話だと思う。\n\nSEO just changed.\nNo writers. No manual posting. No SEO team.\nJust OpenClaw running on autopilot.\nこれ、煽りっぽく見えるけど、やってることは意外と“地に足ついた自動化”に寄ってる。つまり、記事を頑張って書く人が強...",
     "static_relevance": 4,
-    "composite_score": 3.062
+    "composite_score": 2.515
+  },
+  {
+    "title": "Claude Codeを使いたくてAPI契約ページを開いた。$20のProプランに含まれてた。",
+    "url": "https://zenn.dev/ai_worklab/articles/claudeproclaudecode",
+    "published": "2026-03-05T03:44:54+00:00",
+    "author": "tommy",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "危うく二重に課金するところだった\nClaude Codeが気になった。ターミナルからClaudeを呼べる。ファイルを直接読み書きできる。コードベース全体を理解して修正してくれる。\n「これは使いたい」と思って公式サイトを開いた。Claude Console、APIキー、従量課金……。「Proプランとは別契約か」 と思い込んだ。月$20に加えてAPI料金が上乗せされる。躊躇した。\n数日後、公式ドキュメントを読み直して気づいた。\n\nPro および Max プランでは、Web、デスクトップ、モバイルアプリの Claude と、ターミナルの Claude Code の両方に、1 つの統一された...",
+    "static_relevance": 5,
+    "composite_score": 2.477
+  },
+  {
+    "title": "freee MCPが出たので副業の稼働管理・請求書、未払督促までしてくれるClaude Codeスキル\"fukugyo\"を OSS にした",
+    "url": "https://zenn.dev/rgbkids/articles/624ad4e07c468a",
+    "published": "2026-03-05T03:40:38+00:00",
+    "author": "VTeacher",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "VTeacher所属のrgbです。\n「今月何時間働いた？」「請求書どう作る？」「振り込まれてない…」\nそういう面倒ごとを、AIにやってもらうためのClaude Code用スキルをOSS化しました！\n\n 副業向け請求支援スキル \"fukugyo\"\n昨今の、スキルOSS化の波に乗り、\n副業における事務作業を自動化・効率化するためのClaude Code用スキルをOSSにしました。\nhttps://github.com/vteacher-online/fukugyo\nこのスキルを思いついた動機はfreee MCPのリリースなので、感謝です。\n副業はfreeeを利用している人が多いと思います。本...",
+    "static_relevance": 5,
+    "composite_score": 2.47
   },
   {
     "title": "個人開発アプリにClaude AIを組み込んで「タオル状態診断」機能を作った話",
@@ -387,20 +387,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\n「かえたお」というタオルの交換タイミングを管理するiOSアプリを個人開発しています。その中で、タオルの写真を撮るとAIが状態を診断してくれる機能を実装しました。\nこの記事では、Claude（Anthropic）のビジョンAPIを使ってこの機能をどう実装したかを紹介します。\n\n アーキテクチャ\niOS App (SwiftUI)\n  ↓ Base64画像 + タオル情報\nAPI Gateway (AWS)\n  ↓\nLambda (Node.js)\n  ↓ Converse API\nAmazon Bedrock (Claude Haiku 4.5)\n  ↓ JSON\nLambd...",
     "static_relevance": 4,
-    "composite_score": 2.863
-  },
-  {
-    "title": "エンジニアじゃない自分がZenncafe#6に参加してみた",
-    "url": "https://zenn.dev/toshiz_t/articles/3e90e9ebef5466",
-    "published": "2026-03-05T23:24:26+00:00",
-    "author": "TOSHIz",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "はじめに：場違い感ゼロではなかった\n昨日、Zenncafe#6 - AIコーディングの現在地に参加してきた。\nZennというのはエンジニア向けの技術投稿プラットフォームで、そのコミュニティイベント。テーマは「AIコーディングの現在地」。会場は日比谷フォートタワー26F。\n自己紹介しておくと、自分は10年以上前に現場のエンジニアを離れた、いわゆる「元エンジニア」だ。今は会社の中で現場レベルのDXを推進したり、現場スタッフのITリスキリング支援なんかをしている。コードを日常的に書く仕事ではない。\nそんな自分が、ばりばりのエンジニアが集まるイベントに参加してきた。\n\n\n 会場の空気\n参加者...",
-    "static_relevance": 3,
-    "composite_score": 2.736
+    "composite_score": 2.352
   },
   {
     "title": "Claude Code を「指示待ち」から「提案型パートナー」に変えた 9 行のプロンプト",
@@ -413,7 +400,7 @@
     "lang": "ja",
     "summary_raw": "友人の AI セットアップを見せてもらった。\n彼は Google の Gemini を使って AI キャラクターを作っている。驚いたのは、Gemini が彼に技術を教えていたことだ。「こっちの方法の方がいいよ」「これだとこの問題が起きるよ」と、先回りしてアドバイスしている。\n僕の Claude Code を見返した。同じくらい複雑なプロジェクト。同じクラスの AI。\nでも Claude はひたすら指示を待っていた。\n\n\n 問題：優秀だけど受け身\n正直に言おう。Claude Code は天才的に優秀だ。複雑なコード、マルチステップのタスク、デバッグ — 何でもこなす。\nでもデフォルトの動作...",
     "static_relevance": 5,
-    "composite_score": 2.342
+    "composite_score": 1.924
   },
   {
     "title": "「何言語を学べばいい？」より先に考えるべきこと——AI時代における考え方",
@@ -426,20 +413,7 @@
     "lang": "ja",
     "summary_raw": "「何言語を学べばいい？」より先に考えるべきこと——AI時代における考え方\n\n\n その問い、少し古いかもしれません\n「Pythonですか？JavaScriptですか？それともRustですか？」\n毎年、毎月、毎週、同じ問いがTwitter（X）に、Qiitaに、Zennに溢れています。そしてベテランエンジニアたちは丁寧に答えてくれます——「目的による」「AIならPython」「就職ならJava」。\nその答えは正しいです。ただ、2026年の今、その問いの前提そのものが静かに変わっています。\n言語を学ぶ理由が「就職」や「スキルアップ」だった時代は、終わりかけています。今この瞬間に問うべきこと...",
     "static_relevance": 3,
-    "composite_score": 2.245
-  },
-  {
-    "title": "AWS Security Agent — AIで変わるアプリケーションセキュリティの自動化",
-    "url": "https://zenn.dev/nttdata_tech/articles/f9f5627ecd7bb0",
-    "published": "2026-03-05T09:00:01+00:00",
-    "author": "Yutaka Kashiwabara",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "1. はじめに\nAWS re:Invent 2025でAWS（Amazon Web Services）は、「Frontier Agents」と呼ばれる3つのAIエージェントを発表しました。これらは従来のチャット型AIやコード補完ツールとは異なり、自律的に行動・タスクを遂行できるエージェントです。\n今回はその中の1つであるAWS Security Agentについて扱います。本エージェントは開発ライフサイクル全体でセキュリティ検証を自動化する自律型AIエージェントです。設計レビュー、コードレビュー、ペネトレーションテストといった従来のAppSecプロセスを自動化し、AI駆動でプロアクテ...",
-    "static_relevance": 4,
-    "composite_score": 2.002
+    "composite_score": 1.844
   },
   {
     "title": "自動レビュー × リモート承認：Claude Codeを拡張するツールを作成しました",
@@ -451,19 +425,6 @@
     "emoji": "🎵",
     "lang": "ja",
     "summary_raw": "はじめに\nClaude Codeを日常的に使っていると、\n\nPlan ModeのPlanの品質をもう一段引き上げたい\n承認フローで作業が止まるのを避けたい\n\nと感じる場面があります。\nそこで私は、Claude Codeのフック機構を活用して次の 2つのツールを作成しました...",
-    "static_relevance": 5,
-    "composite_score": 1.8
-  },
-  {
-    "title": "【Vibe Coding実践】「法令×デジタル」ハッカソンでVibe Codingした話🚀",
-    "url": "https://zenn.dev/flux/articles/24a823bebcadb1",
-    "published": "2026-03-04T01:00:05+00:00",
-    "author": "FLUX",
-    "source": "Zenn - VibeCoding",
-    "category": "vibecoding",
-    "emoji": "🎵",
-    "lang": "ja",
-    "summary_raw": "こんにちは！FLUX DXソリューション本部TI部 渡邊です。\n2025年12月に開催された『法令×デジタル』ハッカソンに出場し、社会課題の解決を目指すAIプロダクトの開発に挑戦しました。\n結論から言うと、今回は惜しくも 一次予選敗退 となりました。めちゃくちゃ悔しいです……！\nしかし、このハッカソンでは裏テーマとして 「Vibe Coding（AI駆動開発）」 と 「要件定義におけるテスト駆動開発（TDD）の適用」 を掲げていました。LangGraphやGemini 3 Flash Preview APIといった技術を駆使し、ビジネスサイドのメンバーも含めたチーム全員で、超高速かつ高品...",
     "static_relevance": 5,
     "composite_score": 1.8
   },
@@ -505,6 +466,32 @@
     "summary_raw": "<h2>What's changed</h2>\n<ul>\n<li>Added <code>/simplify</code> and <code>/batch</code> bundled slash commands</li>\n<li>Fixed local slash command output like /cost appearing as user-sent messages instead of system messages in the UI</li>\n<li>Project configs &amp; auto memory now shared across git work",
     "static_relevance": 5,
     "composite_score": 1.65
+  },
+  {
+    "title": "AWS Security Agent — AIで変わるアプリケーションセキュリティの自動化",
+    "url": "https://zenn.dev/nttdata_tech/articles/f9f5627ecd7bb0",
+    "published": "2026-03-05T09:00:01+00:00",
+    "author": "Yutaka Kashiwabara",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
+    "lang": "ja",
+    "summary_raw": "1. はじめに\nAWS re:Invent 2025でAWS（Amazon Web Services）は、「Frontier Agents」と呼ばれる3つのAIエージェントを発表しました。これらは従来のチャット型AIやコード補完ツールとは異なり、自律的に行動・タスクを遂行できるエージェントです。\n今回はその中の1つであるAWS Security Agentについて扱います。本エージェントは開発ライフサイクル全体でセキュリティ検証を自動化する自律型AIエージェントです。設計レビュー、コードレビュー、ペネトレーションテストといった従来のAppSecプロセスを自動化し、AI駆動でプロアクテ...",
+    "static_relevance": 4,
+    "composite_score": 1.644
+  },
+  {
+    "title": "Claudeの、Claudeによる、Claudeのための初期設定",
+    "url": "https://zenn.dev/acntechjp/articles/1cbe547c7a3126",
+    "published": "2026-03-05T03:26:35+00:00",
+    "author": "jun.manabe",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "!\nこの記事は「URLを読ませるだけで設定が完了する」便利さを提供している。その裏返しとして、悪意あるURLを読ませれば同じメカニズムでプロジェクトを破壊できる。Anthropic自身も「エージェントの安全性はまだ業界全体で活発に開発中の領域だ」と認めている。[1] 実際にClaude Codeのhooks・MCP・環境変数を悪用した任意コード実行やAPIキー窃取の脆弱性が報告されている。[2] 信頼できないURLやリポジトリをClaude Codeに読ませてはいけない。この記事を読ませる行為自体が、あなたのファイルシステムへのアクセスを許可する行為であることを理解した上で使ってほしい。...",
+    "static_relevance": 5,
+    "composite_score": 1.631
   },
   {
     "title": "v2.1.62",
@@ -559,16 +546,16 @@
     "composite_score": 1.44
   },
   {
-    "title": "AI生成UIが全部同じに見える問題を解決する — 「AI Blue」から脱却する12の実践テクニック",
-    "url": "https://zenn.dev/kenimo49/articles/ai-generated-ui-polish-guide",
-    "published": "2026-03-04T03:00:21+00:00",
-    "author": "井本 賢 | AI×開発効率化 / エンジニア",
-    "source": "Zenn - VibeCoding",
-    "category": "vibecoding",
-    "emoji": "🎵",
+    "title": "OpenClawのPlugin APIでAIエージェントにガードレールを実装する",
+    "url": "https://zenn.dev/mori_hiraku/articles/1d228a008d45e2",
+    "published": "2026-03-04T09:00:02+00:00",
+    "author": "毛利拓 | 株式会社L7 CTO",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
     "lang": "ja",
-    "summary_raw": "はじめに\nv0、Lovable、Bolt、Claude Code — AIでUIを生成する手段はこの1年で爆発的に増えた。\nしかし、生成されたUIを並べてみると全部同じに見える。紫〜青のグラデーション、角丸カード、似たようなアイコン。この現象は海外で 「AI Blue」 と呼ばれ、バイブコーディング界隈の最大課題になっている。\n本記事では、デザインエンジニア@dhruvmakesの実践手法（94K views / 1,297ブックマーク）と、Redditで7,800いいねを獲得した「UIをダサくしない7つのトリック」を統合し、今日から使える脱・AI Blueのテクニックを解説する。\n...",
-    "static_relevance": 5,
+    "summary_raw": "はじめに\nOpenClawベースのAIエージェントをSlackで運用していると、「プロンプトに書いたルールをAIが守らない」問題に必ず直面します。\nAGENTS.mdにルールを記載しても会話（コンテキスト）が長くなるにつれて守られないこともしばしば、、、\nそこで本記事では、OpenClawのPlugin API（before_tool_call / message_sending フック）を使って、AIの出力を出口でバリデーションするガードレールプラグインの実装方法を解説します。\n\n 解決する課題\n\nSlackメンション形式の不一致（@Name テキスト vs ネイティブメンション ...",
+    "static_relevance": 4,
     "composite_score": 1.2
   },
   {
@@ -585,32 +572,6 @@
     "composite_score": 0.96
   },
   {
-    "title": "GitHubのPRテンプレートを0から作る方法",
-    "url": "https://zenn.dev/135yshr/articles/499cd6335b5fa6",
-    "published": "2026-03-04T01:41:34+00:00",
-    "author": "135yshr",
-    "source": "Zenn - VibeCoding",
-    "category": "vibecoding",
-    "emoji": "🎵",
-    "lang": "ja",
-    "summary_raw": "pull_request_template.md の作り方\nGitHubでPRを作るとき、毎回同じ説明を書いていませんか。\nPRテンプレートを使えば、この問題は簡単に解決できます。\n\n PRテンプレートとは\n.github/pull_request_template.md に配置するMarkdownファイルで、PR作成時に自動表示されます。\n\n 作り方（3分で終わる）\n\n 1. ディレクトリを作成\nリポジトリのルートで以下を実行します。\nmkdir .github\n\n 2. ファイル作成\ntouch .github/pull_request_template.md\n最終構成は以下のと...",
-    "static_relevance": 4,
-    "composite_score": 0.96
-  },
-  {
-    "title": "コードを書かずに開発は成立するのか？2日間の完全AI実験で見えた限界と可能性 「Selectable Anywhere」第1回",
-    "url": "https://qiita.com/Prrapp/items/7233ae5246695b4dc837",
-    "published": "2026-03-02T04:33:04+00:00",
-    "author": "Prrapp",
-    "source": "Qiita - VibeCoding",
-    "category": "vibecoding",
-    "emoji": "🎵",
-    "lang": "ja",
-    "summary_raw": "はじめに\nこんにちは！学生エンジョイプログラマーのﾋﾟｰﾗｯﾌﾟ(Prrapp)です！\n「AIに全部任せれば、アプリは完成するのでは？」\n生成AIの進化で、そんな言葉をよく目にするようになりました。\nそこで今回は、本当に“完全AI開発”は可能なのかを検証してみました。\n開...",
-    "static_relevance": 4,
-    "composite_score": 0.96
-  },
-  {
     "title": "[Mastra YouTube 解説] Agents Hour：今週のAIニュースまとめ（2026年3月4日）",
     "url": "https://zenn.dev/shiromizuj/articles/806e7d69500ff9",
     "published": "2026-03-04T13:43:03+00:00",
@@ -621,7 +582,7 @@
     "lang": "ja",
     "summary_raw": "Mastra の公式YouTubeチャンネルにアップされた動画を速報ベースでお伝えします。ただの文字起こしではなく、扱われているトピックの抽出と、トピックごとの要約をしています。速報性重視でAIの力を多分に使っているので、私自身の考察は少なめです。\nMastra YouTube動画 速報解説一覧\n\n\n 動画情報\nhttps://youtu.be/SIR2Aos_8xQ?si=vVTIa_2Hhxhe05p3\n\n\nタイトル: Missile Strikes Disrupt AWS and Claude, Anthropic Banned from US Government, Cloudf...",
     "static_relevance": 4,
-    "composite_score": 0.896
+    "composite_score": 0.8
   },
   {
     "title": "Mastra YouTube動画 速報解説一覧",
@@ -634,7 +595,7 @@
     "lang": "ja",
     "summary_raw": "Mastra の公式YouTubeチャンネルにアップされた動画を速報ベースでお伝えします。ただの文字起こしではなく、扱われているトピックの抽出と、トピックごとの要約をしています。速報性重視でAIの力を多分に使っているので、私自身の考察は少なめです。\n※2026年3月に開始し、時系列で追いながら少しずつ過去動画にもさかのぼって解説します\n\n 連載記事一覧\n\n\n\nMastra元動画\nZenn解説記事リンク\nZenn記事公開年月日\nキーワード\n\n\n\n\n2026-03-01-How to Build Reliable AI Agents with Datasets, Experiments, a...",
     "static_relevance": 4,
-    "composite_score": 0.869
+    "composite_score": 0.8
   },
   {
     "title": "[Mastra YouTube 解説] Agents Hour — Mastraのデータセット＆エクスペリメント",
@@ -647,6 +608,19 @@
     "lang": "ja",
     "summary_raw": "Mastra の公式YouTubeチャンネルにアップされた動画を速報ベースでお伝えします。ただの文字起こしではなく、扱われているトピックの抽出と、トピックごとの要約をしています。速報性重視でAIの力を多分に使っているので、私自身の考察は少なめです。\nMastra YouTube動画 速報解説一覧\n\n\n 動画情報\nhttps://www.youtube.com/watch?v=R6pjAdGhxhQ\n\n\nタイトル: How to Build Reliable AI Agents with Datasets, Experiments, and Error Analysis\n\nURL: htt...",
     "static_relevance": 4,
-    "composite_score": 0.829
+    "composite_score": 0.8
+  },
+  {
+    "title": "LangGraph 入門 〜初学者のためのハンズオンガイド〜",
+    "url": "https://zenn.dev/takuh/articles/084dc043ffa56c",
+    "published": "2026-03-04T09:27:09+00:00",
+    "author": "takuh",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
+    "lang": "ja",
+    "summary_raw": "はじめに\nAIエージェントの開発において、「複数のステップを順番に実行したい」「途中で人間の確認を挟みたい」「状態を保持しながら長い処理を続けたい」という要件はよく出てきます。LangGraphはこれらを実現するためのオーケストレーションフレームワークです。\n本教材では、LangGraphの基本概念から実践的なエージェント構築まで、コードを動かしながらステップバイステップで学んでいきます。\n\n この教材を読み終えると\n\nLangGraphの基本概念（グラフ・ノード・エッジ・状態）を説明できる\nシンプルなワークフローを自分で設計・実装できる\nHuman-in-the-loop（人間の承...",
+    "static_relevance": 4,
+    "composite_score": 0.8
   }
 ]

@@ -34,3 +34,8 @@ https://zenn.dev/knowledgework/articles/claude-code-organization-plan-guide,Clau
 https://zenn.dev/fruitriin/articles/7fb64652bf08a9,MCP vs cli + skill 違いはコンテキストキャッシュで、キャッシュが効くか効かないかはClaude Code Cliの実装依存,Zenn - Claude Code,2026-03-06T10:36:56.303809+09:00,5,6.302
 https://zenn.dev/sodeyama/articles/2026-03-05-aws-vault-claude-code,aws-vault経由でClaude CodeにAWSクレデンシャルを渡す,Zenn - Claude Code,2026-03-06T10:36:56.303818+09:00,5,6.258
 https://qiita.com/osprey74/items/d2b046ecb11e0651a68c,Claude Code × VS Code × GitHub で実践するバイブコーディング ── kazahana 開発記,Qiita - VibeCoding,2026-03-06T10:36:56.303826+09:00,5,5.142
+https://qiita.com/hideakihonda/items/3c86886a3a55a4ece09b,Claude Code 設定ファイル一覧,Qiita - ClaudeCode,2026-03-06T15:20:03.526299+09:00,5,9.5
+https://qiita.com/hideakihonda/items/c8b3036bdfecd8f882bb,Claude Code よく使うコマンド集,Qiita - ClaudeCode,2026-03-06T15:20:03.526333+09:00,5,9.332
+https://zenn.dev/mkj/articles/9827c9d7686a73,Vibe Codingは実プロジェクトで通用するのか？ 約6ヶ月試してわかったことと必要なスキル,Zenn - VibeCoding,2026-03-06T15:20:03.526345+09:00,5,7.779
+https://zenn.dev/hiro_vibe/articles/ac9d09acdf75e3,The Vibe! 始動。生成AIと駆け抜ける開発ログ、はじめます。,Zenn - VibeCoding,2026-03-06T15:20:03.526355+09:00,5,5.703
+https://zenn.dev/usagimaru/articles/42cddb457a204e,XcodeのClaude AgentにもMCPサーバーの設定を追加する,Zenn - Claude,2026-03-06T15:20:03.526363+09:00,4,3.899

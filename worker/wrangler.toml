@@ -1,6 +1,7 @@
 name = "newsai-vibecording-bot"
 main = "src/index.js"
 compatibility_date = "2024-12-01"
+account_id = "174035f0b17da0144acfa9e8b371d46f"
 
 # ─── KV Namespaces ───
 # 初回セットアップ時に以下のコマンドで作成し、表示されたIDを入力すること:
@@ -10,12 +11,12 @@ compatibility_date = "2024-12-01"
 
 [[kv_namespaces]]
 binding = "SESSION_KV"
-id = "REPLACE_WITH_SESSION_KV_ID"
+id = "ea0c62327d0f41c2879387b52aaffa33"
 # 用途: ユーザーごとの会話履歴・感情状態 (TTL: 24h)
 
 [[kv_namespaces]]
 binding = "MEMORY_KV"
-id = "REPLACE_WITH_MEMORY_KV_ID"
+id = "9818d0a7f8fd46839ba0d7f23c6c77fc"
 # 用途: エピソード記憶（忘却曲線管理）(TTL: 90日)
 
 # ─── Variables ───

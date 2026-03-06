@@ -20,6 +20,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 from constants import JST
+from config_validator import validate_config, ConfigValidationError
 from keyword_scorer import score_articles
 from dedup_filter import deduplicate
 from candidate_selector import select_and_summarize
@@ -55,16 +56,25 @@ DISCORD_EMBEDS_PER_MESSAGE = 10
 
 
 def load_config() -> dict:
-    """設定ファイルを読み込む"""
+    """設定ファイルを読み込み、スキーマバリデーションを実施する"""
     try:
         with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+            config = json.load(f)
     except FileNotFoundError:
         logger.error(f"config.json not found at {CONFIG_PATH}")
         sys.exit(1)
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON in config.json: {e}")
         sys.exit(1)
+
+    # 設定値の整合性チェック — 起動時に即座に問題を検出する
+    try:
+        validate_config(config)
+    except ConfigValidationError as e:
+        logger.error(f"config.json バリデーションエラー:\n{e}")
+        sys.exit(1)
+
+    return config
 
 
 def _migrate_csv_header():

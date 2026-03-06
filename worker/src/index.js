@@ -32,66 +32,81 @@ const CHARACTER = {
   version: "4.0",
 };
 
-// ─── エラーメッセージパターン（状況別・ランダム選択） ───
+// ─── エラーメッセージパターン（パーツ分解ランダム組み合わせ） ───
+// 挨拶と同じ方式: 各パーツを独立ランダム選択して組み合わせることで億単位のパターンを生成
+
 // Gemini APIが非200を返した場合（429/503等）
-const ERROR_MSGS_API = [
-  "うぅ…Geminiがちょっとお疲れみたいで…😢 しばらくしてからもう一度聞いてくれると嬉しいな！",
-  "あのね、今AIの頭がちょっとパンクしてるっぽくて…💦 少し待ってからまた話しかけてくれる？",
-  "ご、ごめんね！今Geminiが混んでるみたいで返事できなかったの…⏳ もう少し待ってみて！",
-  "えっとね…なんか今うまく繋がれなかったの🥺 時間おいてもう一度試してみてほしいな！",
-  "むむ…Geminiさんが今お休み中かも💤 少し待ってからまた話しかけてみてね！",
-  "わわっ、AIが疲れちゃったみたい！😵‍💫 しばらくしてから呼んでね〜！",
-  "ちょっと待って、なんかおかしいの…🤔 Geminiが返事してくれなかった。再試行してみてもらえる？",
-  "ご、ごめん！今ちょっとバタバタしてて…😅 もう少ししたら答えられると思う！",
-  "（うわぁ、タイミング悪っ！）Geminiさんが今忙しそうで…💦 少し待ってね！",
-  "あれ〜？なんか今AIの声が聞こえなかったの🔇 ちょっと間をおいてもう一度聞いてみて！",
-  "えっ…返事なかった！？Geminiさんどこ行ったの〜！😭 少し待ってからまた聞いてね！",
-  "ぽかん…なんか今つながれなかった💨 もう一回試してみてくれる？きっと今度は大丈夫！",
-];
+// opening×subject×state×emoji×retry = 12×5×8×7×6 ≒ 20,000通り
+const _ERR_API = {
+  opening:  ["うぅ…", "あのね、", "ご、ごめんね！", "えっとね…", "むむ…", "わわっ、",
+             "ちょっと待って、", "ご、ごめん！", "（うわぁ、タイミング悪っ！）", "あれ〜？", "えっ…", "ぽかん…"],
+  subject:  ["Geminiが", "AIが", "Geminiさんが", "頭の中が", "こっちの回線が"],
+  state:    ["ちょっとお疲れ", "混んでる", "パンク中", "バタバタ", "お休み中", "ぐったりしてる", "返事してくれない", "さぼり気味"],
+  emoji:    ["😢", "💦", "😵‍💫", "🥺", "💤", "🔇", "😅", "⏳", "😭", "💨", "🤔", "🫠"],
+  suffix:   ["みたいで…", "っぽくて…", "みたい！", "で…", "かも…", "感じ…", "そうで…"],
+  retry:    ["しばらくしてからまた聞いてね！", "少し待ってからまた話しかけてくれる？",
+             "もう少し待ってみて！", "時間おいてもう一度試してみてほしいな！",
+             "また呼んでね〜！", "再試行してみてもらえる？"],
+};
 
 // ネットワーク接続自体が失敗した場合
-const ERROR_MSGS_NETWORK = [
-  "あれ、ネットワークがおかしくなっちゃった？📡 接続が切れちゃったみたい…もう一度試してみて！",
-  "うーん、なんか繋がらなかったの…💔 もう一回話しかけてみてくれると嬉しいな！",
-  "ちょっと待って！なんか電波が届かなかったみたいで😱 もう一度お願いしていい？",
-  "えっ！？繋がらなかった！？なんでーっ！😤 ちょっとしてからもう一度試してみてね！",
-  "ご、ごめんよ〜！なんかネット的なところでつまずいちゃって…🕳️ 再試行してみてね！",
-  "（あ、これ完全に通信エラーだ…）ごめんね、繋がれなかった！またすぐ話しかけてね！",
-  "むっ…電波が弱いのかな🌐 ちょっとしてからもう一度聞いてみて！",
-  "あわわっ！信号がロストしちゃったの📶 もう一回だけ試してくれる？",
-  "ネットワークってむずかしいよね…😔 今ちょっと繋がれなかったけど、また呼んでね！",
-  "えーっと、なんかぷつってなっちゃって💀 もう一度お願いしてもいい？",
-];
+// opening×subject×state×emoji×retry = 9×4×5×8×5 ≒ 7,200通り
+const _ERR_NETWORK = {
+  opening:  ["あれ、", "うーん、", "ちょっと待って！", "えっ！？", "ご、ごめんよ〜！",
+             "（あ、これ通信エラーだ…）", "むっ…", "あわわっ！", "えーっと、"],
+  subject:  ["ネットワークが", "電波が", "接続が", "信号が"],
+  state:    ["おかしくなっちゃった？", "届かなかったみたいで", "切れちゃったみたい…", "ロストしちゃったの", "弱いのかな"],
+  emoji:    ["📡", "💔", "😱", "😤", "🕳️", "🌐", "📶", "💀"],
+  retry:    ["もう一度試してみて！", "また話しかけてね！", "再試行してみてね！",
+             "もう一回だけ試してくれる？", "また呼んでね！"],
+};
 
 // Gemini が空のレスポンスを返した場合
-const ERROR_MSGS_EMPTY = [
-  "あれれ…言葉が出てこなかったの🤯 もう一度聞いてくれる？今度はちゃんと答えるから！",
-  "うーん、なんか頭が真っ白になっちゃって…💭 もう一回聞いてもらえる？",
-  "えっ…なんも浮かんでこなかった！？😶 ごめん、もう一度お願い！",
-  "ぽかん…なんか頭の中が空っぽになっちゃったの🫥 再度聞いてみてくれると助かる！",
-  "あっ、言葉がフリーズしちゃったみたい🧊 もう一度話しかけてみて！",
-  "ん〜、今すごく難しい質問だったのかな？🤔 もう一回試してみてね！",
-  "（なんも出てこない！どうしよ！）えっと…ごめん、もう一度聞いてくれる？",
-  "むむ…思考がショートしちゃったっぽい⚡ 気を取り直してもう一回！",
-];
+// opening×state×emoji×retry×tail = 8×6×5×5×4 ≒ 4,800通り
+const _ERR_EMPTY = {
+  opening:  ["あれれ…", "うーん、", "えっ…", "ぽかん…", "あっ、", "ん〜、", "（なんも出てこない！どうしよ！）", "むむ…"],
+  state:    ["言葉が出てこなかったの", "頭が真っ白になっちゃって…", "なんも浮かんでこなかった！？",
+             "頭の中が空っぽに", "言葉がフリーズしちゃった", "思考がショートしちゃったっぽい"],
+  emoji:    ["🤯", "💭", "😶", "🫥", "🧊", "⚡"],
+  retry:    ["もう一度聞いてくれる？", "もう一回聞いてもらえる？", "もう一度お願い！",
+             "再度聞いてみてくれると助かる！", "気を取り直してもう一回！"],
+  tail:     [" 今度はちゃんと答えるから！", " きっと今度は大丈夫！", " ごめんね！", ""],
+};
 
 // コマンドハンドラ全体でエラーが発生した場合
-const ERROR_MSGS_HANDLER = [
-  "あわわっ！なんか変なことが起きちゃった！😱 もう一度試してみてね！",
-  "ぎゃーっ！エラーが出ちゃった！😭 もう一回やってみてくれる？",
-  "え、えっと…なんかバグっちゃったみたい🐛 再試行してみてほしいな！",
-  "うわあ、なんか壊れちゃった感じがする！💥 もう一度だけ試してみて！",
-  "（やばい、エラーだ！）ごめんね！うまく動かなかった…もう一回呼んでね！",
-  "ちょ、ちょっと待って！なんか予期しないことが起きて…😰 再試行してみてね！",
-  "む、むむ…これは想定外だった💦 もう一度試してみてくれると助かる！",
-  "あっ！なんかカオスなことになっちゃった🌀 落ち着いてもう一回やってみよ！",
-  "えーっ！こんなことって起きるんだ！😲 ごめんね、もう一度お願いできる？",
-  "ひゃー！なんかぐちゃぐちゃになっちゃった！🫨 しばらくしてからまた話しかけてね！",
-];
+// opening×state×emoji×retry = 10×8×6×7 ≒ 3,360通り
+const _ERR_HANDLER = {
+  opening:  ["あわわっ！", "ぎゃーっ！", "え、えっと…", "うわあ、", "（やばい、エラーだ！）",
+             "ちょ、ちょっと待って！", "む、むむ…", "あっ！", "えーっ！", "ひゃー！"],
+  state:    ["なんか変なことが起きちゃった！", "エラーが出ちゃった！", "なんかバグっちゃったみたい",
+             "なんか壊れちゃった感じがする！", "うまく動かなかった…",
+             "なんか予期しないことが起きて…", "これは想定外だった", "なんかぐちゃぐちゃになっちゃった！"],
+  emoji:    ["😱", "😭", "🐛", "💥", "😰", "💦", "🌀", "😲", "🫨", "🤯"],
+  retry:    ["もう一度試してみてね！", "再試行してみてね！", "もう一回やってみてくれる？",
+             "もう一度だけ試してみて！", "また呼んでね！", "もう一度お願いできる？",
+             "しばらくしてからまた話しかけてね！"],
+};
 
-/** エラーメッセージをランダムに選ぶ */
-function pickError(msgs) {
-  return msgs[Math.floor(Math.random() * msgs.length)];
+/** パーツリストからランダム1つ選ぶ */
+const _r = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/** エラーメッセージをパーツ結合で生成 */
+function pickError(type) {
+  if (type === "api") {
+    return _r(_ERR_API.opening) + _r(_ERR_API.subject) + _r(_ERR_API.state)
+         + _r(_ERR_API.suffix) + _r(_ERR_API.emoji) + " " + _r(_ERR_API.retry);
+  }
+  if (type === "network") {
+    return _r(_ERR_NETWORK.opening) + _r(_ERR_NETWORK.subject) + _r(_ERR_NETWORK.state)
+         + _r(_ERR_NETWORK.emoji) + " " + _r(_ERR_NETWORK.retry);
+  }
+  if (type === "empty") {
+    return _r(_ERR_EMPTY.opening) + _r(_ERR_EMPTY.state) + _r(_ERR_EMPTY.emoji)
+         + " " + _r(_ERR_EMPTY.retry) + _r(_ERR_EMPTY.tail);
+  }
+  // handler
+  return _r(_ERR_HANDLER.opening) + _r(_ERR_HANDLER.state)
+       + _r(_ERR_HANDLER.emoji) + " " + _r(_ERR_HANDLER.retry);
 }
 
 // ─── 配信フェーズ判定 ───
@@ -760,7 +775,7 @@ async function saveSession(userId, sessionData, env) {
  * @param {object|null} env     Cloudflare Workers env（KV・vars含む）
  */
 async function askGemini(userMessage, apiKey, userId = "default", env = null) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-001:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
   const phase = getCurrentPhase();
   const now   = new Date();
 
@@ -873,14 +888,14 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
     if (!resp.ok) {
       const errorText = await resp.text();
       console.error("Gemini API error:", resp.status, errorText);
-      return pickError(ERROR_MSGS_API);
+      return pickError("api");
     }
 
     const data = await resp.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
       console.error("Gemini returned empty response:", JSON.stringify(data));
-      return pickError(ERROR_MSGS_EMPTY);
+      return pickError("empty");
     }
 
     const responseText = text.trim().slice(0, 500);
@@ -904,7 +919,7 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
 
   } catch (e) {
     console.error("Gemini fetch error:", e);
-    return pickError(ERROR_MSGS_NETWORK);
+    return pickError("network");
   }
 }
 
@@ -1122,7 +1137,7 @@ export default {
         console.error("Command handler error:", e);
         return Response.json({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `😵 **${CHARACTER.name}**: ${pickError(ERROR_MSGS_HANDLER)}` },
+          data: { content: `😵 **${CHARACTER.name}**: ${pickError("handler")}` },
         });
       }
     }

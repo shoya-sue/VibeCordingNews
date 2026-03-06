@@ -525,7 +525,7 @@ def send_to_discord(articles: list[dict], config: dict):
         + random.choice(parts["news_action"])
     )
 
-    char_name = character.get("name", "NewsAI VibeCording")
+    char_name = character.get("name", "Vibeちゃん")
 
     embeds = []
     for article in articles:

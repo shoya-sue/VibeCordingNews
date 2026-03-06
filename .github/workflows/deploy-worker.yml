@@ -58,6 +58,7 @@ jobs:
 
       - name: "🚨 Notify Discord on failure"
         if: failure()
+        working-directory: "."
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
@@ -65,9 +66,4 @@ jobs:
             echo "DISCORD_WEBHOOK_URL not set, skipping notification"
             exit 0
           fi
-          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"username\": \"NewsAI Bot\",
-              \"content\": \"🚨 **Workerデプロイが失敗しました**\nワークフロー: \`${{ github.workflow }}\`\n実行ID: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n時刻: $(date '+%Y-%m-%d %H:%M JST')\"
-            }"
+          python3 scripts/failure_message.py

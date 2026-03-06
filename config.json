@@ -149,7 +149,9 @@
     "max_candidates": 5,
     "max_per_category": 2,
     "max_per_priority_category": 1,
-    "summary_max_length": 120
+    "summary_max_length": 120,
+    "freshness_decay_hours": 24.0,
+    "freshness_min": 0.2
   },
   "discord": {
     "max_items_per_delivery": 5,

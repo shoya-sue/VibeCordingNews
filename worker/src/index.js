@@ -109,6 +109,106 @@ function pickError(type) {
        + _r(_ERR_HANDLER.emoji) + " " + _r(_ERR_HANDLER.retry);
 }
 
+// ─── コマンド応答メッセージパターン ───
+// /news ニュース未取得: opening×body×emoji×tail = 8×6×5×6 ≒ 1,440通り
+const _MSG_NO_NEWS = {
+  opening: ["ん〜、", "あれれ、", "うーん…", "ちょっと待って、", "えっと、", "むむ…", "あっ、", "（なかったよ…）"],
+  body:    ["今はニュースが取得できなかったの", "まだニュースが届いてないみたい", "ニュースが見つからなかったの…",
+            "今回はニュースが取れなかったよ", "ちょっと空振りしちゃったかも", "配信データが見当たらなかったの"],
+  emoji:   ["📭", "🙈", "😅", "🔍", "📡"],
+  tail:    ["定時配信をお楽しみに！", "しばらく待ってみてね！", "次の配信を待っててね！",
+            "もう少し後で確認してみて！", "すぐまた来るよ！", "引き続きよろしくね！"],
+};
+
+// /news 成功時冒頭: opening×body = 10×8 = 80通り
+const _MSG_NEWS_INTRO = {
+  opening: ["はいはい〜！", "さっそく！", "待ってた！？", "わあ、来たよ〜！", "どうぞ〜！",
+            "お届けします！", "はーい！", "きたきた〜！", "あったよ〜！", "ばばーん！"],
+  body:    ["最新ニュースをお届けするよ！", "今日のVibeCordingニュースだよ！", "新鮮ほかほかのニュースだよ！",
+            "チェックしてみてね！", "選りすぐりのニュースだよ！", "気になる記事を持ってきたよ！",
+            "今日の収穫はこちら！", "ピックアップしてきたよ！"],
+};
+
+// /news 成功時末尾: 8通り
+const _MSG_NEWS_TAIL = [
+  "_気になる記事があったら読んでみてね！_", "_面白そうな記事あった？_", "_ぜひチェックしてみて！_",
+  "_VibeCodingライフを楽しんでね！_",       "_役に立てたら嬉しいな！_",  "_今日もコーディング楽しんでね！_",
+  "_一緒にVibeっていこー！_",               "_また気になったら呼んでね！_",
+];
+
+// /ask 質問未入力: opening×body×example = 8×6×4 ≒ 192通り
+const _MSG_ASK_NOINPUT = {
+  opening: ["えっと、", "ん？", "あれ、", "むむ、", "待って、", "質問が…", "（質問がないよ！）", "あのー、"],
+  body:    ["質問を入力してほしいの！", "何を聞きたいか教えてほしいの！", "質問がなかったよ？",
+            "聞きたいことを書いてね！", "質問なしじゃわからないの！", "聞きたいことがあったら教えてね！"],
+  example: ["\n例: `/ask Claude Codeの便利な使い方は？`", "\n例: `/ask バイブコーディングって何？`",
+            "\n例: `/ask MCPって何に使うの？`",             "\n例: `/ask AIエージェントの始め方は？`"],
+};
+
+// /ask Gemini未設定: opening×body×request = 6×6×4 ≒ 144通り
+const _MSG_ASK_NO_API = {
+  opening:  ["ごめんね、", "うぅ、", "あのね、", "むむっ、", "ちょっと待って、", "えっとね、"],
+  body:     ["AI機能がまだ設定されてないの…", "まだAIが使える状態じゃないの…", "Gemini APIキーが設定されてないみたい",
+             "AI機能の準備がまだできてないの", "AIの設定が足りないみたい…", "今はAI機能が使えないの…"],
+  request:  ["管理者さんにGemini APIキーの設定をお願いしてね！", "管理者さんに設定してもらってね！",
+             "管理者さんにAPIキーを設定してもらえると嬉しいな！", "管理者さんに頼んでみてね！"],
+};
+
+// /ask 応答末尾: 8通り
+const _MSG_ASK_POWERED = [
+  "_Powered by Vibeちゃん × Gemini_", "_Vibeちゃん × Geminiでお届け！_",
+  "_Vibeちゃんが調べたよ！_",          "_Geminiと一緒にお答えしました！_",
+  "_参考になったら嬉しいな！_",         "_Vibeちゃん × AI で調査しました！_",
+  "_お役に立てたかな？_",               "_また何でも聞いてね！_",
+];
+
+// レート制限: opening×body×emoji = 8×6×5 ≒ 240通り
+const _MSG_RATE_LIMIT = {
+  opening: ["ちょっと待って〜！", "ごめんね〜！", "もう少し休ませて！", "あっぷあっぷ〜！",
+            "うわっ、", "はわわ〜！", "ちょっとオーバーヒート中！", "息切れ中〜！"],
+  body:    ["1時間に30回まで使えるから、少し待ってね！", "ちょっとだけ時間をおいてね！",
+            "1時間に30回が上限なの！",                    "少し休んだらまた答えるよ！",
+            "ちょっと間隔を空けてみてね！",               "連打しすぎてオーバーヒートしちゃった！"],
+  emoji:   ["⏳", "💦", "😵", "🌀", "⚡"],
+};
+
+// 未知コマンド: opening×body×suggest = 8×6×4 ≒ 192通り
+const _MSG_UNKNOWN_CMD = {
+  opening:  ["えっ？", "ん？", "（どれだろ…）", "あれ、", "むむ？", "わからないよ〜、", "うーん、", "ぽかん…"],
+  body:     ["そのコマンドは知らないの…", "そういうコマンドは持ってないの…", "それは使えないコマンドみたい…",
+             "そのコマンドはないかも？", "ちょっとわからないの…", "そのコマンドがないよ…"],
+  suggest:  ["`/news` か `/ask` を使ってみてね！", "使えるのは `/news`, `/ask`, `/status` だよ！",
+             "`/news` でニュース、`/ask` で質問してみてね！", "`/status` でステータスも確認できるよ！"],
+};
+
+/** コマンド応答メッセージをパーツ結合で生成 */
+function pickMsg(type) {
+  if (type === "no_news") {
+    return _r(_MSG_NO_NEWS.opening) + _r(_MSG_NO_NEWS.body)
+         + _r(_MSG_NO_NEWS.emoji) + " " + _r(_MSG_NO_NEWS.tail);
+  }
+  if (type === "news_intro") {
+    return _r(_MSG_NEWS_INTRO.opening) + _r(_MSG_NEWS_INTRO.body);
+  }
+  if (type === "news_tail") {
+    return _r(_MSG_NEWS_TAIL);
+  }
+  if (type === "ask_noinput") {
+    return _r(_MSG_ASK_NOINPUT.opening) + _r(_MSG_ASK_NOINPUT.body) + _r(_MSG_ASK_NOINPUT.example);
+  }
+  if (type === "ask_no_api") {
+    return _r(_MSG_ASK_NO_API.opening) + _r(_MSG_ASK_NO_API.body) + _r(_MSG_ASK_NO_API.request);
+  }
+  if (type === "ask_powered") {
+    return _r(_MSG_ASK_POWERED);
+  }
+  if (type === "rate_limit") {
+    return _r(_MSG_RATE_LIMIT.opening) + _r(_MSG_RATE_LIMIT.body) + _r(_MSG_RATE_LIMIT.emoji);
+  }
+  // unknown_cmd
+  return _r(_MSG_UNKNOWN_CMD.opening) + _r(_MSG_UNKNOWN_CMD.body) + " " + _r(_MSG_UNKNOWN_CMD.suggest);
+}
+
 // ─── 配信フェーズ判定 ───
 function getCurrentPhase() {
   const jstHour = new Date(Date.now() + 9 * 3600 * 1000).getUTCHours();
@@ -1072,7 +1172,7 @@ async function handleNewsCommand(env) {
   if (articles.length === 0) {
     return {
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: { content: `📭 **${CHARACTER.name}**: ん〜、今はニュースが取得できなかったの...定時配信をお楽しみに！` },
+      data: { content: `**${CHARACTER.name}**: ${pickMsg("no_news")}` },
     };
   }
 
@@ -1083,7 +1183,7 @@ async function handleNewsCommand(env) {
   return {
     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
     data: {
-      content: `🎵 **${CHARACTER.name}のVibeCordingニュース！**\n\nはいはい〜！最新ニュースをお届けするよ！\n\n${lines.join("\n\n")}\n\n_気になる記事があったら読んでみてね！_`,
+      content: `🎵 **${CHARACTER.name}のVibeCordingニュース！**\n\n${pickMsg("news_intro")}\n\n${lines.join("\n\n")}\n\n${pickMsg("news_tail")}`,
     },
   };
 }
@@ -1092,7 +1192,7 @@ async function handleAskCommand(question, env, userId = "default") {
   if (!question) {
     return {
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: { content: `❓ **${CHARACTER.name}**: 質問を入力してほしいの！\n例: \`/ask Claude Codeの便利な使い方は？\`` },
+      data: { content: `❓ **${CHARACTER.name}**: ${pickMsg("ask_noinput")}` },
     };
   }
 
@@ -1100,7 +1200,7 @@ async function handleAskCommand(question, env, userId = "default") {
     return {
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
-        content: `⚠️ **${CHARACTER.name}**: ごめんね、AI機能がまだ設定されてないの...管理者さんにGemini APIキーの設定をお願いしてね！`,
+        content: `⚠️ **${CHARACTER.name}**: ${pickMsg("ask_no_api")}`,
         flags: 64,
       },
     };
@@ -1111,7 +1211,7 @@ async function handleAskCommand(question, env, userId = "default") {
   return {
     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
     data: {
-      content: `💡 **Q:** ${question}\n\n🎵 **${CHARACTER.name}:** ${answer}\n\n_Powered by NewsAI VibeCording × Gemini_`,
+      content: `💡 **Q:** ${question}\n\n🎵 **${CHARACTER.name}:** ${answer}\n\n${pickMsg("ask_powered")}`,
     },
   };
 }
@@ -1195,7 +1295,7 @@ export default {
         return Response.json({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
-            content: `⏳ **${CHARACTER.name}**: ちょっと休憩させて〜！1時間に30回まで使えるから、少し待ってね！`,
+            content: `**${CHARACTER.name}**: ${pickMsg("rate_limit")}`,
             flags: 64,
           },
         });
@@ -1242,7 +1342,7 @@ export default {
 
       return Response.json({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: { content: `❓ **${CHARACTER.name}**: そのコマンドは知らないの...` },
+        data: { content: `**${CHARACTER.name}**: ${pickMsg("unknown_cmd")}` },
       });
     }
 

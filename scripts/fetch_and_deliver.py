@@ -8,6 +8,7 @@ AIキャラクター「VibeちゃんBot」として配信。
 """
 
 import csv
+import fcntl
 import json
 import logging
 import os
@@ -62,22 +63,33 @@ def load_config() -> dict:
 
 
 def _migrate_csv_header():
-    """既存CSVにカラムが不足していればヘッダーを更新し既存行に空値を補完する"""
+    """既存CSVにカラムが不足していればヘッダーを更新し既存行に空値を補完する。
+
+    複数プロセスが同時実行した場合の二重書き込みを防ぐため、
+    ロックファイルで排他制御する。
+    """
     if not DELIVERED_CSV.exists() or DELIVERED_CSV.stat().st_size == 0:
         return
-    with open(DELIVERED_CSV, "r", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        existing_fields = reader.fieldnames or []
-        if set(CSV_FIELDNAMES) <= set(existing_fields):
-            return  # マイグレーション不要
-        rows = list(reader)
-    # 新カラムを追加して再書き込み
-    with open(DELIVERED_CSV, "w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({k: row.get(k, "") for k in CSV_FIELDNAMES})
-    logger.info(f"delivered.csv ヘッダーを更新: {CSV_FIELDNAMES}")
+    lock_path = DELIVERED_CSV.with_suffix(".lock")
+    with open(lock_path, "w") as lock_file:
+        fcntl.flock(lock_file, fcntl.LOCK_EX)
+        try:
+            # ロック取得後に再チェック（他プロセスが先に migration 済みの場合を考慮）
+            with open(DELIVERED_CSV, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                existing_fields = reader.fieldnames or []
+                if set(CSV_FIELDNAMES) <= set(existing_fields):
+                    return  # マイグレーション不要
+                rows = list(reader)
+            # 新カラムを追加して再書き込み
+            with open(DELIVERED_CSV, "w", encoding="utf-8", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
+                writer.writeheader()
+                for row in rows:
+                    writer.writerow({k: row.get(k, "") for k in CSV_FIELDNAMES})
+            logger.info(f"delivered.csv ヘッダーを更新: {CSV_FIELDNAMES}")
+        finally:
+            fcntl.flock(lock_file, fcntl.LOCK_UN)
 
 
 def load_delivered() -> set:

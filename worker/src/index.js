@@ -1,6 +1,6 @@
 /**
  * NewsAI VibeCording - Discord Interactions Bot (Cloudflare Worker)
- * v4.0 — Layer1会話履歴 + Layer2忘却曲線記憶 + Layer3人格 + BM25 RAG + 動的感情エンジン v2.1
+ * v1.1.0 — Layer1会話履歴 + Layer2忘却曲線記憶 + Layer3人格 + BM25 RAG + 動的感情エンジン v2.1
  *
  * 記憶アーキテクチャ:
  *   Layer 1: 作業記憶 — 直近3往復の会話履歴 (KV, TTL:24h)
@@ -26,10 +26,10 @@ const InteractionResponseType = {
   DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
 };
 
-// ─── AI Character Config v4.0 ───
+// ─── AI Character Config ───
 const CHARACTER = {
   name: "VibeちゃんBot",
-  version: "4.0",
+  version: "1.1.0",
 };
 
 // ─── エラーメッセージパターン（パーツ分解ランダム組み合わせ） ───

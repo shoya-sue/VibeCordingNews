@@ -281,9 +281,19 @@ NewsAI-VibeCording/
 │   ├── keyword_scorer.py        # Stage 1: キーワード関連度スコアリング
 │   ├── dedup_filter.py          # Stage 2: 類似タイトル重複排除
 │   ├── candidate_selector.py    # Stage 3: 最終候補選定 + 静的要約
+│   ├── config_validator.py      # config.json スキーマバリデーター
 │   ├── extract_knowledge.py     # Gemini APIで知識抽出 & RAG構築
 │   ├── memory_manager.py        # 忘却曲線による保持率管理
 │   └── requirements.txt
+├── tests/
+│   ├── test_keyword_scorer.py   # Stage 1 ユニットテスト
+│   ├── test_dedup_filter.py     # Stage 2 ユニットテスト
+│   ├── test_candidate_selector.py # Stage 3 ユニットテスト
+│   ├── test_fetch_and_deliver.py  # 配信エントリポイント ユニットテスト
+│   ├── test_config_validator.py   # バリデーター ユニットテスト
+│   └── __init__.py
+├── docs/
+│   └── FILTERING_PIPELINE.md    # 静的フィルタリングパイプライン設計ドキュメント
 ├── data/
 │   ├── delivered.csv            # 配信済み記事DB
 │   ├── pipeline/                # フィルタリング中間結果（デバッグ用）
@@ -329,7 +339,10 @@ NewsAI-VibeCording/
     "delivered_similarity_threshold": 0.5,
     "max_candidates": 5,
     "max_per_category": 2,
-    "summary_max_length": 120
+    "max_per_priority_category": 1,
+    "summary_max_length": 120,
+    "freshness_decay_hours": 24.0,
+    "freshness_min": 0.2
   }
 }
 ```
@@ -342,7 +355,10 @@ NewsAI-VibeCording/
 | `delivered_similarity_threshold` | 過去配信との類似度閾値 | `0.5` |
 | `max_candidates` | 最終配信候補の上限数 | `5` |
 | `max_per_category` | 同一カテゴリの最大件数 | `2` |
+| `max_per_priority_category` | `release`/`official` カテゴリの最大件数 | `1` |
 | `summary_max_length` | 静的要約の最大文字数 | `120` |
+| `freshness_decay_hours` | 鮮度スコアが 1/e に減衰するまでの時間（時間） | `24.0` |
+| `freshness_min` | 鮮度スコアの下限値（古い記事でも最低限のスコアを保証） | `0.2` |
 
 ### レート制限の調整（従来フロー用）
 
@@ -354,6 +370,12 @@ NewsAI-VibeCording/
   "discord_interactions_per_hour": 30
 }
 ```
+
+## 📚 ドキュメント
+
+| ドキュメント | 内容 |
+|---|---|
+| [docs/FILTERING_PIPELINE.md](docs/FILTERING_PIPELINE.md) | 静的フィルタリングパイプラインの詳細設計（各ステージのアルゴリズム・パラメータ説明） |
 
 ## 📄 License
 

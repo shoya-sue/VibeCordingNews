@@ -134,8 +134,18 @@ def _match_tier(text: str) -> int:
     return 1
 
 
-def _calc_freshness(published: Optional[datetime]) -> float:
-    """鮮度スコア: max(0.2, exp(-hours/24))"""
+def _calc_freshness(
+    published: Optional[datetime],
+    decay_hours: float = 24.0,
+    min_freshness: float = 0.2,
+) -> float:
+    """鮮度スコア: max(min_freshness, exp(-hours/decay_hours))
+
+    Args:
+        published: 記事の公開日時（UTC）
+        decay_hours: 鮮度が 1/e に減衰する時間（config から設定可能）
+        min_freshness: 鮮度スコアの下限値
+    """
     if published is None:
         return 0.5
     now = datetime.now(timezone.utc)
@@ -143,7 +153,7 @@ def _calc_freshness(published: Optional[datetime]) -> float:
     if published.tzinfo is None:
         published = published.replace(tzinfo=timezone.utc)
     hours = max(0, (now - published).total_seconds() / 3600)
-    return max(0.2, math.exp(-hours / 24))
+    return max(min_freshness, math.exp(-hours / decay_hours))
 
 
 def score_articles(articles: list[dict], config: dict) -> list[dict]:
@@ -158,6 +168,8 @@ def score_articles(articles: list[dict], config: dict) -> list[dict]:
     """
     sf = config.get("static_filtering", {})
     min_relevance = sf.get("min_relevance", 3)
+    freshness_decay_hours = sf.get("freshness_decay_hours", 24.0)
+    freshness_min = sf.get("freshness_min", 0.2)
 
     scored = []
     filtered_count = 0
@@ -193,8 +205,12 @@ def score_articles(articles: list[dict], config: dict) -> list[dict]:
         # ソースカテゴリ重み
         source_weight = SOURCE_WEIGHTS.get(category, DEFAULT_SOURCE_WEIGHT)
 
-        # 鮮度
-        freshness = _calc_freshness(article.get("published"))
+        # 鮮度（減衰係数はconfigで調整可能）
+        freshness = _calc_freshness(
+            article.get("published"),
+            decay_hours=freshness_decay_hours,
+            min_freshness=freshness_min,
+        )
 
         # composite_score 算出
         base = static_relevance * source_weight * freshness

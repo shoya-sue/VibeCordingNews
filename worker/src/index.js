@@ -1073,9 +1073,21 @@ function handleStatusCommand(env) {
   };
 }
 
+// ─── Discord Followup Webhook (Deferred Response用) ───
+// Discordは3秒以内に応答必須。時間がかかるコマンドはDeferredで即応答し
+// ctx.waitUntil() でバックグラウンド処理後にWebhookで追記する
+async function sendFollowup(applicationId, token, content) {
+  const url = `https://discord.com/api/v10/webhooks/${applicationId}/${token}/messages/@original`;
+  await fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content }),
+  });
+}
+
 // ─── Main Handler ───
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     if (request.method === "GET") {
       return new Response(
         JSON.stringify({
@@ -1114,32 +1126,47 @@ export default {
 
       const commandName = interaction.data.name;
 
-      try {
-        switch (commandName) {
-          case "news": {
-            const resp = await handleNewsCommand(env);
-            return Response.json(resp);
-          }
-          case "ask": {
-            const question = interaction.data.options?.[0]?.value || "";
-            const resp = await handleAskCommand(question, env, userId);
-            return Response.json(resp);
-          }
-          case "status":
-            return Response.json(handleStatusCommand(env));
-          default:
-            return Response.json({
-              type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-              data: { content: `❓ **${CHARACTER.name}**: そのコマンドは知らないの...` },
-            });
-        }
-      } catch (e) {
-        console.error("Command handler error:", e);
-        return Response.json({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `😵 **${CHARACTER.name}**: ${pickError("handler")}` },
-        });
+      // /status は高速なので同期で返す
+      if (commandName === "status") {
+        return Response.json(handleStatusCommand(env));
       }
+
+      // /news, /ask は外部API呼び出しがあるためDeferredパターンを使用
+      // 即座にtype:5（処理中）を返し、ctx.waitUntil()でバックグラウンド処理
+      const token = interaction.token;
+      const appId = env.DISCORD_APPLICATION_ID;
+
+      if (commandName === "news") {
+        ctx.waitUntil((async () => {
+          try {
+            const resp = await handleNewsCommand(env);
+            await sendFollowup(appId, token, resp.data.content);
+          } catch (e) {
+            console.error("news command error:", e);
+            await sendFollowup(appId, token, `😵 **${CHARACTER.name}**: ${pickError("handler")}`);
+          }
+        })());
+        return Response.json({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
+      }
+
+      if (commandName === "ask") {
+        const question = interaction.data.options?.[0]?.value || "";
+        ctx.waitUntil((async () => {
+          try {
+            const resp = await handleAskCommand(question, env, userId);
+            await sendFollowup(appId, token, resp.data.content);
+          } catch (e) {
+            console.error("ask command error:", e);
+            await sendFollowup(appId, token, `😵 **${CHARACTER.name}**: ${pickError("handler")}`);
+          }
+        })());
+        return Response.json({ type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE });
+      }
+
+      return Response.json({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: { content: `❓ **${CHARACTER.name}**: そのコマンドは知らないの...` },
+      });
     }
 
     return Response.json({ error: "Unknown interaction type" }, { status: 400 });

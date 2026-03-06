@@ -516,6 +516,146 @@ async function saveEpisodicMemory(userId, memories, env) {
   }
 }
 
+// ══════════════════════════════════════════════════════════
+// ─── ユーザープロファイル（興味タグ + 親密度スコア） ───
+// MEMORY_KV に profile:{userId} で保存
+// 親密度レベル: 0〜100 → Vibeちゃんの口調・テンションに影響
+// 興味タグ: 会話から自動抽出 → RAGスコアブーストに使用
+// ══════════════════════════════════════════════════════════
+
+const INTEREST_KEYWORDS = {
+  "claude-code":     ["claude code", "claudecode", "クロードコード"],
+  "vibecoding":      ["vibecoding", "バイブコーディング", "vibe"],
+  "mcp":             ["mcp", "model context protocol", "モデルコンテキスト"],
+  "ai-agent":        ["ai agent", "aiエージェント", "エージェント"],
+  "prompt":          ["プロンプト", "promptエンジニアリング", "prompt engineering"],
+  "github-actions":  ["github actions", "workflow", "ci/cd", "ワークフロー"],
+  "cursor":          ["cursor", "copilot", "コパイロット"],
+  "llm":             ["llm", "大規模言語モデル", "生成ai", "生成AI"],
+};
+
+// 親密度レベルに応じた口調スタイル
+const INTIMACY_STYLES = [
+  { min: 0,  max: 9,  label: "はじめまして",  style: "ていねい。初対面なので敬語気味。「〜ですね」「〜でしょうか」" },
+  { min: 10, max: 29, label: "知り合い",      style: "フレンドリー。少しくだけた口調。「〜だよ」「〜かな」" },
+  { min: 30, max: 59, label: "友達",           style: "気軽でテンション高め。「〜なの！」「〜だよね！」絵文字多め" },
+  { min: 60, max: 89, label: "親友",           style: "超気軽。愛称で呼ぶかも。「そうそう！」「わかる〜！」テンション高い" },
+  { min: 90, max: 100, label: "大親友",        style: "最高にフレンドリー。内輪ノリ全開。「もう！」「ねえねえ！」ノリが激しい" },
+];
+
+function getIntimacyStyle(score) {
+  return INTIMACY_STYLES.find(s => score >= s.min && score <= s.max) || INTIMACY_STYLES[0];
+}
+
+/**
+ * メッセージから興味タグを抽出
+ * キーワード辞書とのマッチでタグを特定
+ */
+function extractInterestTags(text) {
+  const lower = text.toLowerCase();
+  const matched = [];
+  for (const [tag, keywords] of Object.entries(INTEREST_KEYWORDS)) {
+    if (keywords.some(kw => lower.includes(kw))) matched.push(tag);
+  }
+  return matched;
+}
+
+/**
+ * ユーザープロファイルをMEMORY_KVから読み込む
+ * 未作成の場合はデフォルトを返す
+ */
+async function loadUserProfile(userId, env) {
+  if (env && env.MEMORY_KV) {
+    try {
+      const raw = await env.MEMORY_KV.get(`profile:${userId}`);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      console.warn("MEMORY_KV profile read error:", e.message);
+    }
+  }
+  return {
+    userId,
+    intimacy: 0,         // 0〜100
+    interestTags: {},    // { tag: count }
+    totalConversations: 0,
+    firstSeen: new Date().toISOString(),
+    lastSeen: new Date().toISOString(),
+  };
+}
+
+/**
+ * ユーザープロファイルを更新してMEMORY_KVに保存
+ * 会話ごとに親密度+1（上限100）、興味タグをカウントアップ
+ */
+async function updateUserProfile(userId, userMessage, env) {
+  const profile = await loadUserProfile(userId, env);
+  const now = new Date().toISOString();
+
+  // 親密度を会話回数に応じて段階的に増加（序盤は速く、後半はゆっくり）
+  const intimacyGain = Math.max(0.5, 2 - profile.totalConversations * 0.02);
+  profile.intimacy        = Math.min(100, profile.intimacy + intimacyGain);
+  profile.totalConversations += 1;
+  profile.lastSeen        = now;
+
+  // 興味タグをカウントアップ
+  for (const tag of extractInterestTags(userMessage)) {
+    profile.interestTags[tag] = (profile.interestTags[tag] || 0) + 1;
+  }
+
+  if (env && env.MEMORY_KV) {
+    try {
+      await env.MEMORY_KV.put(
+        `profile:${userId}`,
+        JSON.stringify(profile),
+        { expirationTtl: 7776000 } // 90日TTL
+      );
+    } catch (e) {
+      console.warn("MEMORY_KV profile write error:", e.message);
+    }
+  }
+
+  return profile;
+}
+
+/**
+ * ユーザーの興味タグに一致する知識エントリのBM25スコアをブースト
+ * 興味スコアが高いタグほど強くブースト（最大1.5倍）
+ */
+function searchKnowledgePersonalized(query, entries, topK = 3, interestTags = {}) {
+  if (!entries || entries.length === 0) return [];
+  const queryTerms = tokenize(query);
+  if (queryTerms.length === 0) return [];
+
+  const totalTagCount = Object.values(interestTags).reduce((a, b) => a + b, 0) || 1;
+
+  const scored = entries.map(entry => {
+    const docText = [
+      entry.title        || "",
+      entry.summary      || "",
+      entry.core_insight || "",
+      ...(entry.keywords || []),
+    ].join(" ");
+
+    let score = bm25Score(queryTerms, tokenize(docText));
+
+    // 興味タグに一致するカテゴリのエントリをブースト
+    const entryCategory = (entry.category || "").toLowerCase();
+    for (const [tag, count] of Object.entries(interestTags)) {
+      if (entryCategory.includes(tag) || (entry.keywords || []).some(kw => kw.includes(tag))) {
+        const interestWeight = 1 + (count / totalTagCount) * 0.5; // 最大1.5倍
+        score *= interestWeight;
+      }
+    }
+
+    return { entry, score };
+  }).filter(x => x.score > 0.01);
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK)
+    .map(x => x.entry);
+}
+
 // ─── セッション KV 操作（フォールバック: in-memory）───
 // NOTE: SESSION_KV未設定時はin-memoryで動作（Workerインスタンス揮発）
 const emotionSessionStore = new Map();
@@ -570,14 +710,26 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
   };
 
   // ── Layer2: エピソード記憶の読み込みと忘却適用 ──
-  const rawMemories = await loadEpisodicMemory(userId, env);
-  const memories    = decayMemories(rawMemories, now);
+  // ── ユーザープロファイル更新・読み込みを並列実行 ──
+  const [rawMemories, profile] = await Promise.all([
+    loadEpisodicMemory(userId, env),
+    updateUserProfile(userId, userMessage, env),
+  ]);
+  const memories = decayMemories(rawMemories, now);
 
   // ── 感情状態の計算 ──
   const newState       = computeEmotionState(userMessage, session.state);
   const emotionSection = buildEmotionPromptSection(
     newState, session.state, session.lastResponseEnding
   );
+
+  // ── ユーザープロファイルをシステムプロンプトに反映 ──
+  const intimacyStyle = getIntimacyStyle(Math.floor(profile.intimacy));
+  const topInterests  = Object.entries(profile.interestTags)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([tag]) => tag);
+  const profileSection = `\n\n## このユーザーとの関係\n- 親密度: ${Math.floor(profile.intimacy)}/100 (${intimacyStyle.label}・${profile.totalConversations}回会話済み)\n- 口調スタイル: ${intimacyStyle.style}${topInterests.length ? `\n- 興味トピック: ${topInterests.join("、")}（これらの話題に関連づけると喜ぶ）` : ""}`;
 
   // ── Layer3: 人格レイヤー読み込み（GitHub Raw JSONから10分キャッシュ） ──
   let personalitySection = "";
@@ -616,7 +768,8 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
   let ragSection = "";
   try {
     const knowledgeEntries = await fetchKnowledgeBase(env);
-    const relevant = searchKnowledge(userMessage, knowledgeEntries, 3);
+    // ユーザーの興味タグに合わせてRAGスコアをブースト
+    const relevant = searchKnowledgePersonalized(userMessage, knowledgeEntries, 3, profile.interestTags);
     if (relevant.length > 0) {
       const lines = relevant.map(e =>
         `- [${(e.date || "").slice(0, 10)}] **${e.title}**: ${e.core_insight || e.summary || ""}`
@@ -627,9 +780,9 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
     console.warn("RAG fetch failed (non-critical):", e.message);
   }
 
-  // ── システムプロンプト構築（Base + 人格 + 感情 + Layer2記憶 + RAG） ──
+  // ── システムプロンプト構築（Base + 人格 + プロファイル + 感情 + Layer2記憶 + RAG） ──
   const fullSystemPrompt =
-    buildSystemPrompt(phase) + personalitySection + emotionSection + memorySection + ragSection;
+    buildSystemPrompt(phase) + personalitySection + profileSection + emotionSection + memorySection + ragSection;
 
   // ── Layer1: 会話履歴を Gemini contents に組み込む ──
   const history  = session.history || [];
@@ -834,6 +987,7 @@ function handleStatusCommand(env) {
         "  Layer1 会話履歴 (3往復):  ✅ 実装済み",
         `  Layer2 忘却曲線エンジン:  ✅ 実装済み (${memStatus})`,
         "  Layer3 人格統合知識:      ✅ 実装済み (GitHub JSON)",
+        "  パーソナライズ:           ✅ 実装済み (親密度 + 興味タグ)",
         "",
         "**コマンド:**",
         "`/news` `/ask <質問>` `/status`",

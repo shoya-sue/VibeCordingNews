@@ -1,11 +1,11 @@
 /**
  * NewsAI VibeCording - Discord Interactions Bot (Cloudflare Worker)
- * v3.0 — Layer1会話履歴 + BM25 RAG + 動的感情エンジン v2.1
+ * v4.0 — Layer1会話履歴 + Layer2忘却曲線記憶 + Layer3人格 + BM25 RAG + 動的感情エンジン v2.1
  *
  * 記憶アーキテクチャ:
  *   Layer 1: 作業記憶 — 直近3往復の会話履歴 (KV, TTL:24h)
- *   Layer 2: エピソード記憶 — Ebbinghaus忘却曲線 (KV, TTL:90d) ← 設計完了・未実装
- *   Layer 3: 意味記憶 — 人格統合知識 (GitHub JSON)             ← 設計完了・未実装
+ *   Layer 2: エピソード記憶 — Ebbinghaus忘却曲線 (MEMORY_KV, TTL:90d) ✅ 実装済み
+ *   Layer 3: 意味記憶 — 人格統合知識 (GitHub JSON)                      ✅ 実装済み
  *   RAG: BM25キーワード検索 (GitHub knowledge_base JSON)
  *
  * 参照論文:
@@ -26,10 +26,10 @@ const InteractionResponseType = {
   DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
 };
 
-// ─── AI Character Config v3.0 ───
+// ─── AI Character Config v4.0 ───
 const CHARACTER = {
   name: "VibeちゃんBot",
-  version: "3.0",
+  version: "4.0",
 };
 
 // ─── 配信フェーズ判定 ───
@@ -149,15 +149,36 @@ function hexToUint8Array(hex) {
 // ══════════════════════════════════════════════════════════
 
 /**
- * テキストをトークン列に変換（日本語・英語対応）
+ * テキストをトークン列に変換（英語: 単語分割、日本語: 文字バイグラム/トリグラム）
+ * TinySegmenter不要でCJK文字のBM25精度を向上させる
+ * バイグラム: 「新機能」→ ["新機", "機能"] のように文字の組み合わせでインデックス
  */
 function tokenize(text) {
   if (!text) return [];
-  return text
-    .toLowerCase()
-    .replace(/[^\w\u3040-\u9FFF\uAC00-\uD7AF\s]/g, " ")
-    .split(/\s+/)
-    .filter(t => t.length >= 2);
+  const normalized = text.toLowerCase();
+  const tokens = [];
+
+  // 英語・数字部分は単語単位で分割（記号除去）
+  const asciiPart = normalized.replace(/[\u3000-\u9FFF\uAC00-\uD7AF]/g, " ");
+  for (const w of asciiPart.split(/\s+/)) {
+    if (w.length >= 2) tokens.push(w);
+  }
+
+  // CJK文字列からバイグラム/トリグラムを生成
+  const cjkChunks = normalized.match(/[\u3040-\u9FFF\uAC00-\uD7AF]{2,}/g) || [];
+  for (const chunk of cjkChunks) {
+    for (let i = 0; i < chunk.length - 1; i++) {
+      tokens.push(chunk.slice(i, i + 2)); // バイグラム
+    }
+    // 3文字以上のチャンクはトリグラムも追加（フレーズ検索精度向上）
+    if (chunk.length >= 3) {
+      for (let i = 0; i < chunk.length - 2; i++) {
+        tokens.push(chunk.slice(i, i + 3));
+      }
+    }
+  }
+
+  return tokens;
 }
 
 /**
@@ -202,6 +223,26 @@ function searchKnowledge(query, entries, topK = 3) {
     .sort((a, b) => b.score - a.score)
     .slice(0, topK)
     .map(x => x.entry);
+}
+
+/**
+ * GitHub Raw URLからpersonality_layer.jsonを取得
+ * 人格・ドメイン知識をコードから分離し、パイプラインで更新可能にする
+ * Cloudflare Edge 10分キャッシュで呼び出しコストを抑制
+ */
+async function fetchPersonalityLayer(env) {
+  const owner = env && env.GITHUB_OWNER;
+  const repo  = env && env.GITHUB_REPO;
+  if (!owner || owner === "REPLACE_WITH_YOUR_GITHUB_USERNAME") return null;
+
+  const url = `https://raw.githubusercontent.com/${owner}/${repo}/main/data/personality_layer.json`;
+  try {
+    const resp = await fetch(url, { cf: { cacheTtl: 600, cacheEverything: true } });
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -310,6 +351,171 @@ function extractLastEnding(text) {
   return m ? m[0].trim() : null;
 }
 
+// ══════════════════════════════════════════════════════════
+// ─── Layer2 エピソード記憶（Ebbinghaus忘却曲線 + SM-2） ───
+// 参照: MemoryBank (AAAI 2024) arxiv:2305.10250
+//   保持率: R(t) = e^(-t/S)  t=経過日数, S=記憶強度
+//   SM-2アルゴリズム: インターバル反復学習でSを更新
+// ══════════════════════════════════════════════════════════
+
+const MEMORY_STRENGTH_INITIAL = 1.0;
+const SM2_EF_INITIAL = 2.5;
+const SM2_EF_MIN = 1.3;
+// ユーザー1人あたりの最大エピソード数（KVサイズ制限対策）
+const MAX_MEMORIES_PER_USER = 20;
+// 保持率がこの値を下回ったメモリは削除
+const RETENTION_PRUNE_THRESHOLD = 0.05;
+
+/**
+ * Ebbinghaus忘却曲線による保持率計算
+ * R(t) = e^(-t/S)  ただし t:経過日数, S:記憶強度
+ */
+function computeRetention(entry, now = new Date()) {
+  const refStr = entry.last_recalled || entry.created_at;
+  if (!refStr) return 1.0;
+  const ref = new Date(refStr);
+  if (isNaN(ref.getTime())) return 1.0;
+  const tDays = (now - ref) / (1000 * 60 * 60 * 24);
+  const strength = entry.strength || MEMORY_STRENGTH_INITIAL;
+  return Math.exp(-tDays / strength);
+}
+
+/**
+ * SM-2アルゴリズムでエピソード記憶を更新
+ * quality: 0（完全忘却）〜5（完璧）
+ */
+function recallEntry(entry, quality, now = new Date()) {
+  const q = Math.max(0, Math.min(5, Math.round(quality)));
+  const updated = { ...entry };
+
+  // EFの更新（最低SM2_EF_MINを保証）
+  const ef = Math.max(
+    SM2_EF_MIN,
+    (entry.ef || SM2_EF_INITIAL) + 0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)
+  );
+
+  const rc = (entry.recall_count || 0) + 1;
+
+  // インターバル決定（1回目:1日, 2回目:6日, 以降: 前回×EF）
+  let interval;
+  if (rc === 1) interval = 1;
+  else if (rc === 2) interval = 6;
+  else interval = Math.max(1, Math.round((entry.interval_days || 6) * ef));
+
+  updated.ef = ef;
+  updated.recall_count = rc;
+  updated.interval_days = interval;
+  // リコールするたびに記憶強度が蓄積（20%ずつ増加）
+  updated.strength = MEMORY_STRENGTH_INITIAL * (1 + rc * 0.2);
+  updated.last_recalled = now.toISOString();
+  updated.retention = 1.0;
+  updated.next_review = new Date(
+    now.getTime() + interval * 24 * 60 * 60 * 1000
+  ).toISOString();
+
+  return updated;
+}
+
+/**
+ * 全エピソードに忘却を適用し、保持率が極めて低いものを削除
+ */
+function decayMemories(memories, now = new Date()) {
+  return memories
+    .map(m => ({ ...m, retention: computeRetention(m, now) }))
+    .filter(m => (m.retention || 0) > RETENTION_PRUNE_THRESHOLD);
+}
+
+/**
+ * BM25でクエリに関連するエピソード記憶を検索
+ * 保持率が高いほど結果に残りやすい（長期記憶優先）
+ */
+function searchEpisodicMemory(queryTerms, memories, topK = 3) {
+  if (!memories.length || !queryTerms.length) return [];
+  const scored = memories
+    .map(m => ({
+      memory: m,
+      // BM25スコアに保持率を乗算（忘れかけた記憶は優先度低）
+      score: bm25Score(queryTerms, tokenize(m.content || "")) * (m.retention || 0.5),
+    }))
+    .filter(x => x.score > 0);
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK)
+    .map(x => x.memory);
+}
+
+/**
+ * ユーザーとの会話からエピソード記憶を更新（新規追加または既存強化）
+ * 類似エピソードが既存にある場合はSM-2でリコール、なければ新規作成
+ */
+function upsertEpisode(memories, userMessage, responseText, now = new Date()) {
+  const queryTerms = tokenize(userMessage);
+  const content = `Q: ${userMessage} A: ${responseText}`.slice(0, 300);
+
+  // 類似エピソードがあれば強化（同一話題の繰り返しは記憶を強固にする）
+  const existing = searchEpisodicMemory(queryTerms, memories, 1);
+  if (existing.length > 0) {
+    const idx = memories.findIndex(m => m.id === existing[0].id);
+    if (idx >= 0) {
+      memories[idx] = recallEntry(memories[idx], 4, now); // quality=4（良い想起）
+      return memories;
+    }
+  }
+
+  // 新規エピソードを追加
+  const newEntry = {
+    id: `ep_${now.getTime()}`,
+    content,
+    layer: 2,
+    created_at: now.toISOString(),
+    last_recalled: now.toISOString(),
+    strength: MEMORY_STRENGTH_INITIAL,
+    ef: SM2_EF_INITIAL,
+    recall_count: 0,
+    interval_days: 1,
+    retention: 1.0,
+    next_review: new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(),
+  };
+
+  const updated = [...memories, newEntry];
+
+  // 上限を超えた場合、保持率最低のものを削除
+  if (updated.length > MAX_MEMORIES_PER_USER) {
+    updated.sort((a, b) => (b.retention || 0) - (a.retention || 0));
+    return updated.slice(0, MAX_MEMORIES_PER_USER);
+  }
+
+  return updated;
+}
+
+// MEMORY_KV操作（MEMORY_KV未設定時はエピソード記憶をスキップ）
+async function loadEpisodicMemory(userId, env) {
+  if (env && env.MEMORY_KV) {
+    try {
+      const raw = await env.MEMORY_KV.get(`memory:${userId}`);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      console.warn("MEMORY_KV read error:", e.message);
+    }
+  }
+  return [];
+}
+
+async function saveEpisodicMemory(userId, memories, env) {
+  if (env && env.MEMORY_KV) {
+    try {
+      await env.MEMORY_KV.put(
+        `memory:${userId}`,
+        JSON.stringify(memories),
+        { expirationTtl: 7776000 } // 90日TTL
+      );
+    } catch (e) {
+      console.warn("MEMORY_KV write error:", e.message);
+    }
+  }
+}
+
 // ─── セッション KV 操作（フォールバック: in-memory）───
 // NOTE: SESSION_KV未設定時はin-memoryで動作（Workerインスタンス揮発）
 const emotionSessionStore = new Map();
@@ -354,6 +560,7 @@ async function saveSession(userId, sessionData, env) {
 async function askGemini(userMessage, apiKey, userId = "default", env = null) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
   const phase = getCurrentPhase();
+  const now   = new Date();
 
   // ── Layer1: セッション読み込み（会話履歴 + 感情状態） ──
   const session = (await loadSession(userId, env)) || {
@@ -362,11 +569,48 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
     history: [],
   };
 
+  // ── Layer2: エピソード記憶の読み込みと忘却適用 ──
+  const rawMemories = await loadEpisodicMemory(userId, env);
+  const memories    = decayMemories(rawMemories, now);
+
   // ── 感情状態の計算 ──
   const newState       = computeEmotionState(userMessage, session.state);
   const emotionSection = buildEmotionPromptSection(
     newState, session.state, session.lastResponseEnding
   );
+
+  // ── Layer3: 人格レイヤー読み込み（GitHub Raw JSONから10分キャッシュ） ──
+  let personalitySection = "";
+  try {
+    const personality = await fetchPersonalityLayer(env);
+    if (personality) {
+      const parts = [];
+      if (personality.catchphrases?.length)
+        parts.push(`口癖: ${personality.catchphrases.slice(0, 3).join(" / ")}`);
+      if (personality.quirks?.length)
+        parts.push(`特徴的な癖: ${personality.quirks.slice(0, 3).join(" / ")}`);
+      if (personality.expertise_details?.length)
+        parts.push(`得意分野の詳細: ${personality.expertise_details.slice(0, 2).join("、")}`);
+      if (personality.favorite_topics?.length)
+        parts.push(`好きな話題: ${personality.favorite_topics.slice(0, 3).join("、")}`);
+      if (parts.length) {
+        personalitySection = `\n\n## 人格詳細（personality_layer）\n${parts.join("\n")}`;
+      }
+    }
+  } catch (e) {
+    console.warn("personality_layer fetch failed (non-critical):", e.message);
+  }
+
+  // ── Layer2: 関連エピソード記憶をBM25検索しプロンプトに組み込む ──
+  let memorySection = "";
+  const queryTerms = tokenize(userMessage);
+  const relevantEpisodes = searchEpisodicMemory(queryTerms, memories, 2);
+  if (relevantEpisodes.length > 0) {
+    const lines = relevantEpisodes.map(ep =>
+      `- ${ep.content.slice(0, 100)} (保持率:${((ep.retention || 0) * 100).toFixed(0)}%)`
+    ).join("\n");
+    memorySection = `\n\n## あなたの記憶（このユーザーとの過去の会話）\n${lines}\n_（自然な流れなら話題を絡めてよい）_`;
+  }
 
   // ── RAG: 知識ベース BM25 検索 ──
   let ragSection = "";
@@ -383,8 +627,9 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
     console.warn("RAG fetch failed (non-critical):", e.message);
   }
 
-  // ── システムプロンプト構築（Base + 感情 + RAG） ──
-  const fullSystemPrompt = buildSystemPrompt(phase) + emotionSection + ragSection;
+  // ── システムプロンプト構築（Base + 人格 + 感情 + Layer2記憶 + RAG） ──
+  const fullSystemPrompt =
+    buildSystemPrompt(phase) + personalitySection + emotionSection + memorySection + ragSection;
 
   // ── Layer1: 会話履歴を Gemini contents に組み込む ──
   const history  = session.history || [];
@@ -425,17 +670,20 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
 
     const responseText = text.trim().slice(0, 500);
 
-    // ── セッション保存（会話履歴 + 感情状態 + 語尾）──
-    await saveSession(userId, {
-      state: newState,
-      lastResponseEnding: extractLastEnding(responseText),
-      history: [
-        ...history.slice(-8),  // 最大4往復を保持
-        { role: "user",  parts: [{ text: userMessage }] },
-        { role: "model", parts: [{ text: responseText }] },
-      ],
-      updated_at: new Date().toISOString(),
-    }, env);
+    // ── Layer1セッション保存 + Layer2エピソード記憶更新を並列実行 ──
+    await Promise.all([
+      saveSession(userId, {
+        state: newState,
+        lastResponseEnding: extractLastEnding(responseText),
+        history: [
+          ...history.slice(-8),  // 最大4往復を保持
+          { role: "user",  parts: [{ text: userMessage }] },
+          { role: "model", parts: [{ text: responseText }] },
+        ],
+        updated_at: now.toISOString(),
+      }, env),
+      saveEpisodicMemory(userId, upsertEpisode(memories, userMessage, responseText, now), env),
+    ]);
 
     return responseText;
 
@@ -474,13 +722,18 @@ async function fetchLatestNews() {
   const FEEDS = [
     { url: "https://zenn.dev/topics/claudecode/feed",                 name: "Zenn Claude Code", emoji: "🔧" },
     { url: "https://zenn.dev/topics/vibecoding/feed",                 name: "Zenn VibeCoding",  emoji: "🎵" },
+    { url: "https://zenn.dev/topics/mcp/feed",                        name: "Zenn MCP",         emoji: "🔌" },
+    { url: "https://zenn.dev/topics/claude/feed",                     name: "Zenn Claude",      emoji: "🤖" },
+    { url: "https://qiita.com/tags/claudecode/feed",                  name: "Qiita Claude Code", emoji: "📝" },
+    { url: "https://qiita.com/tags/vibecoding/feed",                  name: "Qiita VibeCoding", emoji: "🎶" },
     { url: "https://github.com/anthropics/claude-code/releases.atom", name: "GitHub Releases",  emoji: "🚀" },
+    { url: "https://www.anthropic.com/news/rss.xml",                  name: "Anthropic News",   emoji: "📰" },
   ];
 
   const articles = [];
   for (const feed of FEEDS) {
     try {
-      const resp = await fetch(feed.url, { headers: { "User-Agent": "NewsAI-VibeCording/3.0" } });
+      const resp = await fetch(feed.url, { headers: { "User-Agent": "NewsAI-VibeCording/4.0" } });
       if (!resp.ok) { console.warn(`Feed failed (${resp.status}): ${feed.name}`); continue; }
 
       const xml    = await resp.text();
@@ -557,9 +810,10 @@ async function handleAskCommand(question, env, userId = "default") {
 }
 
 function handleStatusCommand(env) {
-  const now      = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
-  const kvStatus  = (env && env.SESSION_KV) ? "✅ KV（永続）" : "⚠️ in-memory（揮発）";
-  const ragStatus = (env && env.GITHUB_OWNER && env.GITHUB_OWNER !== "REPLACE_WITH_YOUR_GITHUB_USERNAME")
+  const now        = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+  const kvStatus   = (env && env.SESSION_KV)   ? "✅ KV（永続）" : "⚠️ in-memory（揮発）";
+  const memStatus  = (env && env.MEMORY_KV)    ? "✅ KV（永続・90d）" : "⚠️ 未設定（MEMORY_KV未設定）";
+  const ragStatus  = (env && env.GITHUB_OWNER && env.GITHUB_OWNER !== "REPLACE_WITH_YOUR_GITHUB_USERNAME")
     ? "✅ GitHub RAG 有効"
     : "⚠️ 未設定（GITHUB_OWNER未設定）";
 
@@ -577,9 +831,9 @@ function handleStatusCommand(env) {
         `🔍 知識検索: ${ragStatus}`,
         "",
         "**記憶システム:**",
-        "  Layer1 会話履歴 (3往復): ✅ 実装済み",
-        "  Layer2 忘却曲線エンジン: 🔶 設計完了・実装予定",
-        "  Layer3 人格統合知識:    🔶 設計完了・実装予定",
+        "  Layer1 会話履歴 (3往復):  ✅ 実装済み",
+        `  Layer2 忘却曲線エンジン:  ✅ 実装済み (${memStatus})`,
+        "  Layer3 人格統合知識:      ✅ 実装済み (GitHub JSON)",
         "",
         "**コマンド:**",
         "`/news` `/ask <質問>` `/status`",

@@ -18,6 +18,30 @@ jobs:
       - name: "📥 Checkout"
         uses: actions/checkout@v4
 
+      - name: "🔐 Validate required secrets"
+        run: |
+          # 必須シークレットが設定されているか事前チェック
+          # 未設定の場合は明確なエラーメッセージを出して早期終了
+          missing=()
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
+            missing+=("CLOUDFLARE_API_TOKEN")
+          fi
+          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            missing+=("CLOUDFLARE_ACCOUNT_ID")
+          fi
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "❌ 以下のシークレットが未設定です:"
+            for s in "${missing[@]}"; do
+              echo "   - $s"
+            done
+            echo ""
+            echo "設定手順: GitHub リポジトリ → Settings → Secrets and variables → Actions"
+            echo "  CLOUDFLARE_API_TOKEN : Cloudflare Dashboard → My Profile → API Tokens → Create Token (Workers用)"
+            echo "  CLOUDFLARE_ACCOUNT_ID: Cloudflare Dashboard → Workers & Pages → Overview の右側"
+            exit 1
+          fi
+          echo "✅ 必須シークレットが確認できました"
+
       - name: "📦 Setup Node.js"
         uses: actions/setup-node@v4
         with:
@@ -29,4 +53,21 @@ jobs:
       - name: "🚀 Deploy to Cloudflare Workers"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler deploy
+
+      - name: "🚨 Notify Discord on failure"
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL not set, skipping notification"
+            exit 0
+          fi
+          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"username\": \"NewsAI Bot\",
+              \"content\": \"🚨 **Workerデプロイが失敗しました**\nワークフロー: \`${{ github.workflow }}\`\n実行ID: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n時刻: $(date '+%Y-%m-%d %H:%M JST')\"
+            }"

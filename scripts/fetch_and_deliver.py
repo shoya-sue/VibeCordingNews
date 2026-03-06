@@ -48,6 +48,11 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 CSV_FIELDNAMES = ["url", "title", "source", "delivered_at",
                    "static_relevance", "composite_score"]
 
+# Discord API 上限値（https://discord.com/developers/docs/resources/message）
+DISCORD_CONTENT_MAX = 2000
+DISCORD_EMBED_TITLE_MAX = 256
+DISCORD_EMBEDS_PER_MESSAGE = 10
+
 
 def load_config() -> dict:
     """設定ファイルを読み込む"""
@@ -432,8 +437,12 @@ def send_to_discord(articles: list[dict], config: dict):
 
     embeds = []
     for article in articles:
+        raw_title = f"{article['emoji']} {article['title']}"
+        # Discord embed title 上限を超える場合はトリム
+        if len(raw_title) > DISCORD_EMBED_TITLE_MAX:
+            raw_title = raw_title[:DISCORD_EMBED_TITLE_MAX - 1] + "…"
         embed = {
-            "title": f"{article['emoji']} {article['title']}",
+            "title": raw_title,
             "url": article["url"],
             "description": article.get("summary", ""),
             "color": config["discord"]["embed_color"],
@@ -454,10 +463,14 @@ def send_to_discord(articles: list[dict], config: dict):
         embeds.append(embed)
 
     suffix = random.choice(_COUNT_PHRASES).format(count=len(articles)) + random.choice(_DELIVERY_VERBS)
+    raw_content = f"{greeting} {suffix}"
+    # Discord content 上限を超える場合はトリム
+    if len(raw_content) > DISCORD_CONTENT_MAX:
+        raw_content = raw_content[:DISCORD_CONTENT_MAX - 1] + "…"
     payload = {
-        "content": f"{greeting} {suffix}",
+        "content": raw_content,
         "username": char_name,
-        "embeds": embeds[:10],  # Discord制限: 1メッセージ10embeds
+        "embeds": embeds[:DISCORD_EMBEDS_PER_MESSAGE],
     }
 
     avatar_url = character.get("avatar_url", "")

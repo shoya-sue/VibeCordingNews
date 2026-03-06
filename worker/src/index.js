@@ -32,6 +32,68 @@ const CHARACTER = {
   version: "4.0",
 };
 
+// ─── エラーメッセージパターン（状況別・ランダム選択） ───
+// Gemini APIが非200を返した場合（429/503等）
+const ERROR_MSGS_API = [
+  "うぅ…Geminiがちょっとお疲れみたいで…😢 しばらくしてからもう一度聞いてくれると嬉しいな！",
+  "あのね、今AIの頭がちょっとパンクしてるっぽくて…💦 少し待ってからまた話しかけてくれる？",
+  "ご、ごめんね！今Geminiが混んでるみたいで返事できなかったの…⏳ もう少し待ってみて！",
+  "えっとね…なんか今うまく繋がれなかったの🥺 時間おいてもう一度試してみてほしいな！",
+  "むむ…Geminiさんが今お休み中かも💤 少し待ってからまた話しかけてみてね！",
+  "わわっ、AIが疲れちゃったみたい！😵‍💫 しばらくしてから呼んでね〜！",
+  "ちょっと待って、なんかおかしいの…🤔 Geminiが返事してくれなかった。再試行してみてもらえる？",
+  "ご、ごめん！今ちょっとバタバタしてて…😅 もう少ししたら答えられると思う！",
+  "（うわぁ、タイミング悪っ！）Geminiさんが今忙しそうで…💦 少し待ってね！",
+  "あれ〜？なんか今AIの声が聞こえなかったの🔇 ちょっと間をおいてもう一度聞いてみて！",
+  "えっ…返事なかった！？Geminiさんどこ行ったの〜！😭 少し待ってからまた聞いてね！",
+  "ぽかん…なんか今つながれなかった💨 もう一回試してみてくれる？きっと今度は大丈夫！",
+];
+
+// ネットワーク接続自体が失敗した場合
+const ERROR_MSGS_NETWORK = [
+  "あれ、ネットワークがおかしくなっちゃった？📡 接続が切れちゃったみたい…もう一度試してみて！",
+  "うーん、なんか繋がらなかったの…💔 もう一回話しかけてみてくれると嬉しいな！",
+  "ちょっと待って！なんか電波が届かなかったみたいで😱 もう一度お願いしていい？",
+  "えっ！？繋がらなかった！？なんでーっ！😤 ちょっとしてからもう一度試してみてね！",
+  "ご、ごめんよ〜！なんかネット的なところでつまずいちゃって…🕳️ 再試行してみてね！",
+  "（あ、これ完全に通信エラーだ…）ごめんね、繋がれなかった！またすぐ話しかけてね！",
+  "むっ…電波が弱いのかな🌐 ちょっとしてからもう一度聞いてみて！",
+  "あわわっ！信号がロストしちゃったの📶 もう一回だけ試してくれる？",
+  "ネットワークってむずかしいよね…😔 今ちょっと繋がれなかったけど、また呼んでね！",
+  "えーっと、なんかぷつってなっちゃって💀 もう一度お願いしてもいい？",
+];
+
+// Gemini が空のレスポンスを返した場合
+const ERROR_MSGS_EMPTY = [
+  "あれれ…言葉が出てこなかったの🤯 もう一度聞いてくれる？今度はちゃんと答えるから！",
+  "うーん、なんか頭が真っ白になっちゃって…💭 もう一回聞いてもらえる？",
+  "えっ…なんも浮かんでこなかった！？😶 ごめん、もう一度お願い！",
+  "ぽかん…なんか頭の中が空っぽになっちゃったの🫥 再度聞いてみてくれると助かる！",
+  "あっ、言葉がフリーズしちゃったみたい🧊 もう一度話しかけてみて！",
+  "ん〜、今すごく難しい質問だったのかな？🤔 もう一回試してみてね！",
+  "（なんも出てこない！どうしよ！）えっと…ごめん、もう一度聞いてくれる？",
+  "むむ…思考がショートしちゃったっぽい⚡ 気を取り直してもう一回！",
+];
+
+// コマンドハンドラ全体でエラーが発生した場合
+const ERROR_MSGS_HANDLER = [
+  "あわわっ！なんか変なことが起きちゃった！😱 もう一度試してみてね！",
+  "ぎゃーっ！エラーが出ちゃった！😭 もう一回やってみてくれる？",
+  "え、えっと…なんかバグっちゃったみたい🐛 再試行してみてほしいな！",
+  "うわあ、なんか壊れちゃった感じがする！💥 もう一度だけ試してみて！",
+  "（やばい、エラーだ！）ごめんね！うまく動かなかった…もう一回呼んでね！",
+  "ちょ、ちょっと待って！なんか予期しないことが起きて…😰 再試行してみてね！",
+  "む、むむ…これは想定外だった💦 もう一度試してみてくれると助かる！",
+  "あっ！なんかカオスなことになっちゃった🌀 落ち着いてもう一回やってみよ！",
+  "えーっ！こんなことって起きるんだ！😲 ごめんね、もう一度お願いできる？",
+  "ひゃー！なんかぐちゃぐちゃになっちゃった！🫨 しばらくしてからまた話しかけてね！",
+];
+
+/** エラーメッセージをランダムに選ぶ */
+function pickError(msgs) {
+  return msgs[Math.floor(Math.random() * msgs.length)];
+}
+
 // ─── 配信フェーズ判定 ───
 function getCurrentPhase() {
   const jstHour = new Date(Date.now() + 9 * 3600 * 1000).getUTCHours();
@@ -698,7 +760,7 @@ async function saveSession(userId, sessionData, env) {
  * @param {object|null} env     Cloudflare Workers env（KV・vars含む）
  */
 async function askGemini(userMessage, apiKey, userId = "default", env = null) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite-001:generateContent?key=${apiKey}`;
   const phase = getCurrentPhase();
   const now   = new Date();
 
@@ -811,14 +873,14 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
     if (!resp.ok) {
       const errorText = await resp.text();
       console.error("Gemini API error:", resp.status, errorText);
-      return "ごめんね、今ちょっと調子悪いみたい...しばらくしてからまた聞いてね！";
+      return pickError(ERROR_MSGS_API);
     }
 
     const data = await resp.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
       console.error("Gemini returned empty response:", JSON.stringify(data));
-      return "あれれ、うまく言葉が出てこないの...もう一度聞いてくれる？";
+      return pickError(ERROR_MSGS_EMPTY);
     }
 
     const responseText = text.trim().slice(0, 500);
@@ -842,7 +904,7 @@ async function askGemini(userMessage, apiKey, userId = "default", env = null) {
 
   } catch (e) {
     console.error("Gemini fetch error:", e);
-    return "ネットワークエラーが起きちゃったの...ごめんね！";
+    return pickError(ERROR_MSGS_NETWORK);
   }
 }
 
@@ -1060,7 +1122,7 @@ export default {
         console.error("Command handler error:", e);
         return Response.json({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: { content: `😵 **${CHARACTER.name}**: あわわ、エラーが起きちゃった...もう一度試してみてね！` },
+          data: { content: `😵 **${CHARACTER.name}**: ${pickError(ERROR_MSGS_HANDLER)}` },
         });
       }
     }

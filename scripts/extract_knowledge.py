@@ -54,6 +54,8 @@ from pathlib import Path
 
 import requests
 
+from constants import JST
+
 # ─── Paths ───
 ROOT_DIR = Path(__file__).resolve().parent.parent
 CONFIG_PATH = ROOT_DIR / "config.json"
@@ -72,7 +74,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-JST = timezone(timedelta(hours=9))
 
 # ─── カテゴリ定義 ───
 CATEGORIES = [

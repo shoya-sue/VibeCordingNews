@@ -18,6 +18,7 @@ import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+from constants import JST
 from keyword_scorer import score_articles
 from dedup_filter import deduplicate
 from candidate_selector import select_and_summarize
@@ -43,7 +44,6 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 # ─── Constants ───
-JST = timezone(timedelta(hours=9))
 CSV_FIELDNAMES = ["url", "title", "source", "delivered_at",
                    "static_relevance", "composite_score"]
 
@@ -218,7 +218,7 @@ def fetch_feeds(config: dict) -> list[dict]:
 
 def get_current_phase() -> dict:
     """JSTの現在時刻から配信フェーズを判定"""
-    jst = datetime.now(timezone(timedelta(hours=9)))
+    jst = datetime.now(JST)
     h = jst.hour
     if 6 <= h <= 8:
         return {"name": "early_morning", "tension": [40, 60], "style": "寝起きモード。眠そう"}

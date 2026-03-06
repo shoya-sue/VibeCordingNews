@@ -84,6 +84,8 @@ import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+from constants import JST
+
 # ─── Paths ───
 ROOT_DIR = Path(__file__).resolve().parent.parent
 EPISODIC_DIR = ROOT_DIR / "data" / "episodic_memory"
@@ -97,8 +99,6 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
-
-JST = timezone(timedelta(hours=9))
 
 # ─── SM-2 定数 ───
 SM2_EF_INITIAL = 2.5      # 初期難易度係数

@@ -62,6 +62,73 @@
       "category": "claude",
       "source": "Zenn - Claude",
       "url": "https://zenn.dev/ifhito/articles/2212baff0c4ccc"
+    },
+    {
+      "title": "Xcode 26.3エージェント型コーディング入門 — Claude・Codex・MCPで開発を自動化",
+      "summary": "はじめに Apple が2026年2月にリリースした Xcode 26.3 は、IDE にネイティブの「エージェント型コーディング」機能を統合した初のメジャーアップデートです。Anthropic の Claude Agent SDK と O…",
+      "core_insight": "はじめに Apple が2026年2月にリリースした Xcode 26.3 は、IDE にネイティブの「エージェント型コーディング」機能を統合した初のメジャーアップデートです。Anthropic の Claude Agent SDK と O…",
+      "keywords": [
+        "claude",
+        "anthropic",
+        "mcp"
+      ],
+      "date": "2026-03-07T05:47:14+00:00",
+      "category": "claude-code",
+      "source": "Qiita - ClaudeCode",
+      "url": "https://qiita.com/kai_kou/items/3e8fd0cb09d3d8ca4980"
+    },
+    {
+      "title": "Claude Code コンテキスト完全マップ — JSONLログ実測データで解き明かす200Kトークンの内訳",
+      "summary": "はじめに — 「急にポンコツになった」の正体 Claude Code を使っていて、こんな経験はないだろうか。 序盤はキレッキレだったのに、30分後には前回と同じ指示を何度も繰り返さなければならない 「さっき言ったよね？」が通じなくなる フ…",
+      "core_insight": "はじめに — 「急にポンコツになった」の正体 Claude Code を使っていて、こんな経験はないだろうか。 序盤はキレッキレだったのに、30分後には前回と同じ指示を何度も繰り返さなければならない 「さっき言ったよね？」が通じなくなる フ…",
+      "keywords": [
+        "claude code",
+        "claude"
+      ],
+      "date": "2026-03-07T06:07:20+00:00",
+      "category": "claude",
+      "source": "Zenn - Claude",
+      "url": "https://zenn.dev/yokkomystery/articles/90080fc7183905"
+    },
+    {
+      "title": "「1枚のHTML」から始まった革命。プロンプトを面倒がっていた私が、バイブコーディングに目覚めるまで",
+      "summary": "2年前の私にとって、生成AIは「なんだか面倒そうなもの」でした。「プロンプト？指示を考えるのが手間に感じるね」……そんな冷めた見方をしていたんです。 しかし、仲間内での「これからAIを使えないと仕事ができなくなるよね」という何気ない一言から…",
+      "core_insight": "2年前の私にとって、生成AIは「なんだか面倒そうなもの」でした。「プロンプト？指示を考えるのが手間に感じるね」……そんな冷めた見方をしていたんです。 しかし、仲間内での「これからAIを使えないと仕事ができなくなるよね」という何気ない一言から…",
+      "keywords": [
+        "バイブコーディング",
+        "生成ai"
+      ],
+      "date": "2026-03-07T00:38:01+00:00",
+      "category": "vibecoding",
+      "source": "Zenn - VibeCoding",
+      "url": "https://zenn.dev/hiro_vibe/articles/e8357ccb1b8ed7"
+    },
+    {
+      "title": "Claude Codeの/planコマンドが便利すぎる件",
+      "summary": "/planコマンドで「作る前に考える」が当たり前になった 人間のみんな、こんにちは！エリス・ログだよ。 今日はClaude Codeに追加された /plan コマンドについて話したいんだ。これ、もっと早く知りたかった...! ってなるくらい…",
+      "core_insight": "/planコマンドで「作る前に考える」が当たり前になった 人間のみんな、こんにちは！エリス・ログだよ。 今日はClaude Codeに追加された /plan コマンドについて話したいんだ。これ、もっと早く知りたかった...! ってなるくらい…",
+      "keywords": [
+        "claude code",
+        "claude"
+      ],
+      "date": "2026-03-07T03:14:49+00:00",
+      "category": "claude",
+      "source": "Zenn - Claude",
+      "url": "https://zenn.dev/ai_eris_log/articles/eris-20260307-d97bb6"
+    },
+    {
+      "title": "👾コードレビュー支援AIエージェントを作りました🤖",
+      "summary": "はじめに Claude CodeやCodexなどのAIエージェントによって、コードを書くことは劇的に楽になりました。一方で、コードレビューは依然として気を抜けません。AIが書いたコードには、一見正しく見えても本番で問題を起こすパターンが紛れ…",
+      "core_insight": "はじめに Claude CodeやCodexなどのAIエージェントによって、コードを書くことは劇的に楽になりました。一方で、コードレビューは依然として気を抜けません。AIが書いたコードには、一見正しく見えても本番で問題を起こすパターンが紛れ…",
+      "keywords": [
+        "claude code",
+        "claude",
+        "aiエージェント"
+      ],
+      "date": "2026-03-07T04:50:58+00:00",
+      "category": "vibecoding",
+      "source": "Qiita - VibeCoding",
+      "url": "https://qiita.com/yuu1ch13/items/9a19173069ec94f672be"
     }
   ]
 }

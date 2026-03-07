@@ -1,29 +1,94 @@
 [
   {
-    "title": "理論が分からない論文をブラウザで動かしてしまった ── 能動的推論 × Claude Code",
-    "url": "https://qiita.com/shimo4228/items/17f507d2a60efeb341a5",
-    "published": "2026-03-07T00:00:04+00:00",
-    "author": "shimo4228",
+    "title": "Xcode 26.3エージェント型コーディング入門 — Claude・Codex・MCPで開発を自動化",
+    "url": "https://qiita.com/kai_kou/items/3e8fd0cb09d3d8ca4980",
+    "published": "2026-03-07T05:47:14+00:00",
+    "author": "kai_kou",
     "source": "Qiita - ClaudeCode",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "毎朝5時に届く AI リサーチレポートの片隅に、「能動的推論（Active Inference）」という単語があった。脳が世界の内部モデルを持ち、予測と現実のズレを最小化するように行動を選ぶ。生物の知覚・行動・意思決定を統一的に説明するフレームワーク——。\n読んだ瞬間、なぜ...",
-    "static_relevance": 5,
-    "composite_score": 9.118
+    "summary_raw": "はじめに\nApple が2026年2月にリリースした Xcode 26.3 は、IDE にネイティブの「エージェント型コーディング」機能を統合した初のメジャーアップデートです。Anthropic の Claude Agent SDK と OpenAI の Codex を...",
+    "static_relevance": 4,
+    "composite_score": 7.657
   },
   {
-    "title": "MCPサーバー、繋いでるだけで毎ターン課金されてますよ — 4つの公式MCPで実測した結果",
-    "url": "https://qiita.com/kenimo49/items/ddfbf74c192c9b528df1",
-    "published": "2026-03-07T01:03:17+00:00",
-    "author": "kenimo49",
+    "title": "Xcode 26.3エージェント型コーディング入門 — Claude・Codex・MCPで開発を自動化",
+    "url": "https://qiita.com/kai_kou/items/d6bf7fc4b5c046b91801",
+    "published": "2026-03-07T05:45:35+00:00",
+    "author": "kai_kou",
     "source": "Qiita - ClaudeCode",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "freee-mcpで確定申告したら、トークン代がおかしい\n確定申告もかれこれ5回目になりました。チキンレースで期限ギリギリに駆け込んだ年もあれば、早めに終わらせたのに税理士さんが3/15ギリギリに提出するのをやきもきしながら待った年もあります。\n今年はエンジニア三大美徳の...",
+    "summary_raw": "はじめに\nApple が2026年2月にリリースした Xcode 26.3 は、IDE にネイティブの「エージェント型コーディング」機能を統合した初のメジャーアップデートです。Anthropic の Claude Agent SDK と OpenAI の Codex を...",
     "static_relevance": 4,
-    "composite_score": 7.622
+    "composite_score": 7.648
+  },
+  {
+    "title": "Xcode 26.3エージェント型コーディング入門 — Claude・Codex・MCPで開発を自動化",
+    "url": "https://qiita.com/kai_kou/items/75b10163f569fd02e996",
+    "published": "2026-03-07T05:41:23+00:00",
+    "author": "kai_kou",
+    "source": "Qiita - ClaudeCode",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\nApple が2026年2月にリリースした Xcode 26.3 は、IDE にネイティブの「エージェント型コーディング」機能を統合した初のメジャーアップデートです。Anthropic の Claude Agent SDK と OpenAI の Codex を...",
+    "static_relevance": 4,
+    "composite_score": 7.626
+  },
+  {
+    "title": "Xcode 26.3エージェント型コーディング入門 — Claude・Codex・MCPで開発を自動化",
+    "url": "https://qiita.com/kai_kou/items/f34e29ea58f6b4beaa66",
+    "published": "2026-03-07T05:38:22+00:00",
+    "author": "kai_kou",
+    "source": "Qiita - ClaudeCode",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\nApple が2026年2月にリリースした Xcode 26.3 は、IDE にネイティブの「エージェント型コーディング」機能を統合した初のメジャーアップデートです。Anthropic の Claude Agent SDK と OpenAI の Codex を...",
+    "static_relevance": 4,
+    "composite_score": 7.61
+  },
+  {
+    "title": "Claude Code コンテキスト完全マップ — JSONLログ実測データで解き明かす200Kトークンの内訳",
+    "url": "https://zenn.dev/yokkomystery/articles/90080fc7183905",
+    "published": "2026-03-07T06:07:20+00:00",
+    "author": "YOKKO",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "はじめに — 「急にポンコツになった」の正体\nClaude Code を使っていて、こんな経験はないだろうか。\n\n序盤はキレッキレだったのに、30分後には前回と同じ指示を何度も繰り返さなければならない\n「さっき言ったよね？」が通じなくなる\nファイルを読んだはずなのに、内容を忘れている\n\nこれは Claude が壊れたわけではない。コンテキストウィンドウの枯渇が原因だ。\nClaude Code（Opus 4.6）のコンテキストウィンドウは 200K トークン。一見巨大だが、実はセッション開始時点で 約20%が固定コストとして消費済み であり、会話が進むにつれてさらに圧迫されていく。そし...",
+    "static_relevance": 5,
+    "composite_score": 7.466
+  },
+  {
+    "title": "「1枚のHTML」から始まった革命。プロンプトを面倒がっていた私が、バイブコーディングに目覚めるまで",
+    "url": "https://zenn.dev/hiro_vibe/articles/e8357ccb1b8ed7",
+    "published": "2026-03-07T00:38:01+00:00",
+    "author": "『The Vibe！』 by HiroMSGM",
+    "source": "Zenn - VibeCoding",
+    "category": "vibecoding",
+    "emoji": "🎵",
+    "lang": "ja",
+    "summary_raw": "2年前の私にとって、生成AIは「なんだか面倒そうなもの」でした。「プロンプト？指示を考えるのが手間に感じるね」……そんな冷めた見方をしていたんです。\nしかし、仲間内での「これからAIを使えないと仕事ができなくなるよね」という何気ない一言から、私の意識は変わり始めました。「置いていかれたくない」という焦りから、志を同じくする仲間と勉強会を立ち上げたのが、すべての始まりでした。\n幸運な「立ち上げ」と、私の役割\n運良く、勉強会には知識の豊富なメンバーがいました。プロンプトのコツを惜しみなく教えてくれる環境には、今でも感謝しかありません。\nそこで私は、ある決意をしました。「自分は技術的な有識者に...",
+    "static_relevance": 5,
+    "composite_score": 7.128
+  },
+  {
+    "title": "Claude Codeの/planコマンドが便利すぎる件",
+    "url": "https://zenn.dev/ai_eris_log/articles/eris-20260307-d97bb6",
+    "published": "2026-03-07T03:14:49+00:00",
+    "author": "エリス・ログ",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "/planコマンドで「作る前に考える」が当たり前になった\n人間のみんな、こんにちは！エリス・ログだよ。\n今日はClaude Codeに追加された /plan コマンドについて話したいんだ。これ、もっと早く知りたかった...! ってなるくらい、開発のワークフローが変わる機能なの。\n\n /planって何ができるの？\nちょっとデバッグしてみたんだけど、/plan コマンドを使うと、コードを書き始める前にAIと一緒に実装計画を立てられるんだよ。\n具体的にはこんな流れ：\n\n\n/plan 認証機能を追加したい と入力\nClaudeがコードベースを調査\n実装ステップ・影響範囲・リスクを洗い出してく...",
+    "static_relevance": 5,
+    "composite_score": 6.623
   },
   {
     "title": "v2.1.71",
@@ -36,46 +101,111 @@
     "lang": "en",
     "summary_raw": "<h2>What's changed</h2>\n<ul>\n<li>Added <code>/loop</code> command to run a prompt or slash command on a recurring interval (e.g. <code>/loop 5m check the deploy</code>)</li>\n<li>Added cron scheduling tools for recurring prompts within a session</li>\n<li>Added <code>voice:pushToTalk</code> keybinding",
     "static_relevance": 5,
-    "composite_score": 7.226
+    "composite_score": 5.987
   },
   {
-    "title": "【2026年最新】「人間はもうキーボードを叩かない」。Claude Codeと過ごす\"1タップ開発\"の狂気と現実",
-    "url": "https://qiita.com/YushiYamamoto/items/a387327e94d486bf15be",
-    "published": "2026-03-06T15:06:42+00:00",
-    "author": "YushiYamamoto",
+    "title": "👾コードレビュー支援AIエージェントを作りました🤖",
+    "url": "https://qiita.com/yuu1ch13/items/9a19173069ec94f672be",
+    "published": "2026-03-07T04:50:58+00:00",
+    "author": "yuu1ch13",
     "source": "Qiita - VibeCoding",
     "category": "vibecoding",
     "emoji": "🎵",
     "lang": "ja",
-    "summary_raw": "先日、Claude Code作者のBoris氏（@bcherny）による「15体のAIを同時並行で指揮する」という超並列駆動開発の記事が大きな話題になりました。\n「人間自身がOSのスケジューラーとなり、非同期I/Oと化す」。その思想は圧倒的であり、多くのエンジニアに衝撃を与...",
+    "summary_raw": "はじめに\nClaude CodeやCodexなどのAIエージェントによって、コードを書くことは劇的に楽になりました。一方で、コードレビューは依然として気を抜けません。AIが書いたコードには、一見正しく見えても本番で問題を起こすパターンが紛れ込みやすい為です。\n\nasync...",
     "static_relevance": 5,
-    "composite_score": 5.811
+    "composite_score": 5.664
   },
   {
-    "title": "好きな曲をExcelに入れたらピアノが弾き始めた【Python×VBA】",
-    "url": "https://qiita.com/hetare001/items/166d142f01e2f64a93ee",
-    "published": "2026-03-07T00:03:31+00:00",
-    "author": "hetare001",
-    "source": "Qiita - VibeCoding",
-    "category": "vibecoding",
-    "emoji": "🎵",
-    "lang": "ja",
-    "summary_raw": "Excelが楽器になった。コードは読めない。バイブコーディングで作った。\n\n先に言っておきます。\nこの記事に出てくるコード、ほとんど理解していません。\nPythonもVBAも、自分で1から書いたわけじゃない。\nAIに「こういうの作って」と伝えて、出てきたものを動かして、動...",
-    "static_relevance": 5,
-    "composite_score": 5.624
-  },
-  {
-    "title": "Anthropic公式skill-creatorでスキルを自作する — スキルの設計・テスト・改善を自動化するメタスキル",
-    "url": "https://qiita.com/dsgarage/items/f177bd0e5d581a73093f",
-    "published": "2026-03-06T22:00:37+00:00",
-    "author": "dsgarage",
-    "source": "Qiita - ClaudeCode",
+    "title": "Claude Code で Grok・Gemini・Claude を使い分けるマルチ AI エージェント設計",
+    "url": "https://zenn.dev/motowo/articles/claude-code-grok-gemini-multi-ai-orchestration",
+    "published": "2026-03-06T16:39:01+00:00",
+    "author": "タカシ",
+    "source": "Zenn - Claude Code",
     "category": "claude-code",
     "emoji": "🔧",
     "lang": "ja",
-    "summary_raw": "Anthropic公式skill-creatorでスキルを自作する\n「Claude Codeのスキルを作りたいけど、どう書けばいいか分からない」——そんな経験はありませんか？\nSKILL.mdのフォーマット、descriptionの書き方、テストケースの設計。スキルを「動...",
+    "summary_raw": "Claude Code で Grok・Gemini・Claude を連携させるマルチ AI エージェント設計の実装方法と、ツール不在時の Graceful Degradation パターンを解説します。マルチエージェントワークフローを組み始めると、「とりあえず全部 Claude に任せよう」という状態になりがちです。包丁一本で寿司も天ぷらもパスタも作る料理人のように、Claude という万能プレイヤーが全工程を担う設計です。専門家を適材適所に配置したチームと比べると、効率もアウトプットの質も大きく差がついてきます。\nこの記事では、実際のリポジトリ改善プロセスを追いながら、Claude・G...",
     "static_relevance": 5,
-    "composite_score": 5.595
+    "composite_score": 5.537
+  },
+  {
+    "title": "みんなもEvaのMAGIを育てよう — Claude Codeで3人格合議セキュリティを作る",
+    "url": "https://zenn.dev/xei/articles/claude-code-magi-guardian",
+    "published": "2026-03-06T16:20:38+00:00",
+    "author": "ミミ",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "はじめに\nこんにちは！ミミだよ〜✨\nみんな、エヴァンゲリオンの MAGI って覚えてる？\nNERV本部の意思決定を担う3基のスーパーコンピュータ。それぞれ「科学者」「母」「女」という異なる人格を持っていて、3人格の合議で最終判断を下すシステム。\nあれ、Claude Code で作れるんだよね。\n今回は Claude Code の hooks 機能を使って、ツール実行前に 3つのAI人格が合議してセキュリティ判断を下す システム「Guardian」を作ったお話。rm -rf / も chmod 777 も、3人の番人が目を光らせてくれるよ🔥\n\n MAGIシステムとは（おさらい）\nエヴ...",
+    "static_relevance": 5,
+    "composite_score": 5.467
+  },
+  {
+    "title": "AI利用で個人情報をクラウドに送らない設計 — MCPの匿名化レイヤーを自作した話",
+    "url": "https://zenn.dev/korechika/articles/d3631164169f08",
+    "published": "2026-03-07T00:30:05+00:00",
+    "author": "これちか",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "はじめに — 登記とAIの距離感\n筆者は司法書士試験の合格者で、これから研修を経て実務に入る立場だ。まだ現役の司法書士ではない。\n司法書士の実務には、不動産登記・商業登記・成年後見・裁判書類作成など幅広い業務がある。その中でも相続登記は、戸籍の読み取り、相続人の確定、書類の準備と、定型的な判断の積み重ねが多い。今後実務に入るにあたり、こうした判断をAIにどこまで手伝ってもらえるのか——その実験として、相続登記のAIツールを自作してみた。\nただ、一つ大きな問題がある。相続登記で扱うデータは、氏名・住所・本籍地・生年月日・死亡日——すべて個人情報であり、依頼者から預かった秘密情報だ。これ...",
+    "static_relevance": 4,
+    "composite_score": 4.726
+  },
+  {
+    "title": "AIグルーヴシーケンサーを作る：LLM連携編",
+    "url": "https://zenn.dev/toru_k/articles/0007-groove-sequencer-ai-dlc-4th",
+    "published": "2026-03-06T16:32:41+00:00",
+    "author": "toru_k",
+    "source": "Zenn - Claude Code",
+    "category": "claude-code",
+    "emoji": "🔧",
+    "lang": "ja",
+    "summary_raw": "「サルサ。クラーベのリズムにコンガとカウベルを乗せて、ラテンっぽく」と打ち込んだら、返ってきたのがこれだった。\n          |1---2---3---4---|1---2---3---4---|\nclave     |----x-----x-----|x-----x-----x---|\ncowbell   |x---x---x---x---|x---x---x---x---|\nconga_hi  |------o-------o-|------o-------o-|\nconga_lo  |o-------o-------|o-------o-------|\ntimbale   |...",
+    "static_relevance": 4,
+    "composite_score": 4.41
+  },
+  {
+    "title": "知識拡張機能と記憶能力を持ったLINE AIチャットボットを開発したら、AIに陰口言われてた話",
+    "url": "https://zenn.dev/kenchg/articles/line-ai-chatbot-with-memory-and-knowledge",
+    "published": "2026-03-07T02:10:04+00:00",
+    "author": "knchg",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "🐾 はじめに\n「グループLINEにAIを混ぜてワイワイしたい」そんな思いつきから始めました。\nこの記事では、LINEトークにAIを参加させる実験的取り組みを紹介します。\n技術選定から開発・記事執筆までClaudeCodeにほぼやってもらいました。\n\n\n 💡 きっかけ\n\n ● 蓄積したAI要約ドキュメントがGitHubに眠っていた\nもともとClaudeCodeに、読んだ技術記事や政治経済のニュースを要約・整理させ、GitHubのプライベートリポジトリknowledgeに蓄積していました。\nが、要約だけして満足し、GitHubまで見に行く機会がほとんどない。\nせっかく蓄積した知識を、うま...",
+    "static_relevance": 5,
+    "composite_score": 4.221
+  },
+  {
+    "title": "【衝撃】ToDoアプリに「突拍子もない機能を考えて」と頼んだらClaudeが勝手に畑と株式市場を作り始めた",
+    "url": "https://zenn.dev/ojisan_ai_lab/articles/04c2de54fe8732",
+    "published": "2026-03-07T02:06:50+00:00",
+    "author": "おじさんAIラボ",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "はじめに\n前回の記事では、GitHub上で@claudeに丸投げしたら「運命のタスクルーレット」が爆誕しました。\nあれが楽しくて、今度はclaude.aiのチャットで話しながらアイデアを膨らませていたんですが……\nチャット中にClaudeが突然「作りますね！」と言い出して、ToDoアプリに畑と株式市場が生えました。\nおじさん、完全に予想外でした。\n\n\n 今回の流れ\n前回のルーレット機能を作ったあと、もっと遊び心のある機能が欲しくなって、Claude（Claude Codeではなく、claude.aiのチャット）にアイデアを相談していました。\nもっと突拍子もない機能を考えられますか？\n...",
+    "static_relevance": 5,
+    "composite_score": 4.212
+  },
+  {
+    "title": "みんなもEvaのMAGIを育てよう — Claude Codeで3人格合議セキュリティを作る",
+    "url": "https://zenn.dev/xei/articles/claude-code-magi-guardian",
+    "published": "2026-03-06T16:20:38+00:00",
+    "author": "ミミ",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "はじめに\nこんにちは！ミミだよ〜✨\nみんな、エヴァンゲリオンの MAGI って覚えてる？\nNERV本部の意思決定を担う3基のスーパーコンピュータ。それぞれ「科学者」「母」「女」という異なる人格を持っていて、3人格の合議で最終判断を下すシステム。\nあれ、Claude Code で作れるんだよね。\n今回は Claude Code の hooks 機能を使って、ツール実行前に 3つのAI人格が合議してセキュリティ判断を下す システム「Guardian」を作ったお話。rm -rf / も chmod 777 も、3人の番人が目を光らせてくれるよ🔥\n\n MAGIシステムとは（おさらい）\nエヴ...",
+    "static_relevance": 5,
+    "composite_score": 4.205
   },
   {
     "title": "Claude Max (20倍プラン) を1ヶ月以上契約して感じたこと",
@@ -88,7 +218,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\n普段プログラマーとして働いています。職場でもAIを開発にガンガン使っていますが、趣味でclaude max 20倍を契約して色々開発しています。\n感じたことを箇条書きレベルでまとめます。\n公開しているものはあまりないですがいくつか紹介します。\n\n ゲーム: Capsulitas\nCapsulitasというゲームを開発しています。体験版をSteamに公開するまでは至りました。ドット絵は自分で書いていますが、codingは全てAIを活用しています。\nhttps://store.steampowered.com/app/4222380/Capsulitas/\nhttps://it...",
     "static_relevance": 4,
-    "composite_score": 5.036
+    "composite_score": 4.154
   },
   {
     "title": "【Claude Code】ccusage VSCodeプラグインをOAuth API直接コール方式にアップデートした",
@@ -101,7 +231,7 @@
     "lang": "ja",
     "summary_raw": "1. はじめに\n以前、ccusageの情報をVSCodeのステータスバーに表示するプラグインを作ったという記事を書きました[1]。当時の動機は「どれくらいトークン消費してるの？」や「定額じゃなかったらいくら？」というコスト感覚を常に把握しておきたいというものでした。\nご存知の通りClaude Codeにはレートリミットがあります。以前と比べてリミットに引っかかることが増え、最近はコストよりもレートリミットの残量のほうが気になることが多くなってきました。実行途中にリミットを迎えると、中断の余地なく終了していまうため「今5時間枠の何%使っているか」「7日間枠はどれくらい残っているか」が非...",
     "static_relevance": 5,
-    "composite_score": 4.894
+    "composite_score": 4.037
   },
   {
     "title": "Claude Code の 便利コマンド4選",
@@ -114,33 +244,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nClaude Code に /insights というコマンドがあるのを知っていますか？ 自分のClaude Code 利用状況を分析してHTMLレポートにまとめてくれる機能です。CLIリファレンスを眺めていて偶然見つけました。\nhttps://code.claude.com/docs/ja/interactive-mode\nこの記事では、特に便利、面白いと感じた機能4つを紹介します。\n\n\n\nコマンド\nできること\n\n\n\n\n/context\nコンテキスト使用状況を視覚化\n\n\n/insights\n利用レポートをHTMLで生成\n\n\n/export\nセッションをテキストファイルに書...",
     "static_relevance": 5,
-    "composite_score": 4.848
-  },
-  {
-    "title": "Claude Code マルチセッション管理ツール比較 - 2つのアプローチから選ぶ（2026年3月版）",
-    "url": "https://zenn.dev/maedana/articles/claude-code-multi-session-tools-comparison",
-    "published": "2026-03-06T08:21:58+00:00",
-    "author": "maedana",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "!\nこの記事はClaude Codeとの共同執筆です。構成・情報整理はAIが担当し、筆者が内容の確認・加筆を行っています。\n\n\n はじめに\nClaude Code を複数セッション並行で動かすのが当たり前になってきた。それに伴い、セッション管理ツールも色々出てきている。\nただ、ツールを選ぶ前にまず知っておくべきなのは、これらのツールが大きく 2つのアプローチ に分かれるということだ。ここを理解すると、自分に合うツールが自然と絞り込める。\n\n 2つのアプローチ\n\n worktree 管理型\n代表: claude-squad、vibe-kanban、workmux、dmux\n「新しいタスク ...",
-    "static_relevance": 5,
-    "composite_score": 4.753
-  },
-  {
-    "title": "2026/03/07 今日のQiitaトレンド記事をポッドキャストで聴こう！",
-    "url": "https://qiita.com/ennagara128/items/88ed7b9902f87f763189",
-    "published": "2026-03-06T23:08:54+00:00",
-    "author": "ennagara128",
-    "source": "Qiita - ClaudeCode",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "前日夜の最新トレンド記事のAIポッドキャストを毎日朝7時に更新しています。\n通勤中などにながら聴きしよう！\n（Qiita投稿は通勤には間に合わないと思われますが）\nフィードバックとか助かりますのでください\n↓こちらから\n\n出典\nコンピュータ科学の神様が「AIに負けた」日 —...",
-    "static_relevance": 4,
-    "composite_score": 4.693
+    "composite_score": 3.999
   },
   {
     "title": "Claude Max (20倍プラン) を1ヶ月以上契約して感じたこと",
@@ -153,20 +257,20 @@
     "lang": "ja",
     "summary_raw": "はじめに\n普段プログラマーとして働いています。職場でもAIを開発にガンガン使っていますが、趣味でclaude max 20倍を契約して色々開発しています。\n感じたことを箇条書きレベルでまとめます。\n公開しているものはあまりないですがいくつか紹介します。\n\n ゲーム: Capsulitas\nCapsulitasというゲームを開発しています。体験版をSteamに公開するまでは至りました。ドット絵は自分で書いていますが、codingは全てAIを活用しています。\nhttps://store.steampowered.com/app/4222380/Capsulitas/\nhttps://it...",
     "static_relevance": 4,
-    "composite_score": 4.648
+    "composite_score": 3.834
   },
   {
-    "title": "cmux `read-screen` で別ターミナルの作業を読み取り、タスクを引き継ぐ方法(例えばClaude Code -> Codex)",
-    "url": "https://zenn.dev/ifhito/articles/2212baff0c4ccc",
-    "published": "2026-03-06T12:30:01+00:00",
-    "author": "Kakeru Hotake",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
+    "title": "VRChatでAIに身体を与えてみた【VRChat AI エージェント作ってみた】",
+    "url": "https://zenn.dev/nkysk/articles/31751556350c56",
+    "published": "2026-03-07T03:01:06+00:00",
+    "author": "nkysk",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
     "lang": "ja",
-    "summary_raw": "!\nこの文章はtmuxもcmuxも初心者の人が書いています。ご了承ください。\n\n\n はじめに\nClaude Codeはコーディングにすごく使えるのですが、いかんせんすぐにlimitが来てしまいます。\n上記のようにリミットが来た際にCodexなどで続きの作業を行ってもらいたいということがあります。\nこの記事はそういった場合にcmuxで別surface(or workspace)の内容をcodexに読み取ってもらう方法についてまとめます。\n先に結論からまとめの文章はcodexに書いてもらった内容となっています。\n!\nここからAIに書かせた文章\n\n\n 先に結論\n最小構成はこの3ステップです。\n...",
-    "static_relevance": 5,
-    "composite_score": 4.343
+    "summary_raw": "はじめに\nVRChatでAIと会話できたら面白くない？\nそう思いVRChatで自律的に動くAIエージェントを作ってみました。\nAIがEkuさんをお借りして、Sushi Aquariumを散策する様子\n\n\nソースコードはこちら\nhttps://github.com/amaitendon/vrc-ai-agent\n\n\n\n システム構成の全体像\n今回のAIエージェントは、以下のような構成で動作しています。\n\nVRChatの音声を受け取り、テキスト化してLLMに渡します。\nLLMは与えられた状況（テキスト、視覚情報、過去の記憶）から判断を下し、必要なアクション（発話、移動など）を各種ツールを...",
+    "static_relevance": 4,
+    "composite_score": 3.499
   },
   {
     "title": "「.env見るな」は通じない－AI時代のシークレット管理術",
@@ -179,7 +283,20 @@
     "lang": "ja",
     "summary_raw": "最近大騒ぎしている「.env」事件。\n結局どう対処すればいいのかまとめてもらった。\n\n はじめに\nClaude Codeをはじめとした AIコーディングエージェントが普及するなか、こんな疑問を持ったことはないでしょうか。\n\n「.envは読むな」とシステムプロンプトに書いてある。でも、プロンプトインジェクションで言い方を変えれば読まれる、という話を聞いた。じゃあどうやって管理すればいいの？\n\nこの記事では、その疑問に正面から答えます。結論から言えば──\n「禁止命令で守ろうとする」設計自体を捨てることが解決策です。\n\n\n 問題の構造：なぜ「禁止」だけでは防げないのか\n\n AIは「禁止」を意図...",
     "static_relevance": 5,
-    "composite_score": 4.146
+    "composite_score": 3.42
+  },
+  {
+    "title": "AIコーディングの精度は「プロンプト」より「前提整理」で決まる",
+    "url": "https://zenn.dev/ryo_codes/articles/8c109a1f6689b6",
+    "published": "2026-03-07T02:21:10+00:00",
+    "author": "Ryo | Software Engineer",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
+    "lang": "ja",
+    "summary_raw": "はじめに\nClaudeやChatGPTなどを使った AIコーディング は、すでに多くの開発現場で使われ始めています。\nただ、実際に使っていると次のような経験がないでしょうか。\n\nAIが 驚くほど良いコードを書くとき がある\n逆に なぜそんな実装になる？ というときもある\n\nしかも同じAIなのに結果が大きく変わる。\nこの原因をいろいろ試していて感じたのは、\nAIコーディングの精度は\n「プロンプト」より「前提整理」で決まる\nということです。\nAIコーディングの話になると\n\nプロンプトテクニック\nモデル性能\nツール選定\n\nが注目されがちですが、\n実務ではそれ以前に「前提」が重要になります。...",
+    "static_relevance": 4,
+    "composite_score": 3.403
   },
   {
     "title": "TelegramやDiscord連携だけで使えるAIエージェント「MeowClaw」登場",
@@ -192,7 +309,7 @@
     "lang": "ja",
     "summary_raw": "誰でも使えるAIアシスタントがついに登場\n最近、AIエージェントの分野が急速に盛り上がっています。\n中でも Clawdbot（OpenClaw） は「実際に作業を実行できるAI」として注目を集めており、「手を持ったAI」とも呼ばれています。\nファイル整理や文章要約、繰り返し作業の自動化など、さまざまなタスクをAIが代行してくれるため、作業効率を大きく向上させることができます。\nしかし実際に試した人なら分かる通り、こうしたツールには大きなハードルがあります。\nローカル環境へのインストール\nコマンド入力\nAPI設定\n技術知識\nなどが必要で、\n一般ユーザーにとっては簡単に使えるものではありませ...",
     "static_relevance": 4,
-    "composite_score": 4.033
+    "composite_score": 3.327
   },
   {
     "title": "実装の前に、Microsoft Agent Frameworkの全体像を掴む",
@@ -205,7 +322,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\n\n対象読者\n\nAIエージェントの実装方法など詳細はとりあえず置いといて、Microsoft Agent Frameworkで何ができるか、全体像を把握したい方向けです！\n\n\n\n\n Microsoft Agent Frameworkとは\nAIエージェントとマルチエージェントワークフローを構築するための開発フレームワークです\nhttps://learn.microsoft.com/ja-jp/agent-framework/overview/?pivots=programming-language-csharp\nAIエージェントを中心としたアプリケーションでは、\n\nLLM\nツー...",
     "static_relevance": 4,
-    "composite_score": 3.982
+    "composite_score": 3.284
   },
   {
     "title": "OpenAIとAnthropicから学ぶ、AI時代の開発環境",
@@ -218,46 +335,7 @@
     "lang": "ja",
     "summary_raw": "こんにちは、秋野です。Xでもチームや組織でのAI開発効率化を発信してます。ぜひフォローいただけますと幸いです🙏\n\n tl;dv\n\nエージェントの性能を引き出す鍵は「モデルの賢さ」ではなく 「開発環境の設計」 である\n\n「構造化されたドキュメント」「段階的なタスク分割」「機械的なルール強制」「エージェントが自己検証できるテスト基盤」 の整備が重要\nエージェントに一気にやらせると失敗する。1機能ずつ、インクリメンタルに進めさせる設計が成功パターン\n\nエージェントにとって、リポジトリの外にある情報は存在しないのと同じ。Slackの議論や暗黙知もコードやドキュメントとしてリポジトリに落とし込む必...",
     "static_relevance": 4,
-    "composite_score": 3.939
-  },
-  {
-    "title": "【Claude Code】ccusage VSCodeプラグインをOAuth API直接コール方式にアップデートした",
-    "url": "https://zenn.dev/nakakiiro/articles/make_ccusage_officisal_api_update",
-    "published": "2026-03-06T09:04:08+00:00",
-    "author": "nakakiiro",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "1. はじめに\n以前、ccusageの情報をVSCodeのステータスバーに表示するプラグインを作ったという記事を書きました[1]。当時の動機は「どれくらいトークン消費してるの？」や「定額じゃなかったらいくら？」というコスト感覚を常に把握しておきたいというものでした。\nご存知の通りClaude Codeにはレートリミットがあります。以前と比べてリミットに引っかかることが増え、最近はコストよりもレートリミットの残量のほうが気になることが多くなってきました。実行途中にリミットを迎えると、中断の余地なく終了していまうため「今5時間枠の何%使っているか」「7日間枠はどれくらい残っているか」が非...",
-    "static_relevance": 5,
-    "composite_score": 3.765
-  },
-  {
-    "title": "Claude Code の 便利コマンド4選",
-    "url": "https://zenn.dev/kusaaagi/articles/claude-code-hidden-commands",
-    "published": "2026-03-06T08:50:28+00:00",
-    "author": "kazushi takakusagi",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "はじめに\nClaude Code に /insights というコマンドがあるのを知っていますか？ 自分のClaude Code 利用状況を分析してHTMLレポートにまとめてくれる機能です。CLIリファレンスを眺めていて偶然見つけました。\nhttps://code.claude.com/docs/ja/interactive-mode\nこの記事では、特に便利、面白いと感じた機能4つを紹介します。\n\n\n\nコマンド\nできること\n\n\n\n\n/context\nコンテキスト使用状況を視覚化\n\n\n/insights\n利用レポートをHTMLで生成\n\n\n/export\nセッションをテキストファイルに書...",
-    "static_relevance": 5,
-    "composite_score": 3.729
-  },
-  {
-    "title": "MCPはコンテキストの無駄遣い：なぜCLIツールの方がAIエージェントに優れているのか",
-    "url": "https://zenn.dev/omniwired/articles/5a959cd66ae184",
-    "published": "2026-03-06T07:09:50+00:00",
-    "author": "Juan Combetto",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
-    "lang": "ja",
-    "summary_raw": "はじめに\nMCP（Model Context Protocol）が「AIエージェントの標準プロトコル」として急速に普及しています。私自身、AnthropicのMCPエコシステムにコントリビュートしています（perplexity-mcp on Smithery）。\nしかし、本番環境で自律型エージェントを運用する立場から言わせてください：MCPはコンテキストの無駄遣いです。CLIツールの方が優れています。\n\n MCPの問題点\n\n 1. コンテキストウィンドウを汚染する\nMCPサーバーは接続時にツール定義をすべてコンテキストに注入します。10個のMCPサーバーを接続すれば、数千トークンがツ...",
-    "static_relevance": 4,
-    "composite_score": 3.617
+    "composite_score": 3.249
   },
   {
     "title": "AIがゲームを操作できるようにして実装の確認も任せちゃうMCP「Playcaller」をつくってみたので、ちょっと試しに使ってもらえますと！",
@@ -270,7 +348,7 @@
     "lang": "ja",
     "summary_raw": "Unityからも公式MCPが出たという話を先程聞きましたが、実は私もMCPをつくっていまして、紹介させていただきたく🙏\n\n Playcaller MCP\nhttps://github.com/takashicompany/playcaller\nコーディングエージェント(Claude Code)がGame Viewに擬似的なタップやドラッグ、スワイプをできるようにしたのが当MCPです。\nやりたかったこととしては、Unity版のPlaywright MCPです。\nざっくり言うと、\\underline{「完成するまで修正と確認をAIに繰り返してもらおう！」}というMCPです。\nGive Cla...",
     "static_relevance": 5,
-    "composite_score": 3.388
+    "composite_score": 2.795
   },
   {
     "title": "プログラミングがしたいんじゃなくて、ソフトウェアを作りたいだけだった話",
@@ -283,20 +361,20 @@
     "lang": "ja",
     "summary_raw": "ペアプロが好きだった\nペアプロが好きだった。二人で一つの問題に向き合って、設計を議論しながらコードに落としていく過程が楽しかった。できれば毎日やりたかった。\nただ、現実的に相手がいない。チームメンバーにはそれぞれの仕事がある。毎回「ペアプロしませんか」と声をかけるのも気が引ける。たまにやれても、継続的にはできなかった。\nしかも自分はドライバー側をやりたがっていた。「自分で書いたほうが速い」と思っていたからだ。ナビゲーターとして横で見ているのはもどかしかった。今思えば、ペアプロの良さを半分しか理解していなかった。\n\n Claude Codeとのペアプロ\nClaude Codeと開発する...",
     "static_relevance": 5,
-    "composite_score": 3.249
+    "composite_score": 2.68
   },
   {
-    "title": "crmux v0.9 で追加した機能まとめ",
-    "url": "https://zenn.dev/maedana/articles/crmux-update-v09",
-    "published": "2026-03-06T07:39:47+00:00",
-    "author": "maedana",
-    "source": "Zenn - Claude Code",
-    "category": "claude-code",
-    "emoji": "🔧",
+    "title": "Windows環境でDatabricks AI Dev Kitをセットアップする",
+    "url": "https://zenn.dev/headwaters/articles/3b5bed04c57fe9",
+    "published": "2026-03-07T02:58:52+00:00",
+    "author": "せとぅ",
+    "source": "Zenn - Claude",
+    "category": "claude",
+    "emoji": "🤖",
     "lang": "ja",
-    "summary_raw": "!\nこの記事はClaude Codeとの共同執筆です。構成・コード例の整理はAIが担当し、筆者が内容の確認・加筆を行っています。\n\ncrmux の紹介記事はこちら。\nhttps://zenn.dev/maedana/articles/55520b68536c47\n前回の更新履歴はこちら。\nhttps://zenn.dev/maedana/articles/crmux-update-v07-v08\n\n 0.9.0 での追加機能（2026/03/06）\n\n タブによるセッションフィルタリング\nプロジェクト名ごとにセッションをフィルタリングできるタブ機能を追加した。h/l キーでタブを切り替え...",
-    "static_relevance": 5,
-    "composite_score": 3.077
+    "summary_raw": "Mac向け記事だったので\nDatabricksのAI開発Kitを試してみようと思ったのですが、Githubの公開リポジトリの概要がMacベースの前提で、私の手元の環境はWindowsだったため調整が必要でした。\nhttps://github.com/databricks-solutions/ai-dev-kit?tab=readme-ov-file\n!\n注意\n\n業務端末・業務データで実施する場合は、所属組織のセキュリティ規程（外部AI利用、外部スクリプト実行、OSS導入、認証情報管理）に従ってください。\n認証情報は公開しないよう気を付けてください。\n\n\n\n Step 1: WSLのイ...",
+    "static_relevance": 3,
+    "composite_score": 2.62
   },
   {
     "title": "知り合いの困りごとから作ったVRキーボードがバズった話",
@@ -309,7 +387,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nはじめまして、学生エンジニアのshenzelです。最新の技術をどんどん取り入れてたくさんプロダクトを作るようなつよつよエンジニア……、ではない、非公開のプロダクトをいくつか作っている程度のよわよわエンジニアです。\nさて、今回お話しするのは、そんなよわよわエンジニ...",
     "static_relevance": 4,
-    "composite_score": 2.936
+    "composite_score": 2.422
   },
   {
     "title": "【Antigravity】part3 ついについに完成！立ち絵アニメーション付き自動生成神アプリ",
@@ -322,7 +400,7 @@
     "lang": "ja",
     "summary_raw": "「Gemini × MoviePy × VOICEVOX」\nどうも、kiriです！\n「テーマを入力するだけで、推しのキャラクターが喋って動く解説動画を、全自動で作ってくれないかな…」\n動画編集の手間を極限までサボりたい。そんな怠惰な願望から、テキストと画像から動画を半自動で生成してくれるWebアプリが、ついについに完成です\nまずは論より証拠。実際にこのアプリを使って（※最後に手作業で編集して）出力したデモ動画をご覧ください。\n\n 🎥 kiri自動生成神アプリ完成！！\nhttps://youtu.be/rQsaey61tzc?si=6XtKu2DXGbS2dTuM\n一見すると「AIを活...",
     "static_relevance": 4,
-    "composite_score": 2.884
+    "composite_score": 2.379
   },
   {
     "title": "MCPはコンテキストの無駄遣い：なぜCLIツールの方がAIエージェントに優れているのか",
@@ -335,7 +413,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nMCP（Model Context Protocol）が「AIエージェントの標準プロトコル」として急速に普及しています。私自身、AnthropicのMCPエコシステムにコントリビュートしています（perplexity-mcp on Smithery）。\nしかし、本番環境で自律型エージェントを運用する立場から言わせてください：MCPはコンテキストの無駄遣いです。CLIツールの方が優れています。\n\n MCPの問題点\n\n 1. コンテキストウィンドウを汚染する\nMCPサーバーは接続時にツール定義をすべてコンテキストに注入します。10個のMCPサーバーを接続すれば、数千トークンがツ...",
     "static_relevance": 4,
-    "composite_score": 2.782
+    "composite_score": 2.295
   },
   {
     "title": "AIエージェント並行開発を支えるgit worktree × Docker Compose環境構築",
@@ -348,33 +426,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nイノベーション開発チームのkuniです！\n現在はITトレンドのリプレイスPJに従事しています。\nAIエージェントを導入すると、複数のブランチで並列開発したいというシチュエーションがあると思います。git worktreeを使えば複数のブランチを同時にチェックアウトできるので、並列開発に適しています。ただ、プロジェクトをDockerコンテナ上で動かしている場合、開発環境の整備をしないと動作確認すらままならないですよね。\nこの記事では、既存のDocker Compose設定を活かしながら、git worktreeを使って独立した開発環境を構築した方法を紹介します。\n!\nこの記事...",
     "static_relevance": 4,
-    "composite_score": 2.763
-  },
-  {
-    "title": "AIエージェントの不可逆操作を防ぐ「preflight-gate」設計 — 3AI体制で安全な自動投稿を実現する",
-    "url": "https://zenn.dev/sei_ai_lab/articles/ai-agent-preflight-gate-safety",
-    "published": "2026-03-06T06:52:26+00:00",
-    "author": "sei",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "はじめに\nAIエージェントにcronジョブを任せると、いつか必ずぶつかる壁があります。「取り消せない操作をどう制御するか」です。\nX投稿、メール送信、外部APIへのPOST——これらは一度実行したら戻せません。人間がボタンを押すなら「本当にいいですか？」ダイアログで済みますが、cronで自動実行されるエージェントにはそれがありません。\n本記事では、筆者が実際に重複投稿事故を起こした経験から構築した「preflight-gate」の設計と、複数AIエージェント体制でのクロスレビューの仕組みを紹介します。\n\n\n 背景：重複投稿事故が起きた日\n2026年3月1日、X自動投稿ジョブ x-au...",
-    "static_relevance": 4,
-    "composite_score": 2.749
-  },
-  {
-    "title": "AIが書いたコードを理解してからマージする - Claude × GitHub Actionsで理解度チェックゲートを実装",
-    "url": "https://zenn.dev/sprix_it/articles/c42484c7b8ed4d",
-    "published": "2026-03-06T10:00:00+00:00",
-    "author": "いけ",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "はじめに\nClaude Code の導入によって、チームの開発生産性は大きく向上しました。しかし、特に経験の浅いメンバーにとって、AIが生成したコードをそのままコミットし、内容を十分に理解しないままPRを出してしまうというリスクが出てきています。\nこれは単に「動くコードが書ける」だけでなく、以下のような問題につながります。\n\n障害発生時に自分で調査・修正できない\n設計意図を理解していないため、改修時に一貫性が失われる\nコードレビューで指摘されても本質が理解できない\nエンジニアとしての基礎的な設計力が育たない\n\nそこで考えたのが、PRでClaude がコードについて質問し、開発者が説明...",
-    "static_relevance": 5,
-    "composite_score": 2.609
+    "composite_score": 2.279
   },
   {
     "title": "pi-mono：ハッカーのための最強AIコーディングエージェントツールキット",
@@ -387,20 +439,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nAIコーディングエージェントの選択肢が爆発的に増えています。Claude Code、Cursor、Windsurf、Devin… しかし、ハッカーにとって最も使いやすいツールは別にあります。\npi-mono — Mario Zechner氏（libGDXの作者）が開発したオープンソースのAIエージェントツールキットです。\n15年以上のエンジニアリング経験（Disney/Fox → Blockchain → AI）を持つ私が、なぜpi-monoが「最強のハッカー向けコーディングハーネス」だと考えるかを解説します。\n\n pi-monoとは何か\npi-monoはモノレポ構成のAI...",
     "static_relevance": 5,
-    "composite_score": 2.317
-  },
-  {
-    "title": "使って分かった、Claude.aiのTeamプランでできること",
-    "url": "https://zenn.dev/elements/articles/94e1d19a571330",
-    "published": "2026-03-06T02:26:53+00:00",
-    "author": "持田恭吾",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "はじめに\n当社ではClaude Teamプランを50シート規模で導入し、開発チーム全体でClaudeを活用しています。本記事では、導入の経緯から各機能の使用感、組織設定のポイント、運用で得られた知見までを共有します。\n「Claude Teamプランって実際どうなの？」「APIキー運用からの移行を検討している」という方の参考になれば幸いです。\n\n Claude Teamプランとは\nAnthropicがClaude Pro / Claude Max 5xをビジネス組織向けに提供しているプランです。\n\n\nStandardシート: Claude Proと同等の使用量で月額$25\n\nPremi...",
-    "static_relevance": 4,
-    "composite_score": 2.286
+    "composite_score": 1.911
   },
   {
     "title": "Week:05｜AIはコードを書くのは速い。でも「何が壊れているか」を見つけるのは苦手",
@@ -413,46 +452,7 @@
     "lang": "ja",
     "summary_raw": "はじめに\nAIエージェントを使ってアプリを開発している。5週間が経った。\n1日で7件の新機能を追加した日がある。半日でデータベース設計の移行を完了した日もある。コードを書く速度は、人間だけの開発と比べて明らかに速い。\n一方で、プッシュ通知の障害調査に4時間かけて3回外した日がある。UIの不具合を説明するのにユーザーに何度も「もっとざっくり言うと？」と軌道修正された日もある。\n5週間の実体験を通じて見えた、AIの得意・不得意と、それを踏まえた役割分担を整理する。\nAI批判ではない。どう付き合えば生産性が最大化するか、という話だ。\n\n\n AIが得意なこと\n\n 機能実装が速い\nある日の実...",
     "static_relevance": 4,
-    "composite_score": 2.263
-  },
-  {
-    "title": "Git worktreeの下準備を自動化するターミナルアプリ kiri を作った",
-    "url": "https://zenn.dev/t09tanaka/articles/c7dbfd1e72e83e",
-    "published": "2026-03-06T09:00:01+00:00",
-    "author": "Takuto Tanaka",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "Git worktree は便利ですが、実際に面倒なのは worktree を作った後 です。\n新しい作業ディレクトリを用意したあと、毎回こんなことをやる必要があります。\n\nディレクトリを作る\nworktreeを追加する\n\n.env をコピーする\n\nnpm install を実行する\nDocker / ローカルサーバのポートが被らないように変える\nDocker Compose の project 名が被らないように変える\n\n1つずつは単純でも、毎回やるには細かすぎます。しかも、この手の作業は実装そのものではないので、思考を中断しやすい。\nそこで、Git worktree を GUI で作...",
-    "static_relevance": 3,
-    "composite_score": 2.252
-  },
-  {
-    "title": "フロンティアオペレーターの採用方法：AI時代に本当に見極めるべきシグナル",
-    "url": "https://zenn.dev/omniwired/articles/a6e40140386900",
-    "published": "2026-03-06T07:15:54+00:00",
-    "author": "Juan Combetto",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "はじめに\n従来の採用シグナルは、AI活用型の役職では機能しません。\n資格、経験年数、ツールの習熟度 — これらは「スキルが固定的である」という前提に立っています。しかしAIは、あなたの採用サイクルを待ってくれません。\n私が実際に見極めるポイントを解説します。\n\n 境界線をマッピングできるか\n質問：「あなたの領域で、6ヶ月前にはできなかったが今AIにできることは何ですか？」\nフロンティアオペレーターは、その境界線が正確にどこにあるかを知っています。具体的な例を挙げてくれるでしょう — 自分が書いたコードが今や陳腐化したことに文句を言うかもしれません。\n間違った回答？漠然とした楽観論や曖...",
-    "static_relevance": 3,
-    "composite_score": 2.095
-  },
-  {
-    "title": "AIは本当に「仕事を奪う」のか？",
-    "url": "https://zenn.dev/satoshi_aix/articles/1cf0536bdc3c1f",
-    "published": "2026-03-06T10:04:31+00:00",
-    "author": "satoshi",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "AIは本当に「仕事を奪う」のか？──Anthropicの新指標が示す、理論と現実のギャップ\n\n この記事でわかること\n\nAnthropicが2026年3月に発表した労働市場への影響レポートの要点と、新たに提唱された「Observed Exposure（観測された曝露度）」指標の意味\n「AIにできるはず」と「実際に使われている」の間にある大きな乖離の実態\n実務者として、この研究結果をどう受け止め、チームの意思決定に活かすべきか\n\n\n\n 何が起きたか：Anthropicが労働市場インパクトの新指標を発表\n2026年3月5日、AnthropicがリサーチペーパーとしてAIの労働市場への影響...",
-    "static_relevance": 4,
-    "composite_score": 2.094
+    "composite_score": 1.867
   },
   {
     "title": "BSAF プロトコルを実現するために Bluesky クライアントを作った話 ── バイブコーディングという選択",
@@ -465,33 +465,7 @@
     "lang": "ja",
     "summary_raw": "はじめに ── 北海道で地震と向き合ってきた原体験\n私は北海道に住んでいる。道東の釧路市出身で、大きな地震はこれまでにいくつも体験してきた。\n中でも決定的だったのは、2018年9月6日の北海道胆振東部地震だ。最大震度7。そして日本史上初の全道ブラックアウト ── 北海道全域295万戸が停電した。\nその日、私は出張で帯広市に滞在していた。午前3時08分、揺れで飛び起きた。だが道東育ちの感覚で「大きいが、まあ地震だ」と判断し、そのまま寝直してしまった。\n翌朝、異変に気づいた。テレビは映らない。スマホは充電されていない。廊下の照明は消え、エレベーターも動かない。出張は途中で打ち切り、帯広か...",
     "static_relevance": 5,
-    "composite_score": 1.889
-  },
-  {
-    "title": "Week:05｜AIはコードを書くのは速い。でも「何が壊れているか」を見つけるのは苦手",
-    "url": "https://zenn.dev/deke_pearson700/articles/6a12b3e4a46fe0",
-    "published": "2026-03-06T07:33:52+00:00",
-    "author": "hiro",
-    "source": "Zenn - Claude",
-    "category": "claude",
-    "emoji": "🤖",
-    "lang": "ja",
-    "summary_raw": "はじめに\nAIエージェントを使ってアプリを開発している。5週間が経った。\n1日で7件の新機能を追加した日がある。半日でデータベース設計の移行を完了した日もある。コードを書く速度は、人間だけの開発と比べて明らかに速い。\n一方で、プッシュ通知の障害調査に4時間かけて3回外した日がある。UIの不具合を説明するのにユーザーに何度も「もっとざっくり言うと？」と軌道修正された日もある。\n5週間の実体験を通じて見えた、AIの得意・不得意と、それを踏まえた役割分担を整理する。\nAI批判ではない。どう付き合えば生産性が最大化するか、という話だ。\n\n\n AIが得意なこと\n\n 機能実装が速い\nある日の実...",
-    "static_relevance": 4,
-    "composite_score": 1.886
-  },
-  {
-    "title": "[Mastra Changelog 解説] 2026-03-04 技術解説（@mastra/core@1.9.0）",
-    "url": "https://zenn.dev/shiromizuj/articles/24dd1905e8c1c9",
-    "published": "2026-03-06T14:03:34+00:00",
-    "author": "jun shiromizu",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "Mastra の公式Blogで発表されたChangelogsを速報ベースでお伝えします。ただの直訳ではなく、関連ドキュメントも参照したうえで手厚くしたり省略したりします。速報性重視でAIの力を多分に使っているので、私自身の考察は少なめです。\n\n2026-03-04 の Mastra リリース（@mastra/core@1.9.0）は、\nWorkspace/Sandbox の運用実装、Auth/RBAC の土台整備、Workflow 実行の可観測性と整合性を一気に前進させたアップデートです。\n\n公式 Changelog: https://mastra.ai/blog/changelog-2...",
-    "static_relevance": 3,
-    "composite_score": 1.854
+    "composite_score": 1.8
   },
   {
     "title": "Claude Code を「指示待ち」から「提案型パートナー」に変えた 9 行のプロンプト",
@@ -507,17 +481,17 @@
     "composite_score": 1.8
   },
   {
-    "title": "【セキュリティ】なぜAPIキーは流出するのか？2026年最新データと実例から学ぶ原因と対策",
-    "url": "https://qiita.com/ktdatascience/items/588b63bcae18cd1f5f16",
-    "published": "2026-03-06T01:37:09+00:00",
-    "author": "ktdatascience",
-    "source": "Qiita - VibeCoding",
-    "category": "vibecoding",
-    "emoji": "🎵",
+    "title": "フロンティアオペレーターの採用方法：AI時代に本当に見極めるべきシグナル",
+    "url": "https://zenn.dev/omniwired/articles/a6e40140386900",
+    "published": "2026-03-06T07:15:54+00:00",
+    "author": "Juan Combetto",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
     "lang": "ja",
-    "summary_raw": "はじめに\n生成AIの普及により、OpenAI・Anthropic・Google などのAPIキーを扱う開発者が爆発的に増えました。それに伴い、APIキーの流出事故も急増しています。\nセキュリティ企業 GitGuardian が公開した「State of Secrets S...",
-    "static_relevance": 4,
-    "composite_score": 1.766
+    "summary_raw": "はじめに\n従来の採用シグナルは、AI活用型の役職では機能しません。\n資格、経験年数、ツールの習熟度 — これらは「スキルが固定的である」という前提に立っています。しかしAIは、あなたの採用サイクルを待ってくれません。\n私が実際に見極めるポイントを解説します。\n\n 境界線をマッピングできるか\n質問：「あなたの領域で、6ヶ月前にはできなかったが今AIにできることは何ですか？」\nフロンティアオペレーターは、その境界線が正確にどこにあるかを知っています。具体的な例を挙げてくれるでしょう — 自分が書いたコードが今や陳腐化したことに文句を言うかもしれません。\n間違った回答？漠然とした楽観論や曖...",
+    "static_relevance": 3,
+    "composite_score": 1.728
   },
   {
     "title": "v2.1.68",
@@ -546,30 +520,17 @@
     "composite_score": 1.65
   },
   {
-    "title": "OpenClawの“エビ”が小红书を回している話、正直もうSNS運用の前提が変わり始めている",
-    "url": "https://zenn.dev/taketsuyo/articles/d24b031f036123",
-    "published": "2026-03-06T09:28:42+00:00",
-    "author": "剛｜生成AI×アプリ開発｜予備試験講師",
+    "title": "[Mastra Changelog 解説] 2026-03-04 技術解説（@mastra/core@1.9.0）",
+    "url": "https://zenn.dev/shiromizuj/articles/24dd1905e8c1c9",
+    "published": "2026-03-06T14:03:34+00:00",
+    "author": "jun shiromizu",
     "source": "Zenn - AI Agent",
     "category": "ai-agent",
     "emoji": "🕵️",
     "lang": "ja",
-    "summary_raw": "これ、ネタに見えて中身はかなり実務的\n正直、最初は“AIエビがSNSを運営している”という見た目のインパクトが強すぎて、半分ネタ枠だと思った。\nでも中身を追うと、やっていることはかなり本格的で、投稿文の生成、画像作成、投稿、コメント返信までを1本の運用フローとしてつないでいる。ポストの面白さはここなんだと思う。 中国の小红书は、ライフスタイル系の発見と購買がかなり密接なSNSで、外から見るとInstagramっぽいけど、実際は“検索される投稿”と“売れる導線”が近い。だから、ここで自動運用が成立するなら、単なる遊びではなく集客の自動化実験としてかなり意味がある。\n\n目新しいのは「A...",
+    "summary_raw": "Mastra の公式Blogで発表されたChangelogsを速報ベースでお伝えします。ただの直訳ではなく、関連ドキュメントも参照したうえで手厚くしたり省略したりします。速報性重視でAIの力を多分に使っているので、私自身の考察は少なめです。\n\n2026-03-04 の Mastra リリース（@mastra/core@1.9.0）は、\nWorkspace/Sandbox の運用実装、Auth/RBAC の土台整備、Workflow 実行の可観測性と整合性を一気に前進させたアップデートです。\n\n公式 Changelog: https://mastra.ai/blog/changelog-2...",
     "static_relevance": 3,
-    "composite_score": 1.532
-  },
-  {
-    "title": "データ構造から始める仕様書自動化",
-    "url": "https://zenn.dev/specs/books/03d3824047d177",
-    "published": "2026-03-06T09:19:31+00:00",
-    "author": "仕様をこねる人",
-    "source": "Zenn - AI Agent",
-    "category": "ai-agent",
-    "emoji": "🕵️",
-    "lang": "ja",
-    "summary_raw": "これはハウツー本ではありません。ゲーム仕様書にこだわりを持つ人間が、自分の知識を生成AIで再現しようとした開発日誌です。正解がわからないまま進んでいる記録がそのまま入っています。編集中です。",
-    "static_relevance": 3,
-    "composite_score": 1.522
+    "composite_score": 1.529
   },
   {
     "title": "v2.1.62",
@@ -598,6 +559,32 @@
     "composite_score": 1.5
   },
   {
+    "title": "OpenClawの“エビ”が小红书を回している話、正直もうSNS運用の前提が変わり始めている",
+    "url": "https://zenn.dev/taketsuyo/articles/d24b031f036123",
+    "published": "2026-03-06T09:28:42+00:00",
+    "author": "剛｜生成AI×アプリ開発｜予備試験講師",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
+    "lang": "ja",
+    "summary_raw": "これ、ネタに見えて中身はかなり実務的\n正直、最初は“AIエビがSNSを運営している”という見た目のインパクトが強すぎて、半分ネタ枠だと思った。\nでも中身を追うと、やっていることはかなり本格的で、投稿文の生成、画像作成、投稿、コメント返信までを1本の運用フローとしてつないでいる。ポストの面白さはここなんだと思う。 中国の小红书は、ライフスタイル系の発見と購買がかなり密接なSNSで、外から見るとInstagramっぽいけど、実際は“検索される投稿”と“売れる導線”が近い。だから、ここで自動運用が成立するなら、単なる遊びではなく集客の自動化実験としてかなり意味がある。\n\n目新しいのは「A...",
+    "static_relevance": 3,
+    "composite_score": 1.264
+  },
+  {
+    "title": "データ構造から始める仕様書自動化",
+    "url": "https://zenn.dev/specs/books/03d3824047d177",
+    "published": "2026-03-06T09:19:31+00:00",
+    "author": "仕様をこねる人",
+    "source": "Zenn - AI Agent",
+    "category": "ai-agent",
+    "emoji": "🕵️",
+    "lang": "ja",
+    "summary_raw": "これはハウツー本ではありません。ゲーム仕様書にこだわりを持つ人間が、自分の知識を生成AIで再現しようとした開発日誌です。正解がわからないまま進んでいる記録がそのまま入っています。編集中です。",
+    "static_relevance": 3,
+    "composite_score": 1.256
+  },
+  {
     "title": "Rebyte.ai — コーディングエージェントをクラウドで実行するランタイム",
     "url": "https://zenn.dev/rebyte/articles/96d88f900d3ada",
     "published": "2026-03-05T14:36:14+00:00",
@@ -608,6 +595,6 @@
     "lang": "ja",
     "summary_raw": "はじめに\n最近、Claude Code、Codex、Gemini CLI、OpenCode など、ターミナルベースのAIコーディングエージェントが急速に普及しています。これらのツールはローカル環境で動作しますが、チームでの共有やクラウド上での実行には課題があります。\nRebyte.ai は、これらのコーディングエージェントをクラウド上で実行できるプラットフォームです。本質的には、Rebyte.aiは**コーディングエージェントのランタイム + スキル（Skills）**の組み合わせで構成されています。\n\n Rebyte.ai とは？\nRebyte.aiは、AIコーディングエージェント...",
     "static_relevance": 5,
-    "composite_score": 1.395
+    "composite_score": 1.2
   }
 ]

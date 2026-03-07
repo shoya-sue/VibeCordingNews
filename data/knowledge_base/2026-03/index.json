@@ -1,0 +1,67 @@
+{
+  "entries": [
+    {
+      "title": "理論が分からない論文をブラウザで動かしてしまった ── 能動的推論 × Claude Code",
+      "summary": "毎朝5時に届く AI リサーチレポートの片隅に、「能動的推論（Active Inference）」という単語があった。脳が世界の内部モデルを持ち、予測と現実のズレを最小化するように行動を選ぶ。生物の知覚・行動・意思決定を統一的に説明するフレ…",
+      "core_insight": "毎朝5時に届く AI リサーチレポートの片隅に、「能動的推論（Active Inference）」という単語があった。脳が世界の内部モデルを持ち、予測と現実のズレを最小化するように行動を選ぶ。生物の知覚・行動・意思決定を統一的に説明するフレ…",
+      "keywords": [
+        "claude code",
+        "claude"
+      ],
+      "date": "2026-03-07T00:00:04+00:00",
+      "category": "claude-code",
+      "source": "Qiita - ClaudeCode",
+      "url": "https://qiita.com/shimo4228/items/17f507d2a60efeb341a5"
+    },
+    {
+      "title": "MCPサーバー、繋いでるだけで毎ターン課金されてますよ — 4つの公式MCPで実測した結果",
+      "summary": "freee-mcpで確定申告したら、トークン代がおかしい 確定申告もかれこれ5回目になりました。チキンレースで期限ギリギリに駆け込んだ年もあれば、早めに終わらせたのに税理士さんが3/15ギリギリに提出するのをやきもきしながら待った年もありま…",
+      "core_insight": "freee-mcpで確定申告したら、トークン代がおかしい 確定申告もかれこれ5回目になりました。チキンレースで期限ギリギリに駆け込んだ年もあれば、早めに終わらせたのに税理士さんが3/15ギリギリに提出するのをやきもきしながら待った年もありま…",
+      "keywords": [
+        "mcp"
+      ],
+      "date": "2026-03-07T01:03:17+00:00",
+      "category": "claude-code",
+      "source": "Qiita - ClaudeCode",
+      "url": "https://qiita.com/kenimo49/items/ddfbf74c192c9b528df1"
+    },
+    {
+      "title": "【2026年最新】「人間はもうキーボードを叩かない」。Claude Codeと過ごす\"1タップ開発\"の狂気と現実",
+      "summary": "先日、Claude Code作者のBoris氏（@bcherny）による「15体のAIを同時並行で指揮する」という超並列駆動開発の記事が大きな話題になりました。 「人間自身がOSのスケジューラーとなり、非同期I/Oと化す」。その思想は圧倒的…",
+      "core_insight": "先日、Claude Code作者のBoris氏（@bcherny）による「15体のAIを同時並行で指揮する」という超並列駆動開発の記事が大きな話題になりました。 「人間自身がOSのスケジューラーとなり、非同期I/Oと化す」。その思想は圧倒的…",
+      "keywords": [
+        "claude code",
+        "claude"
+      ],
+      "date": "2026-03-06T15:06:42+00:00",
+      "category": "vibecoding",
+      "source": "Qiita - VibeCoding",
+      "url": "https://qiita.com/YushiYamamoto/items/a387327e94d486bf15be"
+    },
+    {
+      "title": "好きな曲をExcelに入れたらピアノが弾き始めた【Python×VBA】",
+      "summary": "Excelが楽器になった。コードは読めない。バイブコーディングで作った。 先に言っておきます。 この記事に出てくるコード、ほとんど理解していません。 PythonもVBAも、自分で1から書いたわけじゃない。 AIに「こういうの作って」と伝え…",
+      "core_insight": "Excelが楽器になった。コードは読めない。バイブコーディングで作った。 先に言っておきます。 この記事に出てくるコード、ほとんど理解していません。 PythonもVBAも、自分で1から書いたわけじゃない。 AIに「こういうの作って」と伝え…",
+      "keywords": [
+        "バイブコーディング"
+      ],
+      "date": "2026-03-07T00:03:31+00:00",
+      "category": "vibecoding",
+      "source": "Qiita - VibeCoding",
+      "url": "https://qiita.com/hetare001/items/166d142f01e2f64a93ee"
+    },
+    {
+      "title": "cmux `read-screen` で別ターミナルの作業を読み取り、タスクを引き継ぐ方法(例えばClaude Code -> Codex)",
+      "summary": "! この文章はtmuxもcmuxも初心者の人が書いています。ご了承ください。 はじめに Claude Codeはコーディングにすごく使えるのですが、いかんせんすぐにlimitが来てしまいます。 上記のようにリミットが来た際にCodexなどで…",
+      "core_insight": "! この文章はtmuxもcmuxも初心者の人が書いています。ご了承ください。 はじめに Claude Codeはコーディングにすごく使えるのですが、いかんせんすぐにlimitが来てしまいます。 上記のようにリミットが来た際にCodexなどで…",
+      "keywords": [
+        "claude code",
+        "claude"
+      ],
+      "date": "2026-03-06T12:30:01+00:00",
+      "category": "claude",
+      "source": "Zenn - Claude",
+      "url": "https://zenn.dev/ifhito/articles/2212baff0c4ccc"
+    }
+  ]
+}
